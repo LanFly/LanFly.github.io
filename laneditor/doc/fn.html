@@ -135,7 +135,7 @@
     <div class="sidebar bg-mint">
         <div class="sidebar-inner">
             <h1 class="blog-title">
-                <a href="//laneditor" title="一个简单、快速的在线markdown编辑器" rel="home">LanEditor</a>
+                <a href="/laneditor/doc" title="一个简单、快速的在线markdown编辑器" rel="home">LanEditor</a>
             </h1>
             <a class="nav-toggle hidden" title="Click to view the navigation" href="#">
                 <div class="bars">
@@ -158,7 +158,7 @@
                 <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/api.html">API</a></li>
             </ul>
             <!-- 版权信息 -->
-            <p class="credits">Optimized By <a href="http://lansky.github.io">BluesCode</a>
+            <p class="credits">Optimized By <a href="http://lanfly.github.io">BluesCode</a>
                 <br/>Based on <a href="http://www.andersnoren.se">Anders Nor&eacute;n</a></p>
             <div class="clear"></div>
         </div>
@@ -340,9 +340,9 @@
                 <span class="c1">//在光标前插入一个中文（</span>
                 <span class="nx">TextElem</span><span class="p">.</span><span class="nx">iAddField</span><span class="p">(</span><span class="s2">"）"</span><span class="p">);</span>
             <span class="p">}</span>
+            <span class="c1">//将光标往前移动一个字符</span>
+            <span class="nx">TextElem</span><span class="p">.</span><span class="nx">iSelectField</span><span class="p">(</span><span class="nx">TextElem</span><span class="p">.</span><span class="nx">iGetFieldPos</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="c1">//将光标往前移动一个字符</span>
-        <span class="nx">TextElem</span><span class="p">.</span><span class="nx">iSelectField</span><span class="p">(</span><span class="nx">TextElem</span><span class="p">.</span><span class="nx">iGetFieldPos</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
     <span class="p">}</span>
  <span class="p">});</span>
 </code></pre>
@@ -396,7 +396,10 @@
 <div class="highlighter-rouge"><pre class="highlight"><code>编辑于：2016/1/20 下午3:17:16
 </code></pre>
 </div>
-<p>addText函数因为返回了一个false，所以它所做的任何改动都将作废。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>addText函数因为返回了一个false，所以它所做的任何改动都将作废。
+</code></pre>
+</div>
 
 <p>而在文档末行，会显示：</p>
 
@@ -433,13 +436,13 @@
                         </a>
                         <!-- /文章附加信息开关 -->
                         <div class="post-meta-inner">
-                            <p><strong>Author</strong><a href="http://localhost/wordpress/author/bluescode/" title="由 BluesCode 发布" rel="author"> BluesCode </a></p>
+                            <p><strong>Author</strong><a href="http://lanfly.github.com" title="由 BluesCode 发布" rel="author"> BluesCode </a></p>
                             <p class="post-meta-date"><strong>Posted</strong><a href="">2016-01-21</span></a></p>
                             <!-- <p><strong>Categories</strong><a href="http://localhost/wordpress/category/all/" rel="category tag">随便看看</a></p> -->
                             <div class="post-nav">
                                 <p>
-                                    <strong>Previous</strong>
-                                    <a class="post-nav-older" title="Previous post: 个性化" href="/laneditor/doc/extend.html">个性化</a>
+                                    <strong>Next</strong>
+                                    <a class="post-nav-older" title="Next post: API" href="/laneditor/doc/api.html">API</a>
                                 </p>
                                 <div class="clear"></div>
                             </div>
