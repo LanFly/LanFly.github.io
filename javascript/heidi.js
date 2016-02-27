@@ -147,6 +147,25 @@ var BluesCode = {
 			}
 		}
 	},
+	sidebar: {
+		GetList: function(url, path) {
+			$.ajax({
+				url: url,
+				dataType: "jsonp",
+				data: {p: path, type: "jsonp"},
+				success: function(data) {
+					if(data.state == "success") {
+						$("#secondary").html(BluesCode.HTML.SidebarList(data.result));
+					}else{
+						$("#sidebar-loading").html('<h1 class="widget-title">发生错误了/(ㄒoㄒ)/~~ '+data.message+'</h1>');
+					}
+				},
+				error: function(errorThrown) {
+					$("#sidebar-loading").html('<h1 class="widget-title">发生错误了/(ㄒoㄒ)/~~ </h1>');
+				}
+			});
+		}
+	},
 	HTML: {
 		//生成文章列表HTML
 		PostList: function(post) {
@@ -206,6 +225,20 @@ var BluesCode = {
                             '</p>'+
                         '</div>';
                 html += '</div></div></li>';
+			}
+			return html;
+		},
+		SideBarList: function(data) {
+			var html = "";
+			for(var name in data){
+				html += '<aside id="sidebar-'+name+'" class="widget widget_'+name+'">';
+                    html += '<h1 class="widget-title">'+data[name].name+'</h1>';
+                    html += '<ul>'
+                    for(var i=0; i<data[name].data.length; ++i){
+                    	html += '<li><a href="'+data[name].data[i].path+'">'+data[name].data[i].title+'</a></li>';
+                    }
+                    html += '</ul>';
+                html += '</aside>';
 			}
 			return html;
 		}
