@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WEB前端之DNS预获取(dns-prefetch) | BluesCode</title>
+    <link rel='stylesheet' id='heidi-style-css' href='/css/heidi.css' type='text/css' media='all' />
+    <meta name="generator" content="github pages" />
+    <style type="text/css">
+    .content-area a,
+    .content-area a:visited {
+        color: ;
+    }
+    
+    .site-header,
+    .main-navigation ul ul li,
+    .site-footer {
+        background: ;
+    }
+    </style>
+    <style type="text/css">
+    .sticky .entry-header {
+        border-top-color: ;
+    }
+    
+    .sticky .entry-footer {
+        border-bottom-color: ;
+    }
+    
+    .sticky a {
+        color: ;
+    }
+    
+    blockquote {
+        border-left-color: ;
+    }
+    
+    .more-link {
+        background: ;
+    }
+    
+    .hentry h1 a,
+    .posted-on a,
+    .more-link:hover,
+    .more-link:focus {
+        color: ;
+    }
+    </style>
+    <style type="text/css">
+    .hentry,
+    .comments-area {
+        background: ;
+    }
+    </style>
+    <style type="text/css">
+    .entry-footer,
+    .comment-body,
+    .single-post-thumbnail,
+    table,
+    pre {
+        background: ;
+    }
+    </style>
+    <style type="text/css">
+    .hentry,
+    .comments-area {
+        border-color: ;
+    }
+    </style>
+    <style type="text/css">
+    .sticky,
+    blockquote {
+        background: !important;
+    }
+    </style>
+    <style type="text/css">
+    .sticky .entry-footer,
+    .sticky blockquote,
+    thead {
+        background: !important;
+    }
+    </style>
+    <style type="text/css">
+    .widget-area,
+    .date_with_link:hover,
+    .page-title {
+        background: ;
+    }
+    
+    .widget_calendar td > a,
+    .widget_calendar td > a:focus,
+    .sticky a:hover,
+    .sticky a:focus,
+    a:hover,
+    a:focus,
+    a:active {
+        color: ;
+    }
+    
+    @media all and (min-width: 1024px) {
+        .widget-area {
+            background: transparent;
+        }
+        .widget {
+            background: ;
+        }
+    }
+    </style>
+    <style type="text/css">
+    .widget-area a {
+        color: ;
+    }
+    </style>
+    <style type="text/css">
+    .widget-area table {
+        background: ;
+    }
+    </style>
+    <style type="text/css">
+    .widget-area td,
+    .widget-area th {
+        border-color: ;
+    }
+    </style>
+    <style type="text/css">
+    .recentcomments a {
+        display: inline !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    </style>
+</head>
+
+<body class="home blog">
+    <div id="page" class="hfeed site">
+        <header id="masthead" role="banner" class="site-header">
+            <div class="site-branding">
+                <h1 class="site-title"><a href="lanfly.github.io" rel="home">BluesCode</a></h1>
+                <h2 class="site-description">Make it easier to read blog</h2>
+                <span class="nav-toggle hidden" title="菜单" href="#">
+                    <div class="bars">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="clear"></div>
+                    </div>
+                    <p>
+                        <span class="menu">Menu</span>
+                <span class="close">Close</span>
+                </p>
+                </span>
+            </div>
+            <!-- .site-branding -->
+        </header>
+        <ul class="mobile-menu">
+            <li class="menu-item"><a href="http://localhost/wordpress/category/all/">首页</a></li>
+            <li class="menu-item"><a href="http://localhost/wordpress/category/all/">随便看看</a></li>
+            <li class="menu-item"><a href="http://localhost/wordpress/category/set/">前端大杂烩</a></li>
+            <li class="menu-item"><a href="http://localhost/wordpress/category/js/">JavaScript</a></li>
+        </ul>
+        <!-- #masthead -->
+        <div id="content" class="site-content">
+            <div id="primary" class="content-area">
+                <main id="main" class="site-main" role="main">
+                    <article id="post-52" class="post-52 post type-post status-publish format-standard hentry category-all">
+                        <header class="entry-header">
+                            <h1 class="entry-title">WEB前端之DNS预获取(dns-prefetch)</h1>
+                            <div class="entry-meta">
+                                <span class="posted-on">最后编辑：<a href="http://localhost/wordpress/2016/01/14/52/" rel="bookmark"><time class="entry-date published" datetime="2016-01-14T15:05:59+00:00">2016年1月14日</time></a></span><span class="byline"> by <span class="author vcard"><a class="author-url" href="">BluesCode</a></span></span>
+                            </div>
+                            <!-- .entry-meta -->
+                        </header>
+                        <!-- .entry-header -->
+                        <div class="entry-content">
+                            <p>转载自 <strong>吕涛博客</strong> 原文地址：http://www.lvtao.net/web/dns-prefetch.html</p>
+
+<p>今天翻看twitter的源码的时候看到了一下内容：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">”dns-prefetch”</span> <span class="na">href=</span><span class="s">”http://a0.twimg.com”/</span><span class="nt">&gt;</span>
+<span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">”dns-prefetch”</span> <span class="na">href=</span><span class="s">”http://a1.twimg.com”/</span><span class="nt">&gt;</span>
+<span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">”dns-prefetch”</span> <span class="na">href=</span><span class="s">”http://a2.twimg.com”/</span><span class="nt">&gt;</span>
+<span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">”dns-prefetch”</span> <span class="na">href=</span><span class="s">”http://a3.twimg.com”/</span><span class="nt">&gt;</span>
+<span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">”dns-prefetch”</span> <span class="na">href=</span><span class="s">”http://api.twitter.com”/</span><span class="nt">&gt;</span>
+</code></pre>
+</div>
+
+<p>查阅了相关资料，知道DNS Prefetch也就是DNS预获取，也是前段优化的一部分。</p>
+
+<p>在前段优化中关于DNS的有两点：</p>
+
+<ol>
+  <li>减少DNS的请求次数</li>
+  <li>进行DNS预先获取。</li>
+</ol>
+
+<p>DNS Prefetch 已经被下面的浏览器支持</p>
+
+<ul>
+  <li>Firefox: 3.5+</li>
+  <li>Chrome: Supported</li>
+  <li>Safari 5+</li>
+  <li>Opera: Unknown</li>
+  <li>IE: 9 (called “Pre-resolution” on blogs.msdn.com)</li>
+</ul>
+
+<p>默认情况下浏览器会对页面中和当前域名（正在浏览网页的域名）不在同一个域的域名进行预获取，并且缓存结果，这就是隐式的DNS Prefetch。如果想对页面中没有出现的域进行预获取，那么就要使用显示的DNS　Prefetch了，也就是使用link标签：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">”dns-prefetch”</span> <span class="na">href=</span><span class="s">”http://api.twitter.com”/</span><span class="nt">&gt;</span>
+</code></pre>
+</div>
+
+<p>DNS Prefetch应该尽量的放在网页的前面，推荐放在<code class="highlighter-rouge">&lt;meta charset=”/&gt;</code>后面。</p>
+
+<p>PS:可以通过下面的标签禁止隐式的DNS Prefetch</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">”x-dns-prefetch-control”</span> <span class="na">content=</span><span class="s">”off”</span><span class="nt">&gt;</span>
+</code></pre>
+</div>
+
+                        </div>
+                        <!-- .entry-content -->
+                        <footer class="entry-footer">
+                            <span class="cat-links">Posted in <a href="/web" rel="category tag">web前端</a></span> </footer>
+                        <!-- .entry-footer -->
+                    </article>
+                    <!-- #post-## -->
+                    <nav class="navigation post-navigation" role="navigation">
+                        <h2 class="screen-reader-text">文章导航</h2>
+                        <div class="nav-links">
+                            <div class="nav-previous">
+                                <span>上一篇：</span>
+                                <a href="http://localhost/wordpress/2015/12/01/5/" rel="prev">LanEditor</a>
+                            </div>
+                            <div class="nav-next">
+                                <span>下一篇：</span>
+                                <a href="" rel="next">没有了！</a>
+                            </div>
+                        </div>
+                    </nav>
+                    <div id="comments" class="comments-area">
+                        <div class="comments-title-container">
+                            <h2 class="comment-title"><span class="comment-number" id="commentNumber">No</span> Comments</h2>
+                            <h4 class="comment-subtitle"><a href="#respond">Add yours →</a></h4>
+                        </div>
+                        <ol class="commentlist" id="commentlist">
+                            <p style="text-align: center;">正在加载评论...</p>
+                            <!-- <li class="comment even thread-even depth-1" id="li-comment-1">
+                                <div id="comment-1" class="comment">
+                                    <div class="avatar-container">
+                                        <img alt='' src='http://localhost/wordpress/wp-content/uploads/2015/12/huidong.gif' srcset='http://0.gravatar.com/avatar/37b7597003d518630ea48a06b729a438?s=320&amp;d=retro&amp;r=g 2x' class='avatar avatar-160 photo' height='160' width='160' /> </div>
+                                    <div class="comment-inner">
+                                        <div class="comment-header">
+                                            <h4>
+                                                <a href='http://lansky.com' rel='external nofollow' class='url'>lan</a>
+                                                <a class="comment-date-link" href="http://localhost/wordpress/2016/01/14/52/#comment-1" title="2016年1月14日 at 下午3:24">2016年1月14日<span> &mdash; 下午3:24</span></a>
+                                            </h4>
+                                        </div>
+                                        <div class="comment-content post-content">
+                                            <p>hello,this test reply</p>
+                                            <p>hello,this test reply</p>
+                                            <p>hello,this test reply</p>
+                                        </div>
+                                        <!-- /comment-content
+                                        <div class="comment-actions">
+                                            <p class="comment-reply"><a rel='nofollow' class='comment-reply-link' href='http://localhost/wordpress/2016/01/14/52/?replytocom=1#respond' onclick='return addComment.moveForm( "comment-1", "1", "respond", "52" )' aria-label='回复给lan'>Reply</a></p>
+                                        </div>
+                                        <!-- /comment-actions
+                                    </div>
+                                    <!-- /comment-inner
+                                </div>
+                                <!-- /comment-##
+                            </li> -->
+                            <!-- #comment-## -->
+                        </ol>
+                        <!-- 评论 -->
+                        <div id="respond" class="comment-respond">
+                            <div>
+                                <h3 id="reply-title" class="comment-reply-title">发表你的评论</h3>
+                                <small id="cancel-reply" class="cancel-reply"></small>
+                            </div>
+                            <form action="http://localhost/wordpress/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+                                <p class="comment-form-author">
+                                    <label for="author">Name<span class="required">*</span></label>
+                                    <input id="author" name="author" type="text" value="" size="30" required/>
+                                </p>
+                                <p class="comment-form-email">
+                                    <label for="email">Email<span class="required">*</span></label>
+                                    <input id="email" name="email" type="text" value="" size="30" placeholder="评论使用Gravatar头像" required/>
+                                </p>
+                                <p class="comment-form-url">
+                                    <label for="url">Website</label>
+                                    <input id="url" name="url" type="text" value="" size="30" placeholder="请带上 http://" />
+                                </p>
+                                <p class="comment-form-comment">
+                                    <label for="comment">Comment</label>
+                                    <textarea id="comment" name="comment" cols="45" rows="6" required></textarea>
+                                </p>
+                                <p class="form-submit">
+                                    <input name="submit" type="submit" id="submit" class="submit" value="发表评论" />
+                                    <input type='hidden' name='replyto' value='' id='replyto' />
+                                </p>
+                            </form>
+                        </div>
+                        <!-- 评论框 -->
+                    </div>
+
+                </main>
+                <!-- #main -->
+            </div>
+            <!-- #primary -->
+            <div id="secondary" class="widget-area" role="complementary">
+                <aside id="recent-posts-2" class="widget widget_recent_entries">
+                    <h1 class="widget-title">近期文章</h1>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/wordpress/2016/01/14/52/">test</a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/wordpress/2015/12/01/5/">LanEditor</a>
+                        </li>
+                    </ul>
+                </aside>
+                <aside id="categories-2" class="widget widget_categories">
+                    <h1 class="widget-title">分类目录</h1>
+                    <ul>
+                        <li class="cat-item cat-item-2"><a href="http://localhost/wordpress/category/js/">JavaScript</a>
+                        </li>
+                        <li class="cat-item cat-item-1"><a href="http://localhost/wordpress/category/all/">随便看看</a>
+                        </li>
+                    </ul>
+                </aside>
+                <aside id="archives-2" class="widget widget_archive">
+                    <h1 class="widget-title">文章归档</h1>
+                    <ul>
+                        <li><a href='http://localhost/wordpress/2016/01/'>2016年一月</a></li>
+                        <li><a href='http://localhost/wordpress/2015/12/'>2015年十二月</a></li>
+                    </ul>
+                </aside>
+                <aside id="meta-2" class="widget widget_meta">
+                    <h1 class="widget-title">功能</h1>
+                    <ul>
+                        <li><a href="http://localhost/wordpress/wp-login.php">登录</a></li>
+                        <li><a href="http://localhost/wordpress/feed/">文章<abbr title="Really Simple Syndication">RSS</abbr></a></li>
+                        <li><a href="http://localhost/wordpress/comments/feed/">评论<abbr title="Really Simple Syndication">RSS</abbr></a></li>
+                        <li><a href="https://cn.wordpress.org/" title="基于WordPress，一个优美、先进的个人信息发布平台。">WordPress.org</a></li>
+                    </ul>
+                </aside>
+            </div>
+            <!-- #secondary -->
+        </div>
+        <!-- #content -->
+        <footer id="colophon" class="site-footer" role="contentinfo">
+            <div class="site-info">Powered by 
+                <a href="http://jekyllrb.com/">jekyll</a>
+                <span class="sep"> </span> Theme optimized by <a href="mailto:bluescode@outlook.com">BluesCode</a> based on <a href="http://www.andersnoren.se/teman/rams-wordpress-theme/">Rams</a> and <a href="http://alexaweidinger.com" rel="designer">Alexa Weidinger</a></div>
+            <!-- .site-info -->
+        </footer>
+        <!-- #colophon -->
+    </div>
+    <!-- #page -->
+    <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/javascript/useragent.js"></script>
+    <script type="text/javascript" src="/javascript/heidi.js"></script>
+    <script type="text/javascript" src="/javascript/post-heidi.js"></script>
+</body>
+
+</html>

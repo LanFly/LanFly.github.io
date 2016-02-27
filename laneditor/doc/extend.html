@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html class="js" lang="zh-CN">
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>个性化 | LanEditor</title>
+    <link rel='stylesheet' id='rams_style-css' href="/css/rams.css" type='text/css' media='all' />
+    <script type='text/javascript' src="/javascript/jquery-1.11.1.min.js"></script>
+    <!-- 定义文档上下文联系 -->
+    
+    <link rel='start' title="快速开始 | LanEditor" href='/laneditor/doc/index.html' />
+    
+
+    
+    <link rel='prev' title='插件模式 | LanEditor' href='/laneditor/doc/plugins.html' />
+
+     
+    
+    <!-- 定义文档生成工具 -->
+    <meta name="generator" content="github pages" />
+    <!-- 定义多份相同或相似的网页中，那个是首选 -->
+    <link rel="canonical" href="lanfly.github.io/laneditor/doc/extend.html">
+    <!-- Customizer CSS -->
+    <style type="text/css">
+    body a {
+        color: #e07b23;
+    }
+    
+    body a:hover {
+        color: #e07b23;
+    }
+    
+    .sidebar {
+        background: #e07b23;
+    }
+    
+    .flex-direction-nav a:hover {
+        background-color: #e07b23;
+    }
+    
+    a.post-quote:hover {
+        background: #e07b23;
+    }
+    
+    .post-title a:hover {
+        color: #e07b23;
+    }
+    
+    .post-content a {
+        color: #e07b23;
+    }
+    
+    .post-content a:hover {
+        color: #e07b23;
+    }
+    
+    .post-content a:hover {
+        border-bottom-color: #e07b23;
+    }
+    
+    .post-content a.more-link:hover {
+        background: #e07b23;
+    }
+    
+    .post-content input[type="submit"]:hover {
+        background: #e07b23;
+    }
+    
+    .post-content input[type="button"]:hover {
+        background: #e07b23;
+    }
+    
+    .post-content input[type="reset"]:hover {
+        background: #e07b23;
+    }
+    
+    #infinite-handle span:hover {
+        background: #e07b23;
+    }
+    
+    .page-links a:hover {
+        background: #e07b23;
+    }
+    
+    .post-meta-inner a:hover {
+        color: #e07b23;
+    }
+    
+    .add-comment-title a {
+        color: #e07b23;
+    }
+    
+    .add-comment-title a:hover {
+        color: #e07b23;
+    }
+    
+    .bypostauthor .avatar {
+        border-color: #e07b23;
+    }
+    
+    .comment-actions a:hover {
+        color: #e07b23;
+    }
+    
+    .comment-header h4 a:hover {
+        color: #e07b23;
+    }
+    
+    #cancel-comment-reply-link {
+        color: #e07b23;
+    }
+    
+    .comments-nav a:hover {
+        color: #e07b23;
+    }
+    
+    .comment-form input[type="submit"]:hover {
+        background-color: #e07b23;
+    }
+    
+    .logged-in-as a:hover {
+        color: #e07b23;
+    }
+    
+    .archive-nav a:hover {
+        color: #e07b23;
+    }
+    </style>
+    <!--/Customizer CSS-->
+</head>
+
+<body class="single single-post postid-52 single-format-standard no-featured-image">
+    <div class="sidebar bg-mint">
+        <div class="sidebar-inner">
+            <h1 class="blog-title">
+                <a href="//laneditor" title="一个简单、快速的在线markdown编辑器" rel="home">LanEditor</a>
+            </h1>
+            <a class="nav-toggle hidden" title="Click to view the navigation" href="#">
+                <div class="bars">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="clear"></div>
+                </div>
+                <p>
+                    <span class="menu">Menu</span>
+                    <span class="close">Close</span>
+                </p>
+            </a>
+            <ul class="main-menu">
+                <li id="menu-item-11" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-11"><a href="/laneditor/doc">快速开始</a></li>
+                <li id="menu-item-20" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-20"><a href="/laneditor/doc/install.html">安装</a></li>
+                <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/plugins.html">插件模式</a></li>
+                <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/extend.html">个性化</a></li>
+                <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/fn.html">扩展功能</a></li>
+                <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/api.html">API</a></li>
+            </ul>
+            <!-- 版权信息 -->
+            <p class="credits">Optimized By <a href="http://lansky.github.io">BluesCode</a>
+                <br/>Based on <a href="http://www.andersnoren.se">Anders Nor&eacute;n</a></p>
+            <div class="clear"></div>
+        </div>
+        <!-- /pc版侧边栏 -->
+    </div>
+    <!-- /pc侧边栏 -->
+    <ul class="mobile-menu bg-dark hidden">
+        <li id="menu-item-11" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-11"><a href="/laneditor/doc">快速开始</a></li>
+        <li id="menu-item-20" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-20"><a href="/laneditor/doc/install.html">安装</a></li>
+        <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/plugins.html">插件模式</a></li>
+        <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/extend.html">个性化</a></li>
+        <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/fn.html">扩展功能</a></li>
+        <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/api.html">API</a></li>
+    </ul>
+    <!-- 移动版侧边栏 -->
+    <div class="wrapper" id="wrapper">
+        <div class="section-inner wrapper-inner">
+            <div class="content">
+                <div id="post-52" class="post-52 post type-post status-publish format-standard category-all has-featured-image">
+                    <!-- <div class="post-performance">服务器君在0.144秒内进行30次查询,使用15.54MB内存为你提供此页面 </div>
+                    文章图片
+                    <div class="featured-media">
+                        <a href="http://localhost/wordpress/2015/12/01/5/" rel="bookmark" title="LanEditor">
+                            <img width="800" height="416" src="index-pic-1024x533.jpg" class="attachment-post-image wp-post-image" alt="L1446777874869_top_pic" />
+                        </a>
+                    </div> -->
+                    <div class="post-inner">
+                        <div class="post-header">
+                            <p class="post-date">
+                                最后更新于：<a href="">2016-01-18</a> &nbsp;&nbsp;&nbsp;
+                                <span class="post-views" id="post-views">0 views</span>
+                            </p>
+                            <!-- 文章标题 -->
+                            <h1 class="post-title">个性化</h1>
+                        </div>
+                        <!-- /文章头信息 -->
+                        <!-- 文章内容 -->
+                        <div class="post-content">
+                            <p>LanEditor的一个特点之一是有关键字提示功能，尽管这个功能在一个在线编辑器中出现还是比较少的，也有很多人不理解这有什么用。不过我当初做这个编辑器就是为了符合自己的习惯，所以我个人觉得它还是有必要的。</p>
+
+<p>我写这个文档的时候，或是写一些技术类文章的时候，不可避免的要写些代码。如果是写一段CSS，大部分都是重复的，我可不会一个一个字敲上去。js中有很多函数、关键字，难道也要一个一个敲？还有一些是不太熟悉的还要临时查一下有没有写错名字。</p>
+
+<h3 id="section">这就是理由吗？</h3>
+
+<p>这篇文档你有没有发现，出现很多次<code class="highlighter-rouge">LanEditor</code>。写一次两次倒没啥，问题是这至少几十次了 ::&gt;_&lt;:: 写起来要命滴！中间还有个大写字母呢(+﹏+)~狂晕</p>
+
+<p>幸好我不是一个一个敲上去的，也不是复制粘贴的。而是关键字提示的。只要输入<code class="highlighter-rouge">lan</code>按回车就插入了~(≧▽≦)/~啦啦啦</p>
+
+<p>什么？这是哪门子语言的关键字？怎么会提示！逗我。</p>
+
+<p>这就是关键字扩展的功能了！</p>
+
+<h3 id="section-1">关键字扩展</h3>
+
+<p>关键字扩展允许你在默认的关键字库下随意扩展个人词库。例如我的：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">LanEditor</span><span class="p">.</span><span class="nx">Keyword</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="s2">"lan"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"LanEditor"</span><span class="p">,</span>
+        <span class="s2">"API"</span><span class="p">,</span>
+        <span class="s2">"GetRenderHTML"</span><span class="p">,</span>
+        <span class="s2">"PluginsMode"</span><span class="p">,</span>
+        <span class="s2">"OpenAutoSymbol"</span>
+    <span class="p">],</span>
+    <span class="s2">"contact"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"bluescode@outlook.com"</span><span class="p">,</span>
+        <span class="s2">"1260022720"</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+</code></pre>
+</div>
+<p>通过<code class="highlighter-rouge">Keyword</code>模块的<code class="highlighter-rouge">extend</code>方法，你可以随意扩展个人词库。</p>
+
+<p><code class="highlighter-rouge">extend</code>的参数任何时候都应该是一个数组对象。否则它不会接受。它可以无限次调用，无限次扩展，只要你喜欢。扩展的字库会以追加的方式加入查找列表。</p>
+
+<p>数组的名字由你自己定义，它不会影响最终查找的结果，只是用来分类。在以后的版本中，它可能会根据分类从而影响插入的结果，为了升级做准备，现在不用担心。</p>
+
+<p>数组里面就是你想要加入查找列表的清单了，它允许出现重复值，如果有多个，也会被查找出来。建议是规范扩展，不要出现重复的。</p>
+
+<p>扩展有多种写法。你可以根据自己的实际情况选择。这里给出一些例子让你更好的理解扩展的原理。</p>
+
+<p>1.同一分类可以分开扩展。下面的效果和上面的是相同的</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">LanEditor</span><span class="p">.</span><span class="nx">Keyword</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="s2">"lan"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"LanEditor"</span><span class="p">,</span>
+        <span class="s2">"API"</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">"lan"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"GetRenderHTML"</span><span class="p">,</span>
+        <span class="s2">"PluginsMode"</span><span class="p">,</span>
+        <span class="s2">"OpenAutoSymbol"</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+
+</code></pre>
+</div>
+<p>2.也可以一次扩展多个分类</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">LanEditor</span><span class="p">.</span><span class="nx">Keyword</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="s2">"lan"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"LanEditor"</span><span class="p">,</span>
+        <span class="s2">"API"</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">"functions"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"GetRenderHTML()"</span><span class="p">,</span>
+        <span class="s2">"GetFileList()"</span><span class="p">,</span>
+        <span class="s2">"NewFile(filename)"</span><span class="p">,</span>
+        <span class="s2">"GetFileContent(filename)"</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+
+</code></pre>
+</div>
+
+<p>3.还可以分次扩展</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">LanEditor</span><span class="p">.</span><span class="nx">Keyword</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="s2">"lan"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"LanEditor"</span><span class="p">,</span>
+        <span class="s2">"API"</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+
+<span class="nx">LanEditor</span><span class="p">.</span><span class="nx">Keyword</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="s2">"functions"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"GetRenderHTML()"</span><span class="p">,</span>
+        <span class="s2">"GetFileList()"</span><span class="p">,</span>
+        <span class="s2">"NewFile(filename)"</span><span class="p">,</span>
+        <span class="s2">"GetFileContent(filename)"</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+
+</code></pre>
+</div>
+<p>你可以把这些保存为一个<code class="highlighter-rouge">.js</code>文件，预先定义好自己经常需要用到的短语。这就是LanEditor最简单的插件了。需要用的时候就把它们引入页面。</p>
+
+                            <!-- 附件列表 -->
+                            <!-- <div style="width:100%;margin:10px 0 10px 0;">
+                                <h3>Attachments</h3>
+                                <ul class="post-attachments">
+                                    <li class="post-attachment mime-applicationjavascript"><a href="http://localhost/wordpress/wp-content/uploads/2016/01/jquery.md5_.js">jquery.md5</a> <small>(10 kB)</small></li>
+                                </ul>
+                            </div> -->
+                        </div>
+                        <!-- /文章内容 -->
+                        <div class="clear"></div>
+                    </div>
+                    <!-- /post-inner -->
+                    <div class="post-meta">
+                        <a class="post-meta-toggle" href="#" title="Show information about the post">
+                            <div class="post-meta-toggle-inner">
+                                <div class="bars">
+                                    <div class="bar"></div>
+                                    <div class="bar"></div>
+                                    <div class="bar"></div>
+                                </div>
+                                <p>Post meta</p>
+                                <div class="clear"></div>
+                            </div>
+                        </a>
+                        <!-- /文章附加信息开关 -->
+                        <div class="post-meta-inner">
+                            <p><strong>Author</strong><a href="http://localhost/wordpress/author/bluescode/" title="由 BluesCode 发布" rel="author"> BluesCode </a></p>
+                            <p class="post-meta-date"><strong>Posted</strong><a href="">2016-01-18</span></a></p>
+                            <!-- <p><strong>Categories</strong><a href="http://localhost/wordpress/category/all/" rel="category tag">随便看看</a></p> -->
+                            <div class="post-nav">
+                                <p>
+                                    <strong>Previous</strong>
+                                    <a class="post-nav-older" title="Previous post: 插件模式" href="/laneditor/doc/plugins.html">插件模式</a>
+                                </p>
+                                <div class="clear"></div>
+                            </div>
+                            <!-- /post-nav -->
+                        </div>
+                        <!-- /post-meta-inner -->
+                    </div>
+                    <!-- /文章附加信息 -->
+                </div>
+                <!-- /post -->
+                <div class="comments-container">
+                    <a name="comments"></a>
+                    <div class="comments-title-container">
+                            <h2 class="comment-title"><span class="comment-number" id="commentNumber">No</span> Comments</h2>
+                            <h4 class="comments-subtitle fright"><a href="#respond">Add yours &rarr;</a></h4>
+                        <div class="clear"></div>
+                    </div>
+                    <!-- /评论标题 -->
+                    <div class="comments">
+                        <ol class="commentlist" id="commentlist">
+                            <p style="text-align: center;">正在加载评论...</p>
+                            <!-- #comment-## -->
+                        </ol>
+                    </div>
+                    <!-- /comments -->
+                    <div id="respond" class="comment-respond">
+                        <h3 id="reply-title" class="comment-reply-title">发表评论 <small id="cancel-reply" class="cancel-reply"></small></h3>
+                        <form action="http://localhost/wordpress/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+                            <p class="comment-form-author">
+                                <label for="author">Name<span class="required">*</span></label>
+                                <input id="author" name="author" type="text" size="30" />
+                            </p>
+                            <p class="comment-form-email">
+                                <label for="email">Email<span class="required">*</span></label>
+                                <input id="email" name="email" type="text" size="30" required placeholder="评论使用Gravatar头像" />
+                            </p>
+                            <p class="comment-form-url">
+                                <label for="url">Website</label>
+                                <input id="url" name="url" type="text" size="30" placeholder="请带上 http://" />
+                            </p>
+                            <p class="comment-form-comment">
+                                <label for="comment">Comment</label>
+                                <textarea id="comment" name="comment" cols="45" rows="6" required></textarea>
+                            </p>
+                            <p class="form-submit">
+                                <input name="submit" type="submit" id="submit" class="submit" value="发表评论" />
+                                <input type='hidden' name='replyto' value='' id='replyto' />
+                            </p>
+                        </form>
+                    </div>
+                    <!-- 评论框 -->
+                </div>
+                <!-- /comments-container -->
+            </div>
+            <!-- /content -->
+        </div>
+        <!-- /wrapper -->
+    </div>
+    <!-- /wrapper-inner -->
+    <script type="text/javascript" src="/javascript/useragent.js"></script>
+    <script type='text/javascript' src="/javascript/rams.js"></script>
+</body>
+
+</html>

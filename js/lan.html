@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>laneditor | BluesCode</title>
+    <link rel='stylesheet' id='heidi-style-css' href='/css/heidi.css' type='text/css' media='all' />
+    <meta name="generator" content="github pages" />
+    <style type="text/css">
+    .content-area a,
+    .content-area a:visited {
+        color: ;
+    }
+    
+    .site-header,
+    .main-navigation ul ul li,
+    .site-footer {
+        background: ;
+    }
+    </style>
+    <style type="text/css">
+    .sticky .entry-header {
+        border-top-color: ;
+    }
+    
+    .sticky .entry-footer {
+        border-bottom-color: ;
+    }
+    
+    .sticky a {
+        color: ;
+    }
+    
+    blockquote {
+        border-left-color: ;
+    }
+    
+    .more-link {
+        background: ;
+    }
+    
+    .hentry h1 a,
+    .posted-on a,
+    .more-link:hover,
+    .more-link:focus {
+        color: ;
+    }
+    </style>
+    <style type="text/css">
+    .hentry,
+    .comments-area {
+        background: ;
+    }
+    </style>
+    <style type="text/css">
+    .entry-footer,
+    .comment-body,
+    .single-post-thumbnail,
+    table,
+    pre {
+        background: ;
+    }
+    </style>
+    <style type="text/css">
+    .hentry,
+    .comments-area {
+        border-color: ;
+    }
+    </style>
+    <style type="text/css">
+    .sticky,
+    blockquote {
+        background: !important;
+    }
+    </style>
+    <style type="text/css">
+    .sticky .entry-footer,
+    .sticky blockquote,
+    thead {
+        background: !important;
+    }
+    </style>
+    <style type="text/css">
+    .widget-area,
+    .date_with_link:hover,
+    .page-title {
+        background: ;
+    }
+    
+    .widget_calendar td > a,
+    .widget_calendar td > a:focus,
+    .sticky a:hover,
+    .sticky a:focus,
+    a:hover,
+    a:focus,
+    a:active {
+        color: ;
+    }
+    
+    @media all and (min-width: 1024px) {
+        .widget-area {
+            background: transparent;
+        }
+        .widget {
+            background: ;
+        }
+    }
+    </style>
+    <style type="text/css">
+    .widget-area a {
+        color: ;
+    }
+    </style>
+    <style type="text/css">
+    .widget-area table {
+        background: ;
+    }
+    </style>
+    <style type="text/css">
+    .widget-area td,
+    .widget-area th {
+        border-color: ;
+    }
+    </style>
+    <style type="text/css">
+    .recentcomments a {
+        display: inline !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    </style>
+</head>
+
+<body class="home blog">
+    <div id="page" class="hfeed site">
+        <header id="masthead" role="banner" class="site-header">
+            <div class="site-branding">
+                <h1 class="site-title"><a href="lanfly.github.io" rel="home">BluesCode</a></h1>
+                <h2 class="site-description">Make it easier to read blog</h2>
+                <span class="nav-toggle hidden" title="菜单" href="#">
+                    <div class="bars">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="clear"></div>
+                    </div>
+                    <p>
+                        <span class="menu">Menu</span>
+                <span class="close">Close</span>
+                </p>
+                </span>
+            </div>
+            <!-- .site-branding -->
+        </header>
+        <ul class="mobile-menu">
+            <li class="menu-item"><a href="http://localhost/wordpress/category/all/">首页</a></li>
+            <li class="menu-item"><a href="http://localhost/wordpress/category/all/">随便看看</a></li>
+            <li class="menu-item"><a href="http://localhost/wordpress/category/set/">前端大杂烩</a></li>
+            <li class="menu-item"><a href="http://localhost/wordpress/category/js/">JavaScript</a></li>
+        </ul>
+        <!-- #masthead -->
+        <div id="content" class="site-content">
+            <div id="primary" class="content-area">
+                <main id="main" class="site-main" role="main">
+                    <article id="post-52" class="post-52 post type-post status-publish format-standard hentry category-all">
+                        <header class="entry-header">
+                            <h1 class="entry-title">laneditor</h1>
+                            <div class="entry-meta">
+                                <span class="posted-on">最后编辑：<a href="http://localhost/wordpress/2016/01/14/52/" rel="bookmark"><time class="entry-date published" datetime="2016-01-14T15:05:59+00:00">2016年1月14日</time></a></span><span class="byline"> by <span class="author vcard"><a class="author-url" href="">BluesCode</a></span></span>
+                            </div>
+                            <!-- .entry-meta -->
+                        </header>
+                        <!-- .entry-header -->
+                        <div class="entry-content">
+                            <p>LanEditor的宗旨是：<strong>simple，simple，and more simple！</strong></p>
+
+<h3 id="section">1. 快速安装</h3>
+
+<p>安装非常简单，只需要2步：</p>
+
+<ol>
+  <li><strong>javascript代码</strong></li>
+</ol>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/javascript"</span><span class="o">&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="c1">//初始化 @textelem:编辑区的id @showelem:显示HTML的id</span>
+        <span class="kd">var</span> <span class="nx">lan</span> <span class="o">=</span> <span class="nx">LanEditor</span><span class="p">.</span><span class="nx">init</span><span class="p">({</span>
+            <span class="na">textelem</span><span class="p">:</span> <span class="s2">"editor"</span><span class="p">,</span>
+            <span class="na">showelem</span><span class="p">:</span> <span class="s2">"show"</span>
+        <span class="p">});</span>
+        <span class="c1">//如果初始化失败，则显示出错信息</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">lan</span><span class="p">.</span><span class="nx">status</span> <span class="o">==</span> <span class="kc">false</span><span class="p">){</span>
+            <span class="nx">alter</span><span class="p">(</span><span class="nx">lan</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+            <span class="k">return</span> <span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+<span class="o">&lt;</span><span class="sr">/script</span><span class="err">&gt;
+</span>
+</code></pre>
+</div>
+
+<ol>
+  <li><strong>HTML代码</strong></li>
+</ol>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;textarea</span> <span class="na">id=</span><span class="s">"editor"</span> <span class="na">name=</span><span class="s">"editor"</span><span class="nt">&gt;&lt;/textarea&gt;</span>
+
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"show"</span><span class="nt">&gt;&lt;/div&gt;</span>
+</code></pre>
+</div>
+<blockquote>
+  <p><strong><em>注意</em></strong><br />
+textelem:”editor” <code class="highlighter-rouge">&lt;textarea&gt;</code>的<code class="highlighter-rouge">id</code>名，不带<code class="highlighter-rouge">#</code><br />
+showelem:”show” 显示渲染后的HTML的<code class="highlighter-rouge">id</code>,也是不带<code class="highlighter-rouge">#</code>，一般用div作为容器</p>
+</blockquote>
+
+<p>不出意外，你就可以使用LanEditor进行编辑了。它会自动渲染。如果你是拿来二次开发，只需要一个编辑器就可以，那么你可以省略<code class="highlighter-rouge">showelem</code>参数，此时它将不会自动渲染，你可以使用提供的API接口获取渲染的结果。就像这样:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/javascript"</span><span class="o">&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="c1">//初始化 @textelem:编辑区的id @showelem可以省略</span>
+        <span class="kd">var</span> <span class="nx">lan</span> <span class="o">=</span> <span class="nx">LanEditor</span><span class="p">.</span><span class="nx">init</span><span class="p">({</span>
+            <span class="na">textelem</span><span class="p">:</span> <span class="s2">"editor"</span>
+        <span class="p">});</span>
+        <span class="c1">//如果初始化失败，则显示出错信息</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">lan</span><span class="p">.</span><span class="nx">status</span> <span class="o">==</span> <span class="kc">false</span><span class="p">){</span>
+            <span class="nx">alter</span><span class="p">(</span><span class="nx">lan</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+            <span class="k">return</span> <span class="p">;</span>
+        <span class="p">}</span>
+        <span class="c1">//获取渲染后的HTML</span>
+        <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">LanEditor</span><span class="p">.</span><span class="nx">GetRenderHTML</span><span class="p">();</span>
+    <span class="p">});</span>
+<span class="o">&lt;</span><span class="sr">/script</span><span class="err">&gt;
+</span></code></pre>
+</div>
+
+<h3 id="section-1">2. 引入必要的文件</h3>
+
+<ol>
+  <li>
+    <p>jquery.js</p>
+
+    <p>这个自不必说，首先就引入它</p>
+  </li>
+  <li>
+    <p>LanEditor.min.js</p>
+
+    <p>这个也不必说，你要使用它当然要这个文件啦，这个文件需要在jquery之后引入，因为它依赖于jquery</p>
+  </li>
+  <li>
+    <p>LanEditor.min.css</p>
+
+    <p>这个也是需要滴！它定义了菜单和提示框的样式，少了它，可不能正常使用了</p>
+  </li>
+</ol>
+
+<p>有上面三个文件就可以正常运行了！</p>
+
+<h3 id="section-2">3. 代码高亮</h3>
+
+<p>如果你想让代码高亮，这样看起来很酷，那么你还需要一个文件，那就是：</p>
+
+<p><code class="highlighter-rouge">highlight/*.css</code></p>
+
+<p>你可以在<code class="highlighter-rouge">highlight</code>文件夹下找到很多css文件，它们的作用都是代码高亮，有不同风格，你可以根据自己的风格喜好替换。甚至你自己编辑文件指定样式。</p>
+
+                        </div>
+                        <!-- .entry-content -->
+                        <footer class="entry-footer">
+                            <span class="cat-links">Posted in <a href="js" rel="category tag"></a></span> </footer>
+                        <!-- .entry-footer -->
+                    </article>
+                    <!-- #post-## -->
+                    <nav class="navigation post-navigation" role="navigation">
+                        <h2 class="screen-reader-text">文章导航</h2>
+                        <div class="nav-links">
+                            <div class="nav-previous">
+                                <span>上一篇：</span>
+                                <a href="http://localhost/wordpress/2015/12/01/5/" rel="prev">LanEditor</a>
+                            </div>
+                            <div class="nav-next">
+                                <span>下一篇：</span>
+                                <a href="" rel="next">没有了！</a>
+                            </div>
+                        </div>
+                    </nav>
+                    <div id="comments" class="comments-area">
+                        <div class="comments-title-container">
+                            <h2 class="comment-title"><span class="comment-number" id="commentNumber">No</span> Comments</h2>
+                            <h4 class="comment-subtitle"><a href="#respond">Add yours →</a></h4>
+                        </div>
+                        <ol class="commentlist" id="commentlist">
+                            <p style="text-align: center;">正在加载评论...</p>
+                            <!-- <li class="comment even thread-even depth-1" id="li-comment-1">
+                                <div id="comment-1" class="comment">
+                                    <div class="avatar-container">
+                                        <img alt='' src='http://localhost/wordpress/wp-content/uploads/2015/12/huidong.gif' srcset='http://0.gravatar.com/avatar/37b7597003d518630ea48a06b729a438?s=320&amp;d=retro&amp;r=g 2x' class='avatar avatar-160 photo' height='160' width='160' /> </div>
+                                    <div class="comment-inner">
+                                        <div class="comment-header">
+                                            <h4>
+                                                <a href='http://lansky.com' rel='external nofollow' class='url'>lan</a>
+                                                <a class="comment-date-link" href="http://localhost/wordpress/2016/01/14/52/#comment-1" title="2016年1月14日 at 下午3:24">2016年1月14日<span> &mdash; 下午3:24</span></a>
+                                            </h4>
+                                        </div>
+                                        <div class="comment-content post-content">
+                                            <p>hello,this test reply</p>
+                                            <p>hello,this test reply</p>
+                                            <p>hello,this test reply</p>
+                                        </div>
+                                        <!-- /comment-content
+                                        <div class="comment-actions">
+                                            <p class="comment-reply"><a rel='nofollow' class='comment-reply-link' href='http://localhost/wordpress/2016/01/14/52/?replytocom=1#respond' onclick='return addComment.moveForm( "comment-1", "1", "respond", "52" )' aria-label='回复给lan'>Reply</a></p>
+                                        </div>
+                                        <!-- /comment-actions
+                                    </div>
+                                    <!-- /comment-inner
+                                </div>
+                                <!-- /comment-##
+                            </li> -->
+                            <!-- #comment-## -->
+                        </ol>
+                        <!-- 评论 -->
+                        <div id="respond" class="comment-respond">
+                            <div>
+                                <h3 id="reply-title" class="comment-reply-title">发表你的评论</h3>
+                                <small id="cancel-reply" class="cancel-reply"></small>
+                            </div>
+                            <form action="http://localhost/wordpress/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+                                <p class="comment-form-author">
+                                    <label for="author">Name<span class="required">*</span></label>
+                                    <input id="author" name="author" type="text" value="" size="30" required/>
+                                </p>
+                                <p class="comment-form-email">
+                                    <label for="email">Email<span class="required">*</span></label>
+                                    <input id="email" name="email" type="text" value="" size="30" placeholder="评论使用Gravatar头像" required/>
+                                </p>
+                                <p class="comment-form-url">
+                                    <label for="url">Website</label>
+                                    <input id="url" name="url" type="text" value="" size="30" placeholder="请带上 http://" />
+                                </p>
+                                <p class="comment-form-comment">
+                                    <label for="comment">Comment</label>
+                                    <textarea id="comment" name="comment" cols="45" rows="6" required></textarea>
+                                </p>
+                                <p class="form-submit">
+                                    <input name="submit" type="submit" id="submit" class="submit" value="发表评论" />
+                                    <input type='hidden' name='replyto' value='' id='replyto' />
+                                </p>
+                            </form>
+                        </div>
+                        <!-- 评论框 -->
+                    </div>
+
+                </main>
+                <!-- #main -->
+            </div>
+            <!-- #primary -->
+            <div id="secondary" class="widget-area" role="complementary">
+                <aside id="recent-posts-2" class="widget widget_recent_entries">
+                    <h1 class="widget-title">近期文章</h1>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/wordpress/2016/01/14/52/">test</a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/wordpress/2015/12/01/5/">LanEditor</a>
+                        </li>
+                    </ul>
+                </aside>
+                <aside id="categories-2" class="widget widget_categories">
+                    <h1 class="widget-title">分类目录</h1>
+                    <ul>
+                        <li class="cat-item cat-item-2"><a href="http://localhost/wordpress/category/js/">JavaScript</a>
+                        </li>
+                        <li class="cat-item cat-item-1"><a href="http://localhost/wordpress/category/all/">随便看看</a>
+                        </li>
+                    </ul>
+                </aside>
+                <aside id="archives-2" class="widget widget_archive">
+                    <h1 class="widget-title">文章归档</h1>
+                    <ul>
+                        <li><a href='http://localhost/wordpress/2016/01/'>2016年一月</a></li>
+                        <li><a href='http://localhost/wordpress/2015/12/'>2015年十二月</a></li>
+                    </ul>
+                </aside>
+                <aside id="meta-2" class="widget widget_meta">
+                    <h1 class="widget-title">功能</h1>
+                    <ul>
+                        <li><a href="http://localhost/wordpress/wp-login.php">登录</a></li>
+                        <li><a href="http://localhost/wordpress/feed/">文章<abbr title="Really Simple Syndication">RSS</abbr></a></li>
+                        <li><a href="http://localhost/wordpress/comments/feed/">评论<abbr title="Really Simple Syndication">RSS</abbr></a></li>
+                        <li><a href="https://cn.wordpress.org/" title="基于WordPress，一个优美、先进的个人信息发布平台。">WordPress.org</a></li>
+                    </ul>
+                </aside>
+            </div>
+            <!-- #secondary -->
+        </div>
+        <!-- #content -->
+        <footer id="colophon" class="site-footer" role="contentinfo">
+            <div class="site-info">Powered by 
+                <a href="http://jekyllrb.com/">jekyll</a>
+                <span class="sep"> </span> Theme optimized by <a href="mailto:bluescode@outlook.com">BluesCode</a> based on <a href="http://www.andersnoren.se/teman/rams-wordpress-theme/">Rams</a> and <a href="http://alexaweidinger.com" rel="designer">Alexa Weidinger</a></div>
+            <!-- .site-info -->
+        </footer>
+        <!-- #colophon -->
+    </div>
+    <!-- #page -->
+    <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/javascript/useragent.js"></script>
+    <script type="text/javascript" src="/javascript/heidi.js"></script>
+    <script type="text/javascript" src="/javascript/post-heidi.js"></script>
+</body>
+
+</html>

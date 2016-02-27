@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html class="js" lang="zh-CN">
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>扩展功能 | LanEditor</title>
+    <link rel='stylesheet' id='rams_style-css' href="/css/rams.css" type='text/css' media='all' />
+    <script type='text/javascript' src="/javascript/jquery-1.11.1.min.js"></script>
+    <!-- 定义文档上下文联系 -->
+    
+    <link rel='start' title="快速开始 | LanEditor" href='/laneditor/doc/index.html' />
+    
+
+    
+    <link rel='prev' title='个性化 | LanEditor' href='/laneditor/doc/extend.html' />
+
+     
+    <link rel='next' title='API | LanEditor' href='/laneditor/doc/api.html' />
+    
+    
+    <!-- 定义文档生成工具 -->
+    <meta name="generator" content="github pages" />
+    <!-- 定义多份相同或相似的网页中，那个是首选 -->
+    <link rel="canonical" href="lanfly.github.io/laneditor/doc/fn.html">
+    <!-- Customizer CSS -->
+    <style type="text/css">
+    body a {
+        color: #e07b23;
+    }
+    
+    body a:hover {
+        color: #e07b23;
+    }
+    
+    .sidebar {
+        background: #e07b23;
+    }
+    
+    .flex-direction-nav a:hover {
+        background-color: #e07b23;
+    }
+    
+    a.post-quote:hover {
+        background: #e07b23;
+    }
+    
+    .post-title a:hover {
+        color: #e07b23;
+    }
+    
+    .post-content a {
+        color: #e07b23;
+    }
+    
+    .post-content a:hover {
+        color: #e07b23;
+    }
+    
+    .post-content a:hover {
+        border-bottom-color: #e07b23;
+    }
+    
+    .post-content a.more-link:hover {
+        background: #e07b23;
+    }
+    
+    .post-content input[type="submit"]:hover {
+        background: #e07b23;
+    }
+    
+    .post-content input[type="button"]:hover {
+        background: #e07b23;
+    }
+    
+    .post-content input[type="reset"]:hover {
+        background: #e07b23;
+    }
+    
+    #infinite-handle span:hover {
+        background: #e07b23;
+    }
+    
+    .page-links a:hover {
+        background: #e07b23;
+    }
+    
+    .post-meta-inner a:hover {
+        color: #e07b23;
+    }
+    
+    .add-comment-title a {
+        color: #e07b23;
+    }
+    
+    .add-comment-title a:hover {
+        color: #e07b23;
+    }
+    
+    .bypostauthor .avatar {
+        border-color: #e07b23;
+    }
+    
+    .comment-actions a:hover {
+        color: #e07b23;
+    }
+    
+    .comment-header h4 a:hover {
+        color: #e07b23;
+    }
+    
+    #cancel-comment-reply-link {
+        color: #e07b23;
+    }
+    
+    .comments-nav a:hover {
+        color: #e07b23;
+    }
+    
+    .comment-form input[type="submit"]:hover {
+        background-color: #e07b23;
+    }
+    
+    .logged-in-as a:hover {
+        color: #e07b23;
+    }
+    
+    .archive-nav a:hover {
+        color: #e07b23;
+    }
+    </style>
+    <!--/Customizer CSS-->
+</head>
+
+<body class="single single-post postid-52 single-format-standard no-featured-image">
+    <div class="sidebar bg-mint">
+        <div class="sidebar-inner">
+            <h1 class="blog-title">
+                <a href="//laneditor" title="一个简单、快速的在线markdown编辑器" rel="home">LanEditor</a>
+            </h1>
+            <a class="nav-toggle hidden" title="Click to view the navigation" href="#">
+                <div class="bars">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="clear"></div>
+                </div>
+                <p>
+                    <span class="menu">Menu</span>
+                    <span class="close">Close</span>
+                </p>
+            </a>
+            <ul class="main-menu">
+                <li id="menu-item-11" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-11"><a href="/laneditor/doc">快速开始</a></li>
+                <li id="menu-item-20" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-20"><a href="/laneditor/doc/install.html">安装</a></li>
+                <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/plugins.html">插件模式</a></li>
+                <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/extend.html">个性化</a></li>
+                <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/fn.html">扩展功能</a></li>
+                <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/api.html">API</a></li>
+            </ul>
+            <!-- 版权信息 -->
+            <p class="credits">Optimized By <a href="http://lansky.github.io">BluesCode</a>
+                <br/>Based on <a href="http://www.andersnoren.se">Anders Nor&eacute;n</a></p>
+            <div class="clear"></div>
+        </div>
+        <!-- /pc版侧边栏 -->
+    </div>
+    <!-- /pc侧边栏 -->
+    <ul class="mobile-menu bg-dark hidden">
+        <li id="menu-item-11" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-11"><a href="/laneditor/doc">快速开始</a></li>
+        <li id="menu-item-20" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-20"><a href="/laneditor/doc/install.html">安装</a></li>
+        <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/plugins.html">插件模式</a></li>
+        <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/extend.html">个性化</a></li>
+        <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/fn.html">扩展功能</a></li>
+        <li id="menu-item-9" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-9"><a href="/laneditor/doc/api.html">API</a></li>
+    </ul>
+    <!-- 移动版侧边栏 -->
+    <div class="wrapper" id="wrapper">
+        <div class="section-inner wrapper-inner">
+            <div class="content">
+                <div id="post-52" class="post-52 post type-post status-publish format-standard category-all has-featured-image">
+                    <!-- <div class="post-performance">服务器君在0.144秒内进行30次查询,使用15.54MB内存为你提供此页面 </div>
+                    文章图片
+                    <div class="featured-media">
+                        <a href="http://localhost/wordpress/2015/12/01/5/" rel="bookmark" title="LanEditor">
+                            <img width="800" height="416" src="index-pic-1024x533.jpg" class="attachment-post-image wp-post-image" alt="L1446777874869_top_pic" />
+                        </a>
+                    </div> -->
+                    <div class="post-inner">
+                        <div class="post-header">
+                            <p class="post-date">
+                                最后更新于：<a href="">2016-01-21</a> &nbsp;&nbsp;&nbsp;
+                                <span class="post-views" id="post-views">0 views</span>
+                            </p>
+                            <!-- 文章标题 -->
+                            <h1 class="post-title">扩展功能</h1>
+                        </div>
+                        <!-- /文章头信息 -->
+                        <!-- 文章内容 -->
+                        <div class="post-content">
+                            <p>仅仅词库可以扩展还不够，我想让它尽可能适用于更多人群。这就要求可扩展性要更强。下面让我教大家如何给LanEditor扩展自己想要的功能。</p>
+
+<h3 id="section">扩展的方式：注册</h3>
+
+<p>LanEditor提供了一系列基于事件的扩展方式，当某一特定的事件发生时，LanEditor就会通知注册到该事件的扩展函数，然后将当前事件的控制权交给扩展函数。这和javascript中监听按键事件很像。</p>
+
+<p>LanEditor维护一个按照<code class="highlighter-rouge">先后注册的顺序</code>组成的注册队列。</p>
+
+<p>注册一个keyup事件的写法：</p>
+
+<p>通过Fn对象提供的register方法注册。第一个参数是事件类型，第二个参数是一个对象，对象内容是要注册的函数。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">LanEditor</span><span class="p">.</span><span class="nx">Fn</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s2">"keyup"</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">name1</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">TextElem</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// function body</span>
+    <span class="p">},</span>
+    <span class="na">name2</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">TextElem</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// function body</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</code></pre>
+</div>
+
+<p>总之，你想让你的函数实现功能，首先要注册一个事件类型，这样你的函数就可以获取控制权，然后执行你想要的功能。就这么简单。</p>
+
+<h3 id="section-1">事件类型</h3>
+
+<p>下面列出了所有可以注册的事件类型，并解释了这些事件拥有哪些控制权以及如何获取等。</p>
+
+<p>第一个是事件类型，第二个是传递的参数</p>
+
+<ol>
+  <li>
+    <p><code class="highlighter-rouge">keydown</code> <code class="highlighter-rouge">function(event, TextElem){}</code></p>
+
+    <p>该事件发生在<code class="highlighter-rouge">按键被按下，且还没有松开</code>时。这个阶段输入的字符<code class="highlighter-rouge">还没有</code>显示在编辑器中，如果你想<code class="highlighter-rouge">改变</code>一些特定按键的行为，那么你应该注册该类事件。例如LanEditor的按键重写功能，就是在这阶段执行的。</p>
+
+    <p>@<strong>event</strong>: 它是keydown事件原生提供的。</p>
+
+    <p>@<strong>TextElem</strong>: 它是编辑区的jquery对象。</p>
+
+    <p><em>LanEditor为该事件默认注册了2个函数：</em></p>
+
+    <ol>
+      <li>LanEditor.Menu.Toggle</li>
+      <li>LanEditor.KeyRewrite</li>
+    </ol>
+
+    <p><strong><em>只有当默认函数执行完后才会执行用户注册的函数。</em></strong></p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">keyup</code> <code class="highlighter-rouge">function(event, TextElem){}</code></p>
+
+    <p>该事件发生在<code class="highlighter-rouge">按键被按下，且已经松开</code>时。这个阶段输入的字符<code class="highlighter-rouge">已经</code>显示在编辑器中，如果你想<code class="highlighter-rouge">增强</code>一些特定按键的功能，那么你应该注册该类事件。例如LanEditor的符号自动补全功能，就是在这阶段执行的。</p>
+
+    <p>@<strong>event</strong>: 它是keydown事件原生提供的。</p>
+
+    <p>@<strong>TextElem</strong>: 它是编辑区的jquery对象。</p>
+
+    <p><em>LanEditor为该事件默认注册了3个函数：</em></p>
+
+    <ol>
+      <li>
+        <p>AutoCompleteSymbol</p>
+      </li>
+      <li>
+        <p>AutoCompleteKeyword</p>
+      </li>
+      <li>
+        <p>LanEditor.File.SaveFile</p>
+      </li>
+    </ol>
+
+    <p><strong><em>先执行前2个默认函数，然后执行用户注册的函数，最后执行第3个默认函数。</em></strong></p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">render</code> <code class="highlighter-rouge">function(html){ return your modify }</code></p>
+
+    <p>该事件发生在<code class="highlighter-rouge">渲染完毕，且即将要显示或输出文档</code>时。这个阶段LanEditor在对编辑区的内容渲染完毕，且即将要将HTML文档显示，或是即将输出通过<code class="highlighter-rouge">GetRenderHTML</code>函数获取的文档，如果你想对渲染后的文档<code class="highlighter-rouge">附加</code>一些特定的信息，那么你应该注册该类事件。例如LanEditor的代码高亮功能，就是在这阶段执行的。</p>
+
+    <p>@<strong>html</strong>: 它是渲染后的HTML文档。</p>
+
+    <p>你的函数需要返回对html修改后的值。你返回的值将传递给下一个函数。如果你返回一个false或任何javascript判定为false的值，那么你的函数此次的修改将不起作用。即数据流从你这里跳过去，传给下一个函数。</p>
+
+    <p><em>LanEditor为该事件默认注册了1个函数：</em></p>
+
+    <ol>
+      <li>hljs.highlightBlock</li>
+    </ol>
+
+    <p><strong><em>用户注册的函数执行完后，最后执行默认注册的函数</em></strong></p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">expertmd</code> <code class="highlighter-rouge">function(md){ return your modify }</code></p>
+
+    <p>该事件发生在<code class="highlighter-rouge">下载md文件</code>时。如果你想对md文档<code class="highlighter-rouge">附加</code>一些特定的信息，那么你应该注册该类事件。</p>
+
+    <p>@<strong>md</strong>: 它是编辑区的markdown文档。</p>
+
+    <p>你的函数需要返回对md修改后的值。你返回的值将传递给下一个函数。如果你返回一个false或任何javascript判定为false的值，那么你的函数此次的修改将不起作用。即数据流从你这里跳过去，传给下一个函数。</p>
+
+    <p><em>LanEditor没有为该事件默认注册函数</em></p>
+  </li>
+</ol>
+
+<blockquote>
+  <p><strong><em>注意</em></strong></p>
+
+  <p>默认注册的函数和用户注册的函数一起组成一个待执行队列。请注意默认函数和用户注册的函数执行的时机。控制权将从第一个开始依次往后传递。前一个函数做出的修改后的状态，将会传递给后一个函数。</p>
+
+  <ol>
+    <li>
+      <p>如果队列中某一个函数发生阻塞，那么LanEditor将会一直阻塞下去。</p>
+    </li>
+    <li>
+      <p>如果队列中某一个函数将数据丢失，那么该信息将永远丢失。</p>
+    </li>
+  </ol>
+
+  <p>所以，请谨慎对待将要修改的数据。特别是删除操作。</p>
+</blockquote>
+
+<h3 id="section-2">实际的例子</h3>
+
+<p>下面将对每个类型的事件给出一个例子。</p>
+
+<p>1.keyup</p>
+
+<p>我们实现一个自动补全括号的功能。原理就是在输入一个字符后，获取光标前一个字符，判断是不是<code class="highlighter-rouge">(</code>，如果是，则在光标处插入一个<code class="highlighter-rouge">)</code></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> <span class="nx">LanEditor</span><span class="p">.</span><span class="nx">Fn</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s2">"keyup"</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">AutoCompleteSymbol</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">TextElem</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">event</span><span class="p">;</span>
+        <span class="c1">// (的ASCII码为57，e.shiftKey判断shift键是否按下</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">shiftKey</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">which</span> <span class="o">==</span> <span class="mi">57</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">//iGetPosStr(-1)是获取光标前一个字符，后面API篇有详细描述</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">TextElem</span><span class="p">.</span><span class="nx">iGetPosStr</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"("</span><span class="p">){</span>
+                <span class="c1">//在光标前插入一个英文(</span>
+                <span class="nx">TextElem</span><span class="p">.</span><span class="nx">iAddField</span><span class="p">(</span><span class="s2">")"</span><span class="p">);</span>
+            <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+                <span class="c1">//在光标前插入一个中文（</span>
+                <span class="nx">TextElem</span><span class="p">.</span><span class="nx">iAddField</span><span class="p">(</span><span class="s2">"）"</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">//将光标往前移动一个字符</span>
+        <span class="nx">TextElem</span><span class="p">.</span><span class="nx">iSelectField</span><span class="p">(</span><span class="nx">TextElem</span><span class="p">.</span><span class="nx">iGetFieldPos</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+ <span class="p">});</span>
+</code></pre>
+</div>
+<p>这样，当你输入一个左括号时，就会自动为你加上匹配的中英文右括号。最后光标会自动定位在括号的中间。</p>
+
+<p>2.keydown</p>
+
+<p>这里我们实现Tab键重写功能。让Tab键输入四个空格的功能，并阻止默认的事件。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">LanEditor</span><span class="p">.</span><span class="nx">Fn</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s2">"keydown"</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">TabkeyRewrite</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">TextElem</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">event</span><span class="p">;</span>
+        <span class="c1">//tab的键码为9</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">which</span> <span class="o">==</span> <span class="mi">9</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">//阻止Tab默认事件</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+            <span class="c1">//插入四个空格</span>
+            <span class="nx">TextElem</span><span class="p">.</span><span class="nx">iAddField</span><span class="p">(</span><span class="s2">"    "</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</code></pre>
+</div>
+<p>引入上面的插件，按Tab键就不会选择元素了，而是会输入四个空格。</p>
+
+<p>3.render</p>
+
+<p>写博客中，经常要在开头加上编写时间，在结尾加上作者等一些版权信息。这些繁杂的工作就不要每次都手动做了。让LanEditor自动完成它。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="nx">LanEditor</span><span class="p">.</span><span class="nx">Fn</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="s2">"render"</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">addHead</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="nx">LanEditor</span><span class="p">.</span><span class="nx">Time</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">timestr</span> <span class="o">=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">GetTimeString</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">GetTimestamp</span><span class="p">());</span>
+        <span class="kd">var</span> <span class="nx">head</span> <span class="o">=</span> <span class="s2">"&lt;p&gt;编辑于："</span> <span class="o">+</span> <span class="nx">timestr</span> <span class="o">+</span> <span class="s2">"&lt;/p&gt;"</span> <span class="o">+</span> <span class="nx">html</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">head</span><span class="p">;</span>
+    <span class="p">},</span>
+    <span class="na">addText</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">html</span> <span class="o">=</span> <span class="s2">"you can not see this text"</span> <span class="o">+</span> <span class="nx">html</span><span class="p">;</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">},</span>
+    <span class="na">addFoot</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">foot</span> <span class="o">=</span> <span class="nx">html</span> <span class="o">+</span> <span class="s2">"&lt;p&gt;作者：LanEditor&lt;/p&gt;"</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">foot</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</code></pre>
+</div>
+<p>加载上面的插件，你在编辑文档时，在文档首行会自动加上：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>编辑于：2016/1/20 下午3:17:16
+</code></pre>
+</div>
+<p>addText函数因为返回了一个false，所以它所做的任何改动都将作废。</p>
+
+<p>而在文档末行，会显示：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>作者：LanEditor
+</code></pre>
+</div>
+<p><code class="highlighter-rouge">render</code>事件发生在自动显示、使用API GetRenderHTML()、使用菜单下载HTML文件时。</p>
+
+<p><code class="highlighter-rouge">expertmd</code>事件发生在使用菜单下载md文件时。</p>
+
+                            <!-- 附件列表 -->
+                            <!-- <div style="width:100%;margin:10px 0 10px 0;">
+                                <h3>Attachments</h3>
+                                <ul class="post-attachments">
+                                    <li class="post-attachment mime-applicationjavascript"><a href="http://localhost/wordpress/wp-content/uploads/2016/01/jquery.md5_.js">jquery.md5</a> <small>(10 kB)</small></li>
+                                </ul>
+                            </div> -->
+                        </div>
+                        <!-- /文章内容 -->
+                        <div class="clear"></div>
+                    </div>
+                    <!-- /post-inner -->
+                    <div class="post-meta">
+                        <a class="post-meta-toggle" href="#" title="Show information about the post">
+                            <div class="post-meta-toggle-inner">
+                                <div class="bars">
+                                    <div class="bar"></div>
+                                    <div class="bar"></div>
+                                    <div class="bar"></div>
+                                </div>
+                                <p>Post meta</p>
+                                <div class="clear"></div>
+                            </div>
+                        </a>
+                        <!-- /文章附加信息开关 -->
+                        <div class="post-meta-inner">
+                            <p><strong>Author</strong><a href="http://localhost/wordpress/author/bluescode/" title="由 BluesCode 发布" rel="author"> BluesCode </a></p>
+                            <p class="post-meta-date"><strong>Posted</strong><a href="">2016-01-21</span></a></p>
+                            <!-- <p><strong>Categories</strong><a href="http://localhost/wordpress/category/all/" rel="category tag">随便看看</a></p> -->
+                            <div class="post-nav">
+                                <p>
+                                    <strong>Previous</strong>
+                                    <a class="post-nav-older" title="Previous post: 个性化" href="/laneditor/doc/extend.html">个性化</a>
+                                </p>
+                                <div class="clear"></div>
+                            </div>
+                            <!-- /post-nav -->
+                        </div>
+                        <!-- /post-meta-inner -->
+                    </div>
+                    <!-- /文章附加信息 -->
+                </div>
+                <!-- /post -->
+                <div class="comments-container">
+                    <a name="comments"></a>
+                    <div class="comments-title-container">
+                            <h2 class="comment-title"><span class="comment-number" id="commentNumber">No</span> Comments</h2>
+                            <h4 class="comments-subtitle fright"><a href="#respond">Add yours &rarr;</a></h4>
+                        <div class="clear"></div>
+                    </div>
+                    <!-- /评论标题 -->
+                    <div class="comments">
+                        <ol class="commentlist" id="commentlist">
+                            <p style="text-align: center;">正在加载评论...</p>
+                            <!-- #comment-## -->
+                        </ol>
+                    </div>
+                    <!-- /comments -->
+                    <div id="respond" class="comment-respond">
+                        <h3 id="reply-title" class="comment-reply-title">发表评论 <small id="cancel-reply" class="cancel-reply"></small></h3>
+                        <form action="http://localhost/wordpress/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+                            <p class="comment-form-author">
+                                <label for="author">Name<span class="required">*</span></label>
+                                <input id="author" name="author" type="text" size="30" />
+                            </p>
+                            <p class="comment-form-email">
+                                <label for="email">Email<span class="required">*</span></label>
+                                <input id="email" name="email" type="text" size="30" required placeholder="评论使用Gravatar头像" />
+                            </p>
+                            <p class="comment-form-url">
+                                <label for="url">Website</label>
+                                <input id="url" name="url" type="text" size="30" placeholder="请带上 http://" />
+                            </p>
+                            <p class="comment-form-comment">
+                                <label for="comment">Comment</label>
+                                <textarea id="comment" name="comment" cols="45" rows="6" required></textarea>
+                            </p>
+                            <p class="form-submit">
+                                <input name="submit" type="submit" id="submit" class="submit" value="发表评论" />
+                                <input type='hidden' name='replyto' value='' id='replyto' />
+                            </p>
+                        </form>
+                    </div>
+                    <!-- 评论框 -->
+                </div>
+                <!-- /comments-container -->
+            </div>
+            <!-- /content -->
+        </div>
+        <!-- /wrapper -->
+    </div>
+    <!-- /wrapper-inner -->
+    <script type="text/javascript" src="/javascript/useragent.js"></script>
+    <script type='text/javascript' src="/javascript/rams.js"></script>
+</body>
+
+</html>
