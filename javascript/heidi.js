@@ -155,7 +155,7 @@ var BluesCode = {
 				data: {p: path, type: "jsonp"},
 				success: function(data) {
 					if(data.state == "success") {
-						$("#secondary").html(BluesCode.HTML.SidebarList(data.result));
+						$("#secondary").html(BluesCode.HTML.SideBarList(data.result));
 					}else{
 						$("#sidebar-loading").html('<h1 class="widget-title">发生错误了/(ㄒoㄒ)/~~ '+data.message+'</h1>');
 					}
