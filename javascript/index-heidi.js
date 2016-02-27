@@ -1,6 +1,10 @@
 $(document).ready(function(){
-	BluesCode.GetPostList("http://localhost/sae/api/jekyll/index.php/index",1);
+	var path = location.pathname;
+	path.replace("index.html", "");
+	BluesCode.GetPostList("http://lansky.sinaapp.com/api/jekyll/index",1,path);
 	$(window).scroll(function() {
-		BluesCode.more("http://localhost/sae/api/jekyll/index.php/index");
+		var path = location.pathname;
+		path.replace("index.html", "");
+		BluesCode.more("http://lansky.sinaapp.com/api/jekyll/index",path);
 	});
 });

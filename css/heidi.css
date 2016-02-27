@@ -790,7 +790,6 @@ a:active {
         font-size: 16px;
         font-weight: 700;
         color: #bbb;
-        text-transform: uppercase;
         letter-spacing: 1px;
     }
     .mobile-menu a:hover {

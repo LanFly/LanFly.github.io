@@ -23,13 +23,13 @@ var BluesCode = {
 	CurPage: 0,
 	PageSize: 10,
 	//获取文章列表并显示
-	GetPostList: function(url, page) {
+	GetPostList: function(url, page, path) {
 		BluesCode.isloading = true;
 		$(".more").text("我正在努力加载(＞﹏＜)").css("display", "block");
 		$.ajax({
 			url: url,
 			dataType: "jsonp",
-			data: {page: page, pagesize: BluesCode.PageSize, type: "jsonp"},
+			data: {page: page, pagesize: BluesCode.PageSize, type: "jsonp", p: path},
 			success: function(data) {
 				if(data.state == "success") {
 					if(data.result.length > 0) {
@@ -55,7 +55,7 @@ var BluesCode = {
 	//是否正在加载文章列表
 	isloading: false,
 	//上拉自动加载更多文章列表
-	more: function(url) {
+	more: function(url, path) {
 		if(BluesCode.StopAutoMore == true) {
 			return ;
 		}
@@ -63,7 +63,7 @@ var BluesCode = {
 		var moreHeight = $("#masthead").height() + $("#navi-menu").height() + $("#primary").height();
 		if(UserHeight >= moreHeight) {
 			if(BluesCode.isloading == false) {
-				BluesCode.GetPostList(url, BluesCode.CurPage+1);
+				BluesCode.GetPostList(url, BluesCode.CurPage+1, path);
 			}
 		}
 	},
@@ -84,8 +84,7 @@ var BluesCode = {
 			return false;
 		},
 		//加载评论列表
-		GetCommentList: function(url) {
-			var path = location.pathname;
+		GetCommentList: function(url, path) {
 			if(!path) {
 				$("#commentlist").html('<p style="text-align: center;">参数错误o(╯□╰)o 请从首页点击文章阅读</p>');
 				return false;
@@ -115,8 +114,7 @@ var BluesCode = {
 			});
 		},
 		//提交评论
-		AjaxSubmit: function(url) {
-			var path = location.pathname;
+		AjaxSubmit: function(url, path) {
 			if(!path) {
 				alert('参数错误o(╯□╰)o 请从首页点击文章阅读');
 				return false;

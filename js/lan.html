@@ -136,8 +136,8 @@
     <div id="page" class="hfeed site">
         <header id="masthead" role="banner" class="site-header">
             <div class="site-branding">
-                <h1 class="site-title"><a href="lanfly.github.io" rel="home">BluesCode</a></h1>
-                <h2 class="site-description">Make it easier to read blog</h2>
+                <h1 class="site-title"><a href="/" rel="home" title="回到首页">BluesCode</a></h1>
+                <h2 class="site-description">一个以兴趣驱动的个人博客</h2>
                 <span class="nav-toggle hidden" title="菜单" href="#">
                     <div class="bars">
                         <div class="bar"></div>
@@ -154,10 +154,9 @@
             <!-- .site-branding -->
         </header>
         <ul class="mobile-menu">
-            <li class="menu-item"><a href="http://localhost/wordpress/category/all/">首页</a></li>
-            <li class="menu-item"><a href="http://localhost/wordpress/category/all/">随便看看</a></li>
-            <li class="menu-item"><a href="http://localhost/wordpress/category/set/">前端大杂烩</a></li>
-            <li class="menu-item"><a href="http://localhost/wordpress/category/js/">JavaScript</a></li>
+            <li class="menu-item"><a href="/">首页</a></li>
+            <li class="menu-item"><a href="/web">web前端</a></li>
+            <li class="menu-item"><a href="/laneditor" title="一款个性化在线markdown编辑器">LanEditor</a></li>
         </ul>
         <!-- #masthead -->
         <div id="content" class="site-content">
@@ -167,7 +166,7 @@
                         <header class="entry-header">
                             <h1 class="entry-title">laneditor</h1>
                             <div class="entry-meta">
-                                <span class="posted-on">最后编辑：<a href="http://localhost/wordpress/2016/01/14/52/" rel="bookmark"><time class="entry-date published" datetime="2016-01-14T15:05:59+00:00">2016年1月14日</time></a></span><span class="byline"> by <span class="author vcard"><a class="author-url" href="">BluesCode</a></span></span>
+                                <span class="posted-on">最后编辑：<a href="" rel="bookmark"><time class="entry-date published" datetime="2016-01-14T15:05:59+00:00">2016年1月14日</time></a></span><span class="byline"> by <span class="author vcard"><a class="author-url" href="">BluesCode</a></span></span>
                             </div>
                             <!-- .entry-meta -->
                         </header>
@@ -278,11 +277,11 @@ showelem:”show” 显示渲染后的HTML的<code class="highlighter-rouge">id<
                         <div class="nav-links">
                             <div class="nav-previous">
                                 <span>上一篇：</span>
-                                <a href="http://localhost/wordpress/2015/12/01/5/" rel="prev">LanEditor</a>
+                                <a href="" rel="prev" id="nav-previous">正在获取...</a>
                             </div>
                             <div class="nav-next">
                                 <span>下一篇：</span>
-                                <a href="" rel="next">没有了！</a>
+                                <a href="" rel="next" id="nav-next">正在获取...</a>
                             </div>
                         </div>
                     </nav>
@@ -327,7 +326,7 @@ showelem:”show” 显示渲染后的HTML的<code class="highlighter-rouge">id<
                                 <h3 id="reply-title" class="comment-reply-title">发表你的评论</h3>
                                 <small id="cancel-reply" class="cancel-reply"></small>
                             </div>
-                            <form action="http://localhost/wordpress/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+                            <form action="" method="post" id="commentform" class="comment-form">
                                 <p class="comment-form-author">
                                     <label for="author">Name<span class="required">*</span></label>
                                     <input id="author" name="author" type="text" value="" size="30" required/>
@@ -358,7 +357,7 @@ showelem:”show” 显示渲染后的HTML的<code class="highlighter-rouge">id<
             </div>
             <!-- #primary -->
             <div id="secondary" class="widget-area" role="complementary">
-                <aside id="recent-posts-2" class="widget widget_recent_entries">
+                <aside id="recent-posts" class="widget widget_recent_entries">
                     <h1 class="widget-title">近期文章</h1>
                     <ul>
                         <li>
@@ -369,31 +368,7 @@ showelem:”show” 显示渲染后的HTML的<code class="highlighter-rouge">id<
                         </li>
                     </ul>
                 </aside>
-                <aside id="categories-2" class="widget widget_categories">
-                    <h1 class="widget-title">分类目录</h1>
-                    <ul>
-                        <li class="cat-item cat-item-2"><a href="http://localhost/wordpress/category/js/">JavaScript</a>
-                        </li>
-                        <li class="cat-item cat-item-1"><a href="http://localhost/wordpress/category/all/">随便看看</a>
-                        </li>
-                    </ul>
-                </aside>
-                <aside id="archives-2" class="widget widget_archive">
-                    <h1 class="widget-title">文章归档</h1>
-                    <ul>
-                        <li><a href='http://localhost/wordpress/2016/01/'>2016年一月</a></li>
-                        <li><a href='http://localhost/wordpress/2015/12/'>2015年十二月</a></li>
-                    </ul>
-                </aside>
-                <aside id="meta-2" class="widget widget_meta">
-                    <h1 class="widget-title">功能</h1>
-                    <ul>
-                        <li><a href="http://localhost/wordpress/wp-login.php">登录</a></li>
-                        <li><a href="http://localhost/wordpress/feed/">文章<abbr title="Really Simple Syndication">RSS</abbr></a></li>
-                        <li><a href="http://localhost/wordpress/comments/feed/">评论<abbr title="Really Simple Syndication">RSS</abbr></a></li>
-                        <li><a href="https://cn.wordpress.org/" title="基于WordPress，一个优美、先进的个人信息发布平台。">WordPress.org</a></li>
-                    </ul>
-                </aside>
+
             </div>
             <!-- #secondary -->
         </div>
@@ -407,7 +382,8 @@ showelem:”show” 显示渲染后的HTML的<code class="highlighter-rouge">id<
         <!-- #colophon -->
     </div>
     <!-- #page -->
-    <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+    <!-- <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script> -->
+    <script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="/javascript/useragent.js"></script>
     <script type="text/javascript" src="/javascript/heidi.js"></script>
     <script type="text/javascript" src="/javascript/post-heidi.js"></script>
