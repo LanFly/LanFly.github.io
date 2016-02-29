@@ -442,7 +442,7 @@ dd {
 img {
     height: auto;
     /* Make sure images are scaled correctly. */
-    max-width: 100%;
+    width: 100%;
     /* Adhere to container width. */
 }
 
@@ -851,7 +851,6 @@ a:active {
         font-size: 14px;
         line-height: 10px;
         font-weight: 700;
-        text-transform: uppercase;
         text-align: right;
         color: #fff;
         float: right;
@@ -915,7 +914,6 @@ a:active {
         font-size: 16px;
         font-weight: 700;
         color: #bbb;
-        text-transform: uppercase;
         letter-spacing: 1px;
     }
     .mobile-menu a:hover {
@@ -1557,7 +1555,6 @@ li.comment {
     margin-bottom: 5px;
     font-size: 14px;
     font-weight: 700;
-    text-transform: uppercase;
     color: #767676;
 }
 
