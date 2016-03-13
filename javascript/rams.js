@@ -196,6 +196,7 @@ var BluesCode = {
                 success: function(data) {
                     if(data.state == "success") {
                         $("#commentNumber").text(data.result.length);
+                        $("#post-views").text(data.view+" views");
                         if(data.result.length > 0) {
                             $("#commentlist").html(BluesCode.HTML.CommentList(data.result));
                         }else{
