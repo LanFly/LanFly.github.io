@@ -54,7 +54,7 @@ Nicolas Gallagher and Jonathan Neal http://necolas.github.com/normalize.css/
 --------------------------------------------------------------*/
 
 html {
-    font-family: 'Open Sans', Arial, sans-serif;
+    font-family: 'Microsoft Yahei', 'Open Sans', Arial, sans-serif;
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
 }
@@ -535,7 +535,7 @@ a {
 }
 
 a:visited {
-    color: #fff;
+    color: #4E9F80;
 }
 
 a:hover,
