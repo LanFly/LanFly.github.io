@@ -389,7 +389,7 @@ html {
 }
 
 body {
-    background: #F6F6E8;
+    background: #e2e2e2;
     /* Fallback for when there is no custom background color defined. */
 }
 
@@ -535,7 +535,7 @@ a {
 }
 
 a:visited {
-    color: #fff;
+    color: #6ac5a2;
 }
 
 a:hover,
@@ -589,7 +589,7 @@ a:active {
 }
 
 .site-title a {
-    color: #CAC7C7;
+    color: #fff;
     font-size: 1.5em;
     -webkit-transition: all 0.4s ease-in-out;
     -moz-transition: all 0.4s ease-in-out;
@@ -608,7 +608,6 @@ a:active {
 }
 
 .site-description {
-    display: none !important;
     font-style: italic;
 }
 
@@ -621,7 +620,7 @@ a:active {
 
 @media all and (min-width: 768px) {
     .site-header {
-        padding: 30px 0 20px 0;
+        padding: 30px 0 0 0;
     }
     .page-title {
         margin: 50px;
@@ -773,7 +772,7 @@ a:active {
         display: block;
         height: auto;
         overflow: hidden;
-        background-color: #A5B807;
+        background-color: #444;
     }
     .mobile-menu li {
         float: left;
@@ -790,7 +789,7 @@ a:active {
         display: inline-block;
         font-size: 16px;
         font-weight: 700;
-        color: #fff;
+        color: #bbb;
         letter-spacing: 1px;
     }
     .mobile-menu a:hover {
@@ -1662,7 +1661,7 @@ li.comment {
 --------------------------------------------------------------*/
 
 .site-footer {
-    background: #A5B807;
+    background: #6ac5a2;
     color: #333;
     padding: 20px;
 }
