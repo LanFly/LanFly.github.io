@@ -529,19 +529,19 @@ textarea {
 --------------------------------------------------------------*/
 
 a {
-    color: #6ac5a2;
+    color: rgb(206, 142, 27);
     font-weight: 700;
     text-decoration: none;
 }
 
 a:visited {
-    color: #4E9F80;
+    color: rgb(206, 142, 27);
 }
 
 a:hover,
 a:focus,
 a:active {
-    color: #E07B23;
+    color: #A5B807;
     text-decoration: underline;
 }
 
@@ -632,6 +632,7 @@ a:active {
 @media all and (max-width: 768px) {
     .site-branding {
         padding: 30px 20px;
+        background-color: #A5B807;
     }
 }
 
@@ -818,6 +819,7 @@ a:active {
     }
     .site-title a {
         font-size: 0.8em;
+        color: #fff;
     }
     .site-header {
         padding: 0;
@@ -1030,7 +1032,9 @@ a:active {
 }
 
 .widget-area a {
-    color: #f2bfb5;
+    color: rgb(253, 253, 253);
+    font-size: 0.9em;
+    font-family: Arial, sans-serif;
 }
 
 .widget-area a:hover,
@@ -1049,7 +1053,8 @@ a:active {
 .widget {
     width: 100%;
     padding: 20px;
-    border-bottom: 2px solid #fff;
+    background-color: rgb(206, 142, 27);
+    box-shadow: 0px 0px 20px #969696;
 }
 
 
@@ -1121,13 +1126,12 @@ a:active {
     color: #b4604e;
 }
 
-@media all and (min-width: 768px) {
+@media all and (max-width: 1024px) {
     .widget-area {
-        padding: 20px 0 20px 50px;
+        padding: 0px;
     }
     .widget {
         margin: 5px 20px 5px 0;
-        width: 350px;
         border-bottom: none;
     }
 }
@@ -1139,7 +1143,6 @@ a:active {
         margin-top: 35px;
     }
     .widget {
-        background-color: #E07B23;
         margin: 15px;
         width: 370px;
         padding: 15px 30px;
@@ -1196,7 +1199,7 @@ content-area,
 
 .hentry {
     margin: 0 0 1.5em;
-    background: #e9f0e9;
+    background-color: #F9F9E2;
     border-top: 1px solid #c9cdc9;
     border-bottom: 1px solid #c9cdc9;
 }
@@ -1205,13 +1208,13 @@ content-area,
     margin-bottom: 15px;
 }
 
-.hentry h1 a {
-    color: #4e9f80;
+.entry-title a {
+    color: #A5B807;
 }
 
 .hentry h1 a:hover,
 .hentry h1 a:focus {
-    color: #E07B23;
+    color: rgb(206, 142, 27);
 }
 
 .entry-title {
@@ -1259,7 +1262,7 @@ content-area,
     opacity: 0.8;
 }
 .entry-footer {
-    background: #f0f7f0;
+    background: #DADAC4;
     padding: 12px 20px;
 }
 
@@ -1551,6 +1554,17 @@ li.comment {
     margin-right: 5%;
 }
 
+@media all and (max-width: 768px) {
+    .comment-form-author,
+    .comment-form-email {
+        display: block;
+        width: 100%;
+        clear: both;
+    }
+    .comment-form-author {
+        margin-right: 0;
+    }
+}
 .comment-form label {
     display: block;
     margin-bottom: 5px;

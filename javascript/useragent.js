@@ -177,8 +177,7 @@ BrowserAgent = {
                 system.ios = parseFloat(RegExp['$1'].replace('_',
                     '.'));
             } else {
-                system.ios = 2; // 不能真正检测出来，所以
-                只能猜测
+                system.ios = 2; // 不能真正检测出来，所以只能猜测
             }
         }
         // 检测Android版本

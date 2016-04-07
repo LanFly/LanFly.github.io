@@ -2,7 +2,7 @@ $(document).ready(function($) {
     setTimeout(function() {
         var path = location.pathname;
         path.replace("index.html", "");
-        BluesCode.comment.GetCommentList("http://lansky.sinaapp.com/api/jekyll/comment",path);
+        BluesCode.comment.GetCommentList("http://lan12600.vicp.cc/api/jekyll/comment",path);
     }, 2000);
     $("#cancel-reply").click(function(e) {
         BluesCode.comment.cancelReply();
@@ -11,7 +11,7 @@ $(document).ready(function($) {
         e.preventDefault();
         var path = location.pathname;
         path.replace("index.html", "");
-        BluesCode.comment.AjaxSubmit("http://lansky.sinaapp.com/api/jekyll/comment/add",path);
+        BluesCode.comment.AjaxSubmit("http://lan12600.vicp.cc/api/jekyll/comment/add",path);
     });
     // Toggle blog-menu
     $(".nav-toggle").on("click", function() {
