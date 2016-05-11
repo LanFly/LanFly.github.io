@@ -1028,18 +1028,18 @@ a:active {
 
 .widget-area {
     background: #b4604e;
-    color: #fff;
+    color: #D08E1B;
 }
 
 .widget-area a {
-    color: rgb(253, 253, 253);
+    color: rgb(72, 71, 71);
     font-size: 0.9em;
     font-family: Arial, sans-serif;
 }
 
 .widget-area a:hover,
 .widget-area a:focus {
-    color: #fff;
+    color: #D08E40;
 }
 
 .widget-title {
@@ -1053,8 +1053,8 @@ a:active {
 .widget {
     width: 100%;
     padding: 20px;
-    background-color: rgb(206, 142, 27);
-    box-shadow: 0px 0px 20px #969696;
+    background-color: #F9F9E2;
+    border: 1px solid #C9CDC9
 }
 
 
@@ -1262,7 +1262,7 @@ content-area,
     opacity: 0.8;
 }
 .entry-footer {
-    background: #DADAC4;
+    background: #E6E2DA;
     padding: 12px 20px;
 }
 

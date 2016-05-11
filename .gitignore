@@ -1,3 +1,5 @@
 .DS_Store
-lansky.github.io.sublime-project
-lansky.github.io.sublime-workspace
+*.sublime-project
+*.sublime-workspace
+.gitignore
+_site

@@ -173,14 +173,14 @@
                         </header>
                         <!-- .entry-header -->
                         <div class="entry-content">
-                            <p>MacOSX安装了一些第三方软件之后，会在控制面板生成一些图标，以便于可视化操作。比如MySQL、Java等。
-前些时候我更新了OSX 10.11.3。发现MySQL启动不了了。于是我卸载了MySQL。
-然后用brew重新安装了。发现删除了MySQL之后，控制面板的图标还在。
-找了好多博客资料，都是只写了如何删除MySQL，并没有写如何删除图标。
+                            <p>MacOSX安装了一些第三方软件之后，会在控制面板生成一些图标，以便于可视化操作。比如MySQL、Java等。<br />
+前些时候我更新了OSX 10.11.3。发现MySQL启动不了了。于是我卸载了MySQL。<br />
+然后用brew重新安装了。发现删除了MySQL之后，控制面板的图标还在。<br />
+找了好多博客资料，都是只写了如何删除MySQL，并没有写如何删除图标。<br />
 最后终于找到一个博客，给了一点提示，于是find一下，在 <code class="highlighter-rouge">/Library/PreferencePanes/</code>文件夹下找到了MySQL图标的文件。删除对应文件名的文件，重新打开控制面板，发现图标不见了。</p>
 
-<p>只要删除该目录下对应的文件，控制面板中的图标就会删除。但是注意该文件夹下的只是一个图标而已，
-删除图标不代表就删除软件了。
+<p>只要删除该目录下对应的文件，控制面板中的图标就会删除。但是注意该文件夹下的只是一个图标而已，<br />
+删除图标不代表就删除软件了。<br />
 具体的软件文件不在该目录下，你安装的时候在哪就在哪里。</p>
 
 <p>例如 <strong>mysql</strong>的安装目录在<code class="highlighter-rouge">/usr/local/mysql-xxx</code>xxx是你具体的版本号。</p>
