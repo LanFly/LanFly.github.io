@@ -155,7 +155,7 @@
         </header>
         <ul class="mobile-menu">
             <li class="menu-item"><a href="/">首页</a></li>
-            <li class="menu-item"><a href="/web">web前端</a></li>
+            <li class="menu-item"><a href="/web">Web前端</a></li>
             <li class="menu-item"><a href="/mac">MacOSX</a></li>
             <li class="menu-item"><a href="/resource">干货分享</a></li>
             <li class="menu-item"><a href="/laneditor" title="一款个性化在线markdown编辑器">LanEditor</a></li>
@@ -184,7 +184,7 @@
   <li><strong>javascript代码</strong></li>
 </ol>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/javascript"</span><span class="o">&gt;</span>
+<div class="language-js highlighter-rouge"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/javascript"</span><span class="o">&gt;</span>
     <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
         <span class="c1">//初始化 @textelem:编辑区的id @showelem:显示HTML的id</span>
         <span class="kd">var</span> <span class="nx">lan</span> <span class="o">=</span> <span class="nx">LanEditor</span><span class="p">.</span><span class="nx">init</span><span class="p">({</span>
@@ -206,20 +206,20 @@
   <li><strong>HTML代码</strong></li>
 </ol>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;textarea</span> <span class="na">id=</span><span class="s">"editor"</span> <span class="na">name=</span><span class="s">"editor"</span><span class="nt">&gt;&lt;/textarea&gt;</span>
+<div class="language-html highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;textarea</span> <span class="na">id=</span><span class="s">"editor"</span> <span class="na">name=</span><span class="s">"editor"</span><span class="nt">&gt;&lt;/textarea&gt;</span>
 
 <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"show"</span><span class="nt">&gt;&lt;/div&gt;</span>
 </code></pre>
 </div>
 <blockquote>
-  <p><strong><em>注意</em></strong><br />
-textelem:”editor” <code class="highlighter-rouge">&lt;textarea&gt;</code>的<code class="highlighter-rouge">id</code>名，不带<code class="highlighter-rouge">#</code><br />
+  <p><strong><em>注意</em></strong>
+textelem:”editor” <code class="highlighter-rouge">&lt;textarea&gt;</code>的<code class="highlighter-rouge">id</code>名，不带<code class="highlighter-rouge">#</code>
 showelem:”show” 显示渲染后的HTML的<code class="highlighter-rouge">id</code>,也是不带<code class="highlighter-rouge">#</code>，一般用div作为容器</p>
 </blockquote>
 
 <p>不出意外，你就可以使用LanEditor进行编辑了。它会自动渲染。如果你是拿来二次开发，只需要一个编辑器就可以，那么你可以省略<code class="highlighter-rouge">showelem</code>参数，此时它将不会自动渲染，你可以使用提供的API接口获取渲染的结果。就像这样:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/javascript"</span><span class="o">&gt;</span>
+<div class="language-js highlighter-rouge"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/javascript"</span><span class="o">&gt;</span>
     <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
         <span class="c1">//初始化 @textelem:编辑区的id @showelem可以省略</span>
         <span class="kd">var</span> <span class="nx">lan</span> <span class="o">=</span> <span class="nx">LanEditor</span><span class="p">.</span><span class="nx">init</span><span class="p">({</span>
@@ -360,8 +360,17 @@ showelem:”show” 显示渲染后的HTML的<code class="highlighter-rouge">id<
             <!-- #primary -->
             <div id="secondary" class="widget-area" role="complementary">
                 <aside id="recent-posts" class="widget widget_recent_entries">
-                    <h1 class="widget-title">我正在努力加载 (＞﹏＜)</h1>
+                    <h1 class="widget-title">近期文章</h1>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/wordpress/2016/01/14/52/">test</a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/wordpress/2015/12/01/5/">LanEditor</a>
+                        </li>
+                    </ul>
                 </aside>
+
             </div>
             <!-- #secondary -->
         </div>

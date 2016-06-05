@@ -155,7 +155,7 @@
         </header>
         <ul class="mobile-menu">
             <li class="menu-item"><a href="/">首页</a></li>
-            <li class="menu-item"><a href="/web">web前端</a></li>
+            <li class="menu-item"><a href="/web">Web前端</a></li>
             <li class="menu-item"><a href="/mac">MacOSX</a></li>
             <li class="menu-item"><a href="/resource">干货分享</a></li>
             <li class="menu-item"><a href="/laneditor" title="一款个性化在线markdown编辑器">LanEditor</a></li>
@@ -225,7 +225,7 @@
 
 <p>使用length可以获取localStorage的长度，key(i)可以获取键名</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>      <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">){</span>
+<div class="language-js highlighter-rouge"><pre class="highlight"><code>      <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">){</span>
           <span class="nx">key</span> <span class="o">=</span> <span class="nx">localStorage</span><span class="p">.</span><span class="nx">key</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
           <span class="nx">value</span> <span class="o">=</span> <span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
       <span class="p">}</span>
@@ -338,8 +338,17 @@
             <!-- #primary -->
             <div id="secondary" class="widget-area" role="complementary">
                 <aside id="recent-posts" class="widget widget_recent_entries">
-                    <h1 class="widget-title">我正在努力加载 (＞﹏＜)</h1>
+                    <h1 class="widget-title">近期文章</h1>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/wordpress/2016/01/14/52/">test</a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/wordpress/2015/12/01/5/">LanEditor</a>
+                        </li>
+                    </ul>
                 </aside>
+
             </div>
             <!-- #secondary -->
         </div>

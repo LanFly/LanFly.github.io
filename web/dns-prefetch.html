@@ -155,7 +155,7 @@
         </header>
         <ul class="mobile-menu">
             <li class="menu-item"><a href="/">首页</a></li>
-            <li class="menu-item"><a href="/web">web前端</a></li>
+            <li class="menu-item"><a href="/web">Web前端</a></li>
             <li class="menu-item"><a href="/mac">MacOSX</a></li>
             <li class="menu-item"><a href="/resource">干货分享</a></li>
             <li class="menu-item"><a href="/laneditor" title="一款个性化在线markdown编辑器">LanEditor</a></li>
@@ -178,7 +178,7 @@
 
 <p>今天翻看twitter的源码的时候看到了一下内容：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">”dns-prefetch”</span> <span class="na">href=</span><span class="s">”http://a0.twimg.com”/</span><span class="nt">&gt;</span>
+<div class="language-html highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">”dns-prefetch”</span> <span class="na">href=</span><span class="s">”http://a0.twimg.com”/</span><span class="nt">&gt;</span>
 <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">”dns-prefetch”</span> <span class="na">href=</span><span class="s">”http://a1.twimg.com”/</span><span class="nt">&gt;</span>
 <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">”dns-prefetch”</span> <span class="na">href=</span><span class="s">”http://a2.twimg.com”/</span><span class="nt">&gt;</span>
 <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">”dns-prefetch”</span> <span class="na">href=</span><span class="s">”http://a3.twimg.com”/</span><span class="nt">&gt;</span>
@@ -207,7 +207,7 @@
 
 <p>默认情况下浏览器会对页面中和当前域名（正在浏览网页的域名）不在同一个域的域名进行预获取，并且缓存结果，这就是隐式的DNS Prefetch。如果想对页面中没有出现的域进行预获取，那么就要使用显示的DNS　Prefetch了，也就是使用link标签：</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">”dns-prefetch”</span> <span class="na">href=</span><span class="s">”http://api.twitter.com”/</span><span class="nt">&gt;</span>
+<div class="language-html highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">”dns-prefetch”</span> <span class="na">href=</span><span class="s">”http://api.twitter.com”/</span><span class="nt">&gt;</span>
 </code></pre>
 </div>
 
@@ -215,7 +215,7 @@
 
 <p>PS:可以通过下面的标签禁止隐式的DNS Prefetch</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">”x-dns-prefetch-control”</span> <span class="na">content=</span><span class="s">”off”</span><span class="nt">&gt;</span>
+<div class="language-html highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">”x-dns-prefetch-control”</span> <span class="na">content=</span><span class="s">”off”</span><span class="nt">&gt;</span>
 </code></pre>
 </div>
 
@@ -312,8 +312,17 @@
             <!-- #primary -->
             <div id="secondary" class="widget-area" role="complementary">
                 <aside id="recent-posts" class="widget widget_recent_entries">
-                    <h1 class="widget-title">我正在努力加载 (＞﹏＜)</h1>
+                    <h1 class="widget-title">近期文章</h1>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/wordpress/2016/01/14/52/">test</a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/wordpress/2015/12/01/5/">LanEditor</a>
+                        </li>
+                    </ul>
                 </aside>
+
             </div>
             <!-- #secondary -->
         </div>
