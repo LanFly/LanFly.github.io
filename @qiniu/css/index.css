@@ -1,0 +1,14 @@
+.main .category-wrapper {
+  margin-top: 30px;
+}
+.main .category-wrapper:first-of-type {
+  margin-top: 0px;
+}
+.main .category-wrapper .article-list {
+  margin-top: 30px;
+}
+.main .category-wrapper .article-list .info-empty {
+  font-size: 0.6rem;
+  color: #404040;
+  text-align: center;
+}

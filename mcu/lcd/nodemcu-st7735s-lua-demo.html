@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="keywords" content="st7735,st7735s,彩色屏幕,tft屏幕,树莓派,oled,iic,i2c,python,驱动,移植">
+<meta name="description" content="本站提供了很多现成的屏幕驱动供大家使用，也写了很多文章教大家如何绘图、显示中文、动画制作等。现在，让我们来自己编写/移植一款彩色屏幕的驱动，这样大家以后也可以把驱动移植到其它平台，或者举一反三，自行学会编写其它型号的屏幕驱动。当然，你也可以移植到其它语言比如 nodejs，Lua，C 来驱动此屏幕。本站已经实现了 C, NodeJS, Lua, Python 各种语言的版本，可以运行在单片机，树莓派，ESP8266/32等各种平台。"><title>nodemcu 使用 Lua 编写/移植 ST7735S 0.96 寸彩色 LCD 屏幕驱动（SPI 通信） - 提莫的神秘商店</title><link rel="stylesheet" href="http://lanfly.vicp.io/css/default.css">
+<link rel="stylesheet" href="http://lanfly.vicp.io/css/highlight/rouge-solarized-light.css">
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" sizes="16x16" />
+<style type="text/css"></style>
+
+    <link rel="stylesheet" href="http://lanfly.vicp.io/css/post.css">
+  </head>
+  <body>
+    <div class="page">
+      <header id="masthead" role="banner" class="site-header">
+  <div class="site-branding">
+    <h1 class="site-title"><a href="/" rel="home" title="回到首页">提莫的神秘商店</a></h1>
+
+    <span class="nav-toggle js-nav-toggle  hidden" title="Click to view the navigation" href="#">
+      <div class="bars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="clear"></div>
+      </div>
+      <p>
+        <span class="menu">Menu</span>
+        <span class="close">Close</span>
+      </p>
+    </span>
+  </div>
+</header>
+
+      <ul id="navi-menu" class="mobile-menu js-mobile-menu"><li class="menu-item transition-02s"><a href="/">首页</a></li><li class="menu-item transition-02s"><a href="/shop">神秘商店</a></li><li class="menu-item transition-02s"><a href="/mcu">硬件</a></li><li class="menu-item transition-02s"><a href="/js">JavaScript</a></li><li class="menu-item transition-02s"><a href="/3d">3D/模型</a></li><li class="menu-item transition-02s"><a href="/project">开源项目</a></li><li class="menu-item transition-02s"><a href="/api">免费服务</a></li><li class="menu-item transition-02s"><a href="/about">关于</a></li></ul>
+      <div class="main enable-sidebar transition-04s">
+  <div class="content article-content">
+    <h1 class="title">nodemcu 使用 Lua 编写/移植 ST7735S 0.96 寸彩色 LCD 屏幕驱动（SPI 通信）</h1>
+    <p>本站提供了很多现成的屏幕驱动供大家使用，也写了很多文章教大家如何绘图、显示中文、动画制作等。现在，让我们来自己编写/移植一款彩色屏幕的驱动，这样大家以后也可以把驱动移植到其它平台，或者举一反三，自行学会编写其它型号的屏幕驱动。当然，你也可以移植到其它语言比如 nodejs，Lua，C 来驱动此屏幕。本站已经实现了 C, NodeJS, Lua, Python 各种语言的版本，可以运行在单片机，树莓派，ESP8266/32等各种平台。</p>
+
+<p class="percent50-img">
+  <img src="https://gd2.alicdn.com/imgextra/i2/1901819815/O1CN010LOo8b2MNJwRdi2NN_!!1901819815.png_400x400.jpg" />
+</p>
+
+<p>先介绍一下 ST7735S LCD 屏幕，这个屏幕的主控型号是使用的 ST7735S，分辨率是 160*80，接口是 SPI。它是 LCD 屏幕，色彩和可视角度都比 TFT 好多了，尤其是色彩鲜艳度和细腻度。此款屏幕可以接 3.3V 或者 5V。注意，不接背光接口它也能亮，只是会发生闪烁现象和屏幕灰暗，所以看到背光闪烁多半是因为电压不够或者没有接背光导致的。它支持 262K 颜色，即 565 格式，使用 2 个字节表示 RGB 颜色。</p>
+
+<p>上面的图片是本店中出售的 ST7735S SPI 接口的屏幕，分辨率是 160*80。</p>
+
+<h2 id="驱动例程">驱动例程</h2>
+
+<p>我们是按照厂家给的驱动例程来移植的，所以大家在阅读此文章时，请先查看这篇文章 <a href="//timor.tech/mcu/lcd/rpi-st7735s-python-demo.html">树莓派使用 Python 编写/移植 ST7735S 0.96 寸彩色 LCD 屏幕驱动（SPI 通信）</a> 里面的 驱动移植部分。</p>
+
+<h2 id="硬件接线">硬件接线</h2>
+
+<p>下面是 nodemcu 的引脚图。</p>
+
+<p class="percent50-img">
+  <img src="http://lanfly.vicp.io/nodemcu/nodemcu_devkit_v1.0_pinmap.png" />
+</p>
+
+<p>程序的开头已经注释了如何接线，请大家自己对照 nodemcu 的引脚图接线。屏幕的 VCC 和 GND 是电源，记得也要接，可以接 3.3V。因为搞电子模块的大家都知道电源是必备的，之前的文章就省略了，然后很多人问我屏幕为什么不亮，我也是很无奈啊。</p>
+
+<blockquote>
+  <p>注意：请一定以屏幕的实际引脚编号为准，如你不清楚如何接，请本店咨询客服，电源反接必烧毁，本店概不负责，屏幕会产生大量热量，注意烫伤手。</p>
+</blockquote>
+
+<p>在本店购买的屏幕除非特殊说明，默认接 3.3V 电压，防止烧坏。其它地方购买的屏幕，请一定注意电源，烧坏本人不负责。</p>
+
+<h2 id="移植到-nodemcu">移植到 nodemcu</h2>
+
+<p>前篇文章我们讲解了如何在树莓派上使用 Python 移植驱动。下面我们把它移植到 nodemcu 上。ESP8266 自带了硬件 SPI，所以我们移植起来非常简单，只需要把 SPI 通信部分替换成硬件 SPI，然后将 C 代码改写成 Lua 就行了。上完整代码：</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- Hardware SPI CLK  = GPIO14</span>
+<span class="c1">-- Hardware SPI MOSI = GPIO13</span>
+<span class="c1">-- Hardware SPI MISO = GPIO12 (not used)</span>
+<span class="n">cs</span>  <span class="o">=</span> <span class="mi">8</span> <span class="c1">-- GPIO15, pull-down 10k to GND</span>
+<span class="n">dc</span>  <span class="o">=</span> <span class="mi">4</span> <span class="c1">-- GPIO2</span>
+<span class="n">res</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">-- GPIO16</span>
+<span class="n">bus</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">node</span><span class="p">.</span><span class="n">setcpufreq</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">CPU160MHZ</span><span class="p">)</span>
+
+<span class="k">function</span> <span class="nf">spi_begin</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span>
+  <span class="n">spi</span><span class="p">.</span><span class="n">setup</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">spi</span><span class="p">.</span><span class="n">MASTER</span><span class="p">,</span> <span class="n">spi</span><span class="p">.</span><span class="n">CPOL_LOW</span><span class="p">,</span> <span class="n">spi</span><span class="p">.</span><span class="n">CPHA_LOW</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+  <span class="c1">-- we won't be using the HSPI /CS line, so disable it again</span>
+  <span class="n">gpio</span><span class="p">.</span><span class="n">mode</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">gpio</span><span class="p">.</span><span class="n">INPUT</span><span class="p">,</span> <span class="n">gpio</span><span class="p">.</span><span class="n">PULLUP</span><span class="p">)</span>
+  <span class="c1">-- setup command and data pin.</span>
+  <span class="n">gpio</span><span class="p">.</span><span class="n">mode</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="n">gpio</span><span class="p">.</span><span class="n">OUTPUT</span><span class="p">)</span>
+  <span class="n">gpio</span><span class="p">.</span><span class="n">mode</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">gpio</span><span class="p">.</span><span class="n">OUTPUT</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">spi_write</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+  <span class="n">spi</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">delay_ms</span> <span class="p">(</span><span class="n">ms</span><span class="p">)</span>
+  <span class="n">tmr</span><span class="p">.</span><span class="n">delay</span><span class="p">(</span><span class="n">ms</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">lcd_writeCmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+  <span class="n">gpio</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="n">spi_write</span><span class="p">(</span><span class="n">bus</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">lcd_writeData</span> <span class="p">(</span><span class="n">data</span><span class="p">)</span>
+  <span class="n">gpio</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="n">spi_write</span><span class="p">(</span><span class="n">bus</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">lcd_reset</span> <span class="p">()</span>
+  <span class="n">gpio</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="n">delay_ms</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+  <span class="n">gpio</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">lcd_init</span> <span class="p">()</span>
+  <span class="n">lcd_reset</span><span class="p">()</span>
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0x11</span><span class="p">)</span>
+  <span class="n">delay_ms</span><span class="p">(</span><span class="mi">120</span><span class="p">)</span>
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0x21</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0xB1</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x05</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x3A</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x3A</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0xB2</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x05</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x3A</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x3A</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0xB3</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x05</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x3A</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x3A</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x05</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x3A</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x3A</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0xB4</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x03</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0xC0</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x62</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x02</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x04</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0xC1</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0xC0</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0xC2</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x0D</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0xC3</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x8D</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x6A</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0xC4</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x8D</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0xEE</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0xC5</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x0E</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0xE0</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x10</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x0E</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x02</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x03</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x0E</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x07</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x02</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x07</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x0A</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x12</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x27</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x37</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x0D</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x0E</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x10</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0xE1</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x10</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x0E</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x03</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x03</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x0F</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x06</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x02</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x08</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x0A</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x13</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x26</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x36</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x0D</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x0E</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x10</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0x3A</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x05</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0x36</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0xC8</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0x29</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">lcd_setRegion</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span>
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0x2a</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="n">x1</span> <span class="o">+</span> <span class="mh">0x1A</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="n">x2</span> <span class="o">+</span> <span class="mh">0x1A</span><span class="p">)</span>
+
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0x2b</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="n">y1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+  <span class="n">lcd_writeData</span><span class="p">(</span><span class="n">y2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="n">lcd_writeCmd</span><span class="p">(</span><span class="mh">0x2c</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">lcd_fill</span> <span class="p">(</span><span class="n">color1</span><span class="p">,</span> <span class="n">color2</span><span class="p">)</span>
+  <span class="n">lcd_setRegion</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">159</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">160</span> <span class="k">do</span>
+    <span class="k">for</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">80</span> <span class="k">do</span>
+      <span class="n">lcd_writeData</span><span class="p">(</span><span class="n">color1</span><span class="p">)</span>
+      <span class="n">lcd_writeData</span><span class="p">(</span><span class="n">color2</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="n">tmr</span><span class="p">.</span><span class="n">wdclr</span><span class="p">()</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">main</span><span class="p">()</span>
+  <span class="n">spi_begin</span><span class="p">(</span><span class="n">bus</span><span class="p">)</span>
+  <span class="n">lcd_init</span><span class="p">()</span>
+
+  <span class="n">lcd_fill</span><span class="p">(</span><span class="mh">0xf8</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">)</span> <span class="c1">-- red</span>
+  <span class="n">lcd_fill</span><span class="p">(</span><span class="mh">0x07</span><span class="p">,</span> <span class="mh">0xe0</span><span class="p">)</span> <span class="c1">-- green</span>
+  <span class="n">lcd_fill</span><span class="p">(</span><span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x1f</span><span class="p">)</span> <span class="c1">-- blue</span>
+  <span class="n">lcd_fill</span><span class="p">(</span><span class="mh">0xff</span><span class="p">,</span> <span class="mh">0xe0</span><span class="p">)</span> <span class="c1">-- yellow</span>
+  <span class="n">lcd_fill</span><span class="p">(</span><span class="mh">0xff</span><span class="p">,</span> <span class="mh">0xff</span><span class="p">)</span> <span class="c1">-- white</span>
+<span class="k">end</span>
+
+<span class="n">main</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>可以看到，代码基本和 C 是差不多的，只有 2 处不同，第一个是我们使用 ESP8266 的硬件 SPI 替换了模拟 SPI，延时函数用的是定时器模块。ESP8266 的硬件 SPI 使用方法请查看官方文档，没什么好说的。使用定时器是因为我们没法在应用层准确的知道执行时间，因为这是 Lua 解释器，指令的执行时间是不确定的。</p>
+
+<p>第二处不同是我们在 <code class="highlighter-rouge">lcd_fill</code> 函数内增加了一个 <code class="highlighter-rouge">tmr.wdclr()</code> 函数调用。这个函数去查看 api 就知道是手动重置看门狗计时器。因为在 nodemcu 上默认开启了看门狗，而我们的清屏函数需要发送整屏的像素数据，并且是同步阻塞的。SPI 的速率没那么快，这就导致还没等我们发送整屏的数据后，看门狗被触发了，导致芯片被硬重启。然后你就会发现你的 ESP8266 一直在无限重启，屏幕总是在刷新到一半的时候就停止。所以我们在每次刷新完一行数据后，就手动重置看门狗，这样就不会无限重启了。虽然对刷新速度有一点影响，不过总算比不能用好。</p>
+
+<p>将上面的代码保存为 <code class="highlighter-rouge">init.lua</code> 文件，上传到 nodemcu，屏幕的接线在程序开头就写了，大家自己对照 nodemcu 的引脚图接。然后复位就能看到屏幕在刷屏了。</p>
+
+<p>到这里，最基本的驱动移植已经做完了，能点亮就成功了一大半了，剩下的就是如何封装更友好的图形 api，比如点、线、面、图片、文字之类的。在树莓派上我们有 pillow 这么好用的图形库，但是在 nodemcu 上没有啊，点、线、面这些简单的图形 api 还好说，可以使用现成的算法函数，代码也不多，但是文字和图片就没办法了。如果要显示文字，必须要有字库，英文的字库比较小，实现起来也不是很难，并且网上已经有很多点阵的英文字库了，nodemcu 的 u8g 已经集成了很多的英文字库，可以直接拿来用。中文的话，大家老老实实去取点阵。图片建议在 PC 上先预处理好，保存成像素数据文件后直接刷屏。</p>
+
+  </div><div class="content sidebar"><div class="preference-product">
+      <h2 class="sidebar-title">神秘商店</h2>
+      <a href="https://item.taobao.com/item.htm?id=602096646962"  target="_blank">
+        <img src="https://gd2.alicdn.com/imgextra/i2/1901819815/O1CN010LOo8b2MNJwRdi2NN_!!1901819815.png_400x400.jpg" alt="图片加载失败了">
+      </a>
+      <p class="product-name">0.96寸高清IPS全彩显示屏 st7735s 支持arduino/stm32/51</p>
+      <a href="https://item.taobao.com/item.htm?id=602096646962" target="_blank">
+        <div class="goto-detail" title="将会在新窗口中打开宝贝详情页面">查看详情</div>
+      </a>
+    </div></div><div class="content sub-content related-article">
+    <h3 class="sub-title">再看看其它同类文章吧！</h3>
+    <div class="list">
+      
+      <a href="/mcu/sensor/rpi-dht-nodejs.html"><p class="transition-02s">树莓派使用 NodeJS 读取并监控 DHT11/22 温度湿度传感器</p></a>
+      <a href="/mcu/oled/rpi-ssd1306-python-graphics.html"><p class="transition-02s">树莓派使用 Python 驱动 SSD1306 中文字体、图片动画高级教程（IIC/SPI 通信）</p></a>
+      <a href="/mcu/oled/rpi-ssd1306-python.html"><p class="transition-02s">树莓派使用 Python 驱动 SSD1306（IIC/SPI 通信）</p></a>
+      <a href="/mcu/lcd/rpi-st7735-python.html"><p class="transition-02s">树莓派使用 Python 驱动 ST7735 1.44 寸彩色 TFT 屏幕（SPI 通信）</p></a>
+      <a href="/mcu/lcd/rpi-st7735s-python-demo.html"><p class="transition-02s">树莓派使用 Python 编写/移植 ST7735S 0.96 寸彩色 LCD 屏幕驱动（SPI 通信）</p></a>
+      <a href="/tv/timor-tv-rpi.html"><p class="transition-02s">树莓派复古小电视开发教程</p></a></div>
+  </div>
+  <div class="content sub-content">
+    <h3 class="sub-title">有想说的评论一句吧！</h3>
+    
+    <div id="SOHUCS" sid="/mcu/lcd/nodemcu-st7735s-lua-demo.html"></div>
+  </div>
+</div>
+    </div>
+    <footer class="site-footer">
+  <div class="site-info">
+    <p>
+      <span>Powered by </span>
+      <a href="http://jekyllrb.com/">jekyll</a>
+      <span> & </span>
+      <a href="https://nodejs.org/" target="_blank">NodeJS</a>
+      <span> | </span>
+      <span> Server on RaspberryPi 3B | Theme made by </span>
+      <a href="mailto:bluescode@outlook.com">sudo</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <p xmlns:dct="http://purl.org/dc/terms/">
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">
+        <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/by-nc-sa.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" style="border-style: none;" width="80" height="28" alt="署名-非商业性使用-相同方式共享 (CC BY-NC-SA)" />
+      </a>
+    </p>
+    <p>
+      <span>本作品采用</span>
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">《署名-非商业性使用-相同方式共享》</a>
+      <span>许可协议，转载请先联系</span>
+      <a href="mailto:bluescode@outlook.com">站长</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/logo.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="logo" width="64" height="64" class="logo">
+    <p>提莫的神秘商店</p>
+  </div>
+  <div class="site-info">
+    <p>
+      <a href="http://www.beian.miit.gov.cn/" target="_blank">浙ICP备19010606号</a>
+      <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/public-security.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" width="20" height="20" alt="浙公网安备案图标" style="margin: 0 20px;" />
+      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002013836" target="_blank">浙公网安备33011002013836号</a>
+    </p>
+  </div>
+</footer>
+
+    <script>
+  /**
+   url: string
+   callback: [function]
+  */
+  function loadScript (url, callback) {
+    var headElement = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+    var script = document.createElement("script");
+    script.setAttribute("type", "text/javascript");
+    script.setAttribute("charset", "UTF-8");
+    script.setAttribute("src", url);
+    if (typeof callback === 'function') {
+      if (window.attachEvent) {
+        script.onreadystatechange = function () {
+          var e = script.readyState;
+          if (e === "loaded" || e === "complete") {
+            script.onreadystatechange = null;
+            callback();
+          }
+        };
+      } else {
+        script.onload = callback
+      }
+    }
+    headElement.appendChild(script);
+  }
+  /**
+   callback: function
+   timeout: [number] default: 1000
+  */
+  function lazycall(callback, timeout) {
+    if (typeof timeout != 'number') {
+      timeout = 1000
+    }
+    if (window.addEventListener) {
+      window.addEventListener('load', callback, false);
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', callback);
+    } else {
+      setTimeout(callback, timeout);
+    }
+  }
+  /**
+   url: string
+   timeout: [number] default: 1000
+   callback: [function]
+  */
+  function lazyloadScript (url, timeout, callback) {
+    if (typeof timeout === 'function') {
+      callback = timeout
+      timeout = 1000
+    }
+    lazycall(function () {
+      loadScript(url, callback)
+    }, timeout)
+  }
+  lazyloadScript('http://libs.baidu.com/jquery/2.0.3/jquery.min.js', function () {
+    $(document).ready(function () {
+      var navToggle = $('.js-nav-toggle')
+      var mobileMenu = $('.js-mobile-menu')
+      // Toggle blog-menu
+      navToggle.on("click", function () {
+        navToggle.toggleClass("active");
+        mobileMenu.slideToggle();
+        return false;
+      });
+      // Hide mobile-menu > 768
+      $(window).resize(function () {
+        var windowWidth = $(window).width()
+        if (windowWidth > 768) {
+          navToggle.removeClass("active");
+          mobileMenu.show();
+        }
+        if (windowWidth <= 768 && !navToggle.hasClass('active')) {
+          navToggle.removeClass("active");
+          mobileMenu.hide();
+        }
+      });
+      // lazyload img for footer
+      $('.site-footer img.js-lazyload-img').each(function (index, elem) {
+        var img = $(this)
+        img.attr('src', img.data('src'))
+      });
+    });
+  })
+</script>
+
+    <script type="text/javascript">
+  var _hmt = _hmt || [];
+  function loadBaiduTongji () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?f497f00a5871b6ed9078f87ab818d62d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  }
+  lazycall(loadBaiduTongji)
+</script>
+    <script type="text/javascript">
+  function loadChangyan () {
+    var appid = 'cytTik2AP';
+    var conf = 'prod_0b6e93ff9daf2e0d6e49c8ad1586bf4b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      var loadJsWithId=function(d,i){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("id",i);b.setAttribute("charset","UTF-8");b.setAttribute("src",d);c.appendChild(b)};
+      loadJsWithId('https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf, "changyan_mobile_js")
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  }
+  lazycall(loadChangyan)
+</script>
+    
+  </body>
+</html>

@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="keywords" content="dht11,xfs5152ce,ssd1306,树莓派,oled,iic,i2c,nodejs,驱动">
+<meta name="description" content="这是一个旨在用 NodeJS 驱动硬件的驱动包。开箱即用、完善的文档、持续更新、友好的 API。用树莓派打造自己的智能家居。"><title>oneDevice.js - NodeJS 万能硬件驱动包 - 提莫的神秘商店</title><link rel="stylesheet" href="http://lanfly.vicp.io/css/default.css">
+<link rel="stylesheet" href="http://lanfly.vicp.io/css/highlight/rouge-solarized-light.css">
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" sizes="16x16" />
+<style type="text/css"></style>
+
+    <link rel="stylesheet" href="http://lanfly.vicp.io/css/post.css">
+  </head>
+  <body>
+    <div class="page">
+      <header id="masthead" role="banner" class="site-header">
+  <div class="site-branding">
+    <h1 class="site-title"><a href="/" rel="home" title="回到首页">提莫的神秘商店</a></h1>
+
+    <span class="nav-toggle js-nav-toggle  hidden" title="Click to view the navigation" href="#">
+      <div class="bars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="clear"></div>
+      </div>
+      <p>
+        <span class="menu">Menu</span>
+        <span class="close">Close</span>
+      </p>
+    </span>
+  </div>
+</header>
+
+      <ul id="navi-menu" class="mobile-menu js-mobile-menu"><li class="menu-item transition-02s"><a href="/">首页</a></li><li class="menu-item transition-02s"><a href="/shop">神秘商店</a></li><li class="menu-item transition-02s"><a href="/mcu">硬件</a></li><li class="menu-item transition-02s"><a href="/js">JavaScript</a></li><li class="menu-item transition-02s"><a href="/3d">3D/模型</a></li><li class="menu-item transition-02s"><a href="/project">开源项目</a></li><li class="menu-item transition-02s"><a href="/api">免费服务</a></li><li class="menu-item transition-02s"><a href="/about">关于</a></li></ul>
+      <div class="main  transition-04s">
+  <div class="content article-content">
+    <h1 class="title">oneDevice.js - NodeJS 万能硬件驱动包</h1>
+    <h1 style="color: #2493fb;">公告（2019-02-06 11:08:01）</h1>
+
+<p>随着 oneDevice.js 集成的驱动越来越多，这个项目维护起来也越来越困难，最重要的是，开发者使用起来也很麻烦。所以在此公告所有用户：</p>
+
+<h4 style="color: #2493fb;">此软件包不再维护，oneDevice.js 升级为单独的项目。项目名依然为 oneDevice.js ，今后所有的驱动都拆分为独立的软件包，放在此项目下。</h4>
+
+<p>很多时候开发者只需要使用其中的一个或几个驱动，而要使用它们，开发者必须要安装所有的驱动和依赖，这使得安装非常困难，因为他们要安装很多无需使用的软件。很多时候这些软件只能在树莓派上安装和使用，导致本来可以在其它平台使用的驱动，因为整个软件包的限制，而无法在其它平台使用。</p>
+
+<p>所以我决定，今后将驱动单独拆分出来，开发者需要使用哪个驱动，只需要安装对应的驱动就可以了。不用担心，此项目依然开源和免费。所有的驱动都放到同一个项目下，oneDevice.js 依然作为这个项目的名称。此项目会在晚些时候开放，到时候会带着我们满满的诚意和新的驱动奉上。</p>
+
+<p>用NodeJS驱动硬件。</p>
+
+<p>心塞塞的，device被占用了，只能叫onedevice了。这感觉。。。。。。🙄</p>
+
+<hr />
+
+<p><img src="https://img.shields.io/badge/version-0.0.3-brightgreen.svg" alt="" /> <img src="https://img.shields.io/badge/test-passing-brightgreen.svg" alt="" /></p>
+
+<h2 id="这是什么">这是什么？</h2>
+
+<p>这是一个旨在用NodeJS驱动硬件的驱动包。开箱即用、完善的文档、持续更新、友好的API。用树莓派打造自己的智能家居。</p>
+
+<p>我们的目标：NodeJS 能驱动的硬件，都要有 NodeJS 的驱动。</p>
+
+<h4 id="最近更新">最近更新</h4>
+
+<blockquote>
+  <p><span style="color: red;">v0.0.3</span> @ 2018-06-02 22:56</p>
+</blockquote>
+
+<ul>
+  <li>使用RxJS，更抽象更简单易用的API</li>
+</ul>
+
+<h4 id="报告bug">报告bug</h4>
+
+<ul>
+  <li>QQ交流群: 230948257</li>
+  <li>email: <a href="mailto:bluescode@outlook.com">bluescode@outlook.com</a></li>
+  <li>issue: <a href="https://github.com/LanFly/Device/issues">https://github.com/LanFly/Device/issues</a></li>
+</ul>
+
+<h4 id="后续主要更新">后续主要更新</h4>
+
+<ul>
+  <li>增加更多型号硬件驱动</li>
+  <li>更抽象的API，一句话完成条件监控、动作触发</li>
+  <li>更容易阅读的文档</li>
+</ul>
+
+<p>test文件夹下面有测试例子，这些都在我的<code class="highlighter-rouge">Linux raspberrypi 4.4.34-v7+ Raspbian GNU/Linux 8.0 (jessie)</code>下面测试通过。</p>
+
+<h2 id="必看">必看</h2>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. 树莓派需要先安装BCM2835
+2. 该软件在树莓派3B (Raspbian GNU/Linux 8.0 jessie)上面开发、测试
+3. 最新文档和代码请查看https://github.com/LanFly/Device
+4. 在除树莓派之外的平台通过npm安装此软件包可能会安装失败
+5. 该软件依赖很多第三方软件，并修改了其中的代码，感谢各位大佬的开源
+6. 因个人时间有限，且硬件种类繁多，代码中可能有尚未测试到的bug，可以通过下面的联系方式反馈给我并寻求帮助
+7. 我会持续集成其它种类的驱动，如有硬件没驱动的同学，可以反馈给我
+8. i2c包的作者已经N年不更新了，里面有个bug，pull request也不处理。使用ssd1306的时候可能会有点问题，自己改一行代码就行了。
+</code></pre></div></div>
+
+<h2 id="开始">开始</h2>
+
+<p>可以引入所有的模块，也可以单独使用某一个模块。</p>
+
+<p>引入所有模块</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">Device</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'onedevice'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>引入某一个模块</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">XFS5152CE</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'onedevice/lib/device/xfs5152ce'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="用法">用法：</h4>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">new</span> <span class="nx">Device</span><span class="p">(</span><span class="nx">option</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h4 id="option-object">option: Object</h4>
+
+<p><code class="highlighter-rouge">description</code>: String</p>
+
+<p>此设备的描述。默认值：String(‘this device has not description’)</p>
+
+<p><code class="highlighter-rouge">model</code>: String</p>
+
+<p>此设备的具体型号，如果配置了此选项，则根据型号返回对应的硬件驱动实例。如果<code class="highlighter-rouge">device</code>没有该型号的驱动，则返回null。</p>
+
+<p>目前device集成的驱动型号有：</p>
+
+<ul>
+  <li>dht11、dht22、am2302: 温湿度传感器，支持这3个型号</li>
+  <li>xfs5152ce: 科大讯飞XFS5152CE文字转语音芯片</li>
+  <li>ssd1306: SSD1306为主控的OLED显示屏，最大分辨率支持 128*128</li>
+  <li>更多型号后续会持续集成</li>
+</ul>
+
+<p><code class="highlighter-rouge">interface</code>: String</p>
+
+<p>此通用设备的通信方式。该选项适用于创建一个自定义设备驱动，或者device没有集成的设备。例如STC89C52RC单片机使用串口跟树莓派通信，则你可以创建一个串口设备，让你能和单片机交换数据，然后自己扩展应用层的逻辑驱动。</p>
+
+<p>对于大部分的传感器或模块，都使用了常见的通信协议，例如：i2c、uart、spi、one-wire。驱动这些设备相对来说简单，因为你无需关心这些协议的原理，只需要处理发送和接受数据。</p>
+
+<p>device集成的科大讯飞驱动就是通过创建uart串口驱动，然后实现say，sleep，setVolume等函数的。</p>
+
+<p>device目前集成的通信协议有:</p>
+
+<ul>
+  <li>i2c: 同步串行总线</li>
+  <li>serial: 串行数据总线，即常见的串口</li>
+  <li>udp: 通过网络使用udp协议交换数据的设备。例如常见的ESP8266 WiFi模块，可以通过WiFi无线传输数据。也可以使用有线。</li>
+  <li>后续会持续集成1-wire、SPI等协议。</li>
+</ul>
+
+<p><code class="highlighter-rouge">address</code>: String or Int</p>
+
+<p>此设备的物理接口地址或者I2C从机设备的逻辑地址。如果此设备是串口协议的设备，则此字段表示设备在主机上的物理接口地址。例如USB转串口设备，则它的地址可能是字符串<code class="highlighter-rouge">/dev/ttyUSB0</code>。</p>
+
+<p>如果此设备是使用I2C协议的设备，则它的值表示该I2C设备的逻辑地址。例如SSD1306模块，它的值可能是Int<code class="highlighter-rouge">0x3C</code>，一般用16进制表示，当然你喜欢也可以用10进制表示。</p>
+
+<p><code class="highlighter-rouge">device</code>: String</p>
+
+<p>I2C设备在主机上的物理接口地址。I2C设备用2个地址来标识，第一个是物理接口地址，第二个是I2C从机的逻辑地址。为什么要2个地址？因为树莓派GPIO提供了2个I2C物理接口，device需要知道你的设备跟主机上的哪个接口相连。</p>
+
+<p>它有下面2个可选值:</p>
+
+<ol>
+  <li>String ‘/dev/i2c-0’</li>
+  <li>String ‘/dev/i2c-1’</li>
+</ol>
+
+<p>你可以使用<code class="highlighter-rouge">i2cdetect</code>工具来扫描接在总线上的所有I2C设备，并列出他们的逻辑地址。该工具需要先安装才能使用。</p>
+
+<h3 id="科大讯飞-xfs5152ce">科大讯飞 XFS5152CE</h3>
+
+<p>xfs5152ce这款文字转语言芯片可以使用I2C、SPI、串口等方式通信，使用3.3V即可满足供电，我使用的是某宝上面的xfs5152ce模块，带3W功放，我使用5V电源比较稳定。</p>
+
+<p>这里使用串口通信驱动模块，波特率一般为9600，波特率根据自己的情况设置。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">Device</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'onedevice'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">xfs5152ce</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Device</span><span class="p">({</span>
+    <span class="na">description</span><span class="p">:</span> <span class="s1">'xfs5152ce module'</span><span class="p">,</span>
+    <span class="na">model</span><span class="p">:</span> <span class="s1">'xfs5152ce'</span><span class="p">,</span>
+    <span class="na">baudRate</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+    <span class="na">address</span><span class="p">:</span> <span class="s1">'/dev/ttyUSB0'</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>上面返回一个串口驱动的实例，<code class="highlighter-rouge">address</code>参数是串口的地址。为什么是串口驱动？因为我们用的是串口方式驱动芯片的。你需要等待串口打开成功才能使用芯片。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">xfs5152ce</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'open'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">next</span><span class="p">){</span>
+    <span class="nx">xfs5152ce</span><span class="p">.</span><span class="nx">say</span><span class="p">(</span><span class="s1">'你好，科大讯飞！'</span><span class="p">);</span>
+    <span class="nx">next</span><span class="p">();</span>
+<span class="p">});</span>
+
+<span class="nx">xfs5152ce</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'error'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+    <span class="nx">next</span><span class="p">();</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>最好在open回调事件中使用串口功能，在open事件触发后，你就可以发送任意长度的文本给芯片朗读。</p>
+
+<p>say函数会自动维护朗读队列。如果当前的文本没有朗读完，再次调用say函数会放到队列中，朗读完后自动从队列中取出第一个朗读，直到队列中所有的都朗读完。</p>
+
+<p><code class="highlighter-rouge">open</code>,<code class="highlighter-rouge">error</code>,<code class="highlighter-rouge">data</code>事件都支持中间件，这跟express框架的洋葱模型是差不多的。next方法表示下一个中间件，它支持参数，表示更改传递给下一个中间件的数据，此更改只作用下一个中间件。请看下面例子。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 假设串口返回的数据是 data === 1</span>
+<span class="nx">xfs5152ce</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'data'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'md-1-start: '</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+    <span class="nx">next</span><span class="p">(</span><span class="nx">data</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'md-1-end: '</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+<span class="p">}).</span><span class="nx">on</span><span class="p">(</span><span class="s1">'data'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'md-2-start: '</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+    <span class="nx">next</span><span class="p">();</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'md-2-end: '</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+<span class="p">}).</span><span class="nx">on</span><span class="p">(</span><span class="s1">'data'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'md-3-start: '</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+    <span class="nx">next</span><span class="p">();</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'md-3-end: '</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>上面的执行结果如下：</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>md-1-start: 1
+md-2-start: 2
+md-3-start: 1
+md-3-end: 1
+md-2-end: 2
+md-1-end: 1
+</code></pre></div></div>
+
+<p>XFS5152CE驱动实例实现了以下函数:</p>
+
+<h4 id="function-saytext-imediately-callback">function: say(text, imediately, callback)</h4>
+
+<p>@params {String} text: 必需。要朗读的文本。可以带上文本控制标记<br />
+@params {Boolean} imediately: 可选。是否立即朗读。如果为true，会中断当前正在朗读的指令。<br />
+@params {function} callback: 可选。发送朗读指令成功的回调。</p>
+
+<p>尽快朗读文本。驱动实现了语音指令缓存，上位机可以连续的多次调用朗读函数，然后去处理其它任务。驱动会按照先后顺序，自动朗读完所有语音指令。如果imediately为true，则会停止正在朗读的所有文本，转而立即朗读text。</p>
+
+<h4 id="function-setvolumevolume">function: setVolume(volume)</h4>
+
+<p>@params {integer} volume: 设置朗读的音量。对正在朗读的文本无效。</p>
+
+<p>设置朗读的音量。可选值为1到10之间的整数。包含1和10。1位最小音量，10为最大音量。默认音量为3。设置音量后仅对后面的语音指令有效，对正在朗读的文本不影响。后面优化成实时设置音量。</p>
+
+<h4 id="function-getvolume">function: getVolume()</h4>
+
+<p>@return {integer}</p>
+
+<p>返回朗读的音量。</p>
+
+<h4 id="function-sleepcallback">function: sleep(callback)</h4>
+
+<p>@params {function} callback: 进入省电模式成功后的回调</p>
+
+<p>让芯片进入省电模式。发送省电指令后，芯片立即停止当前所有指令，此时芯片的工作电流为5mA。</p>
+
+<h4 id="function-wakeupcallback">function: wakeup(callback)</h4>
+
+<p>@params {function} callback: 退出省电模式成功后的回调</p>
+
+<p>让芯片恢复到待合成模式。进入待合成模式时，驱动会自动朗读当前未朗读的文本。</p>
+
+<h4 id="function-voicelength">function: voiceLength()</h4>
+
+<p>@return {integer}</p>
+
+<p>返回当前未朗读的语音合成指令数。每调用一次say函数，就会增加一个语音合成指令数量。</p>
+
+<h4 id="function-isbusy">function: isBusy()</h4>
+
+<p>@return {boolean}</p>
+
+<p>返回芯片是否正在朗读文本。</p>
+
+<h4 id="function-ontype-callback">function: on(type, callback)</h4>
+
+<p>@params {string} type: 监听的事件类型，可以是data、open、error<br />
+@params {function} callback: 当事件触发时需要执行的函数</p>
+
+<p>注册指定事件的回调，当事件发生时会执行回调函数。可以链式调用。采用和express相似的洋葱模型。</p>
+
+<p>事件类型不同，callback回调的参数也不同:</p>
+
+<blockquote>
+  <p>data: function(data, next)
+  data是接收到的数据。也可能是上一个中间件中调用next(data)传递过来的data</p>
+
+  <p>open: function(next)</p>
+
+  <p>error: function(error, next)
+  error是发生错误时的信息。</p>
+</blockquote>
+
+<hr />
+
+<h3 id="dht11dht22am2302系列设备">DHT11、DHT22、AM2302系列设备</h3>
+
+<p>这些设备比较简单，使用单总线的方式，只需要一根数据线和树莓派相连。剩下2根是电源线，分别连接正极和负极。也可以不使用电源线，只使用一根数据线完成数据的读取、发送，并且从数据线上获取设备所需要的电源。具体请另行查阅单总线的寄生电路。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">dht11</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Device</span><span class="p">({</span>
+    <span class="na">model</span><span class="p">:</span> <span class="s1">'dht11'</span><span class="p">,</span>
+    <span class="na">description</span><span class="p">:</span> <span class="s1">'dht11 sensor'</span><span class="p">,</span>
+    <span class="na">address</span><span class="p">:</span> <span class="mi">4</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>address是传感器的数据线连接在树莓派GPIO的编号。采用BCM GPIO编号。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">dht11</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">temperature</span><span class="p">,</span> <span class="nx">humidity</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'温度: '</span> <span class="o">+</span> <span class="nx">temperature</span> <span class="o">+</span> <span class="s1">' 湿度: '</span> <span class="o">+</span> <span class="nx">humidity</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>读取传感器数据比较简单。注意：DHT11采样周期是1s，建议连续读取数值至少间隔1s以上，否则可能会引起错误。DHT22采样周期2s，建议连续读取数值至少间隔2s以上。</p>
+
+<p>dht系列传感器现在增加RxJS。使用<code class="highlighter-rouge">observe</code>可返回<code class="highlighter-rouge">观察者</code>对象。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 观察dht11传感器的数值，间隔2秒观察一次</span>
+<span class="kd">var</span> <span class="nx">observable</span> <span class="o">=</span> <span class="nx">dht11</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="mi">2000</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">observable</code>是可订阅的，使用<code class="highlighter-rouge">then</code>订阅，订阅后返回<code class="highlighter-rouge">subscription</code>，表示进行中的执行。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">subscription</span> <span class="o">=</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+    <span class="c1">// 读取传感器数值成功的订阅函数</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+    <span class="c1">// 每隔2秒这个订阅函数会执行一次，因为在observe中我们指定了2秒</span>
+    <span class="c1">// subscription可以使用dispose停止订阅，停止订阅后，这个订阅函数将不会再执行</span>
+    <span class="nx">subscription</span><span class="p">.</span><span class="nx">dispose</span><span class="p">();</span>
+<span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">){</span>
+    <span class="c1">// 读取传感器数值失败的订阅函数</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+    <span class="c1">// 读取失败后会自动停止订阅</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>使用RxJS，我们可以轻松的组合各种条件<code class="highlighter-rouge">操作符</code>，这可以让我们的逻辑更直观。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// observe可以指定观察数据类型，t 表示温度，h 表示湿度，如果不传，则温度和湿度都观察</span>
+
+<span class="kd">var</span> <span class="nx">subscription</span> <span class="o">=</span> <span class="nx">dht11</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="s1">'t'</span><span class="p">).</span><span class="nx">max</span><span class="p">(</span><span class="mi">28</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'好热啊！当前温度是: '</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">subscription1</span> <span class="o">=</span> <span class="nx">dht11</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="s1">'h'</span><span class="p">).</span><span class="nx">min</span><span class="p">(</span><span class="mi">20</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'好干燥啊！当前湿度是: '</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>max、min 就是<code class="highlighter-rouge">操作符</code>。操作符可链式组合，并且有先后顺序，他们就像一节一节管道一样被依次连接。</p>
+
+<p>max 表示大于(value &gt; max)，上面的结果就是当温度大于28的时候，将会执行订阅函数。</p>
+
+<p>min 表示小于(value &lt; min)，结果是当湿度小于20的时候，将会执行订阅函数。</p>
+
+<p>除此之外，还有其它的操作符。如 <code class="highlighter-rouge">等于 when(condi)</code>、<code class="highlighter-rouge">区间 between(left, right)</code>。此外，observable还包含RxJS的所有可用操作符。</p>
+
+<hr />
+
+<h3 id="ssd1306-oled显示屏">SSD1306 OLED显示屏</h3>
+
+<p>适合市面上常见的以SSD1306为主控的小型OLED显示屏，分辨率在128<em>128以内。大于128</em>128分辨率的未测试，底层驱动使用的是<code class="highlighter-rouge">oled-ssd1306-i2c</code>npm包，它能驱动的都可以驱动。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">ssd1306</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Device</span><span class="p">({</span>
+    <span class="na">description</span><span class="p">:</span> <span class="s1">'ssd1306'</span><span class="p">,</span>
+    <span class="na">width</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+    <span class="na">height</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+    <span class="na">address</span><span class="p">:</span> <span class="mh">0x3c</span><span class="p">,</span>
+    <span class="na">device</span><span class="p">:</span> <span class="s1">'/dev/i2c-1'</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>width、height分别表示分辨率的宽和高。address是i2c的从机地址，这个因硬件设备有所不同，大家自己了解清楚。device是i2c设备接在树莓派上的接口地址，这个也是因人而异。对于SPI接口的OLED，目前还没有集成驱动，后续会加上。</p>
+
+<p>现在，我要如何控制屏幕显示的内容？</p>
+
+<h4 id="1-让显示屏显示内容有3种方法最简单的一种是直接显示一张png图片">1. 让显示屏显示内容，有3种方法，最简单的一种是直接显示一张PNG图片。</h4>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">ssd1306</span><span class="p">.</span><span class="nx">drawPNG</span><span class="p">(</span><span class="s1">'path/to/image.png'</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'显示PNG图片完成'</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>注意，只能为PNG图片。为达到最理想的显示效果，PNG图片的分辨率最好和OLED屏幕的分辨率一致。OLED是只有单色的，不支持彩色，所以显示的时候图片会自动转换为单色图片，然后再显示。有色值的像素点在屏幕上会被点亮，透明的像素点会被熄灭。</p>
+
+<h4 id="2-图片是静态的我想要由程序实时绘制屏幕该怎么办呢这个也很简单使用canvas就好了">2. 图片是静态的，我想要由程序实时绘制屏幕该怎么办呢？这个也很简单，使用canvas就好了。</h4>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">Canvas</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'canvas'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Canvas</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">64</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">'2d'</span><span class="p">);</span>
+
+<span class="nx">ctx</span><span class="p">.</span><span class="nx">fillStyle</span> <span class="o">=</span> <span class="s1">'#FFF'</span><span class="p">;</span>
+<span class="nx">ctx</span><span class="p">.</span><span class="nx">fillText</span><span class="p">(</span><span class="s2">"Hello world"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="c1">// 上面5行代码应该不需要解释吧。都是canvas操作</span>
+<span class="c1">// 结果就是在canvas上会在左上角显示一行白色的'hello world'文字</span>
+
+<span class="c1">// 然后把canvas的内容显示到屏幕上</span>
+<span class="nx">ssd1306</span><span class="p">.</span><span class="nx">drawCanvas</span><span class="p">(</span><span class="nx">canvas</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>这时你应该能在屏幕上看到’hello world’文字了。drawCanvas函数会把canvas上的像素点一一对应到屏幕上绘制(当然也支持只绘制指定部分的canvas)。所以，你的canvas显示什么，屏幕就会显示什么。通过程序不断的更新canvas，然后在合适的时机调用drawCanvas函数刷新屏幕，你就可以控制屏幕了。</p>
+
+<p>使用canvas的好处不需要我解释了，学习成本低，完善的API文档，大量的教程，和各种强大的canvas库。</p>
+
+<p>需要注意的是，为了达到最理想的显示效果，canvas的分辨率最好和屏幕的分辨率一致，并且使用单色绘制canvas，建议用#FFF。因为无论如何，你的OLED都是单色的屏幕，无法显示彩色。虽然有彩色的OLED，但目前还没集成驱动。后续会集成更大尺寸的彩色LCD、TFT屏幕驱动。这是个巨大的工程，希望有懂这方面的软硬件工程师协助我。</p>
+
+<blockquote>
+  <p>在node中使用canvas需要先安装。API和在浏览器HTML5中的canvas稍微有点区别。请自行查阅资料安装并使用。</p>
+</blockquote>
+
+<h4 id="3-我不想安装node-canvas同时又要程序实时绘制屏幕怎么办也简单使用内置的简易图形api绘制">3. 我不想安装node-canvas，同时又要程序实时绘制屏幕怎么办？也简单，使用内置的简易图形API绘制。</h4>
+
+<p>前面说了，这是基于<code class="highlighter-rouge">oled-ssd1306-i2c</code>封装的。它自身已经提供了一套简易的图形API用于操作屏幕。比如常见的绘制像素，直线，矩形，圆，文字等。使用这个的好处是不需要安装node-canvas，没有依赖。轻便、简单。怎么用？</p>
+
+<p>它的所有API都挂载在驱动实例的<code class="highlighter-rouge">oled</code>属性上。例如:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">ssd1306</span><span class="p">.</span><span class="nx">oled</span><span class="p">.</span><span class="nx">drawLine</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>上面使用自带的API绘制一条从(1, 1) 到 (128, 64) 的直线。oled属性就是<code class="highlighter-rouge">oled-ssd1306-i2c</code>的实例。更多API请自行查阅它的文档。</p>
+
+<p>目前node驱动SSD1306屏幕有个缺点，就是刷新率太低，在我的树莓派3B上最高也就10帧。使用Python能达到30帧流畅。如果使用C++，则可以很容易达到60帧。我正在努力尝试提高它的刷新率。</p>
+
+<h4 id="ssd1306-api">SSD1306 API:</h4>
+
+<h4 id="function-drawcanvascanvas-config">function: drawCanvas(canvas, config)</h4>
+
+<p>@params {Canvas} canvas: 要绘制的node-canvas。<br />
+@params {Object} config: 可选。配置要绘制的canvas的区域。默认从左上角开始绘制和屏幕一样大的区域。它有下列几个属性：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+  <span class="nl">sx</span><span class="p">:</span> <span class="s1">'开始绘制的点的横坐标'</span><span class="p">,</span>
+  <span class="nx">sy</span><span class="p">:</span> <span class="s1">'开始绘制的点的纵坐标'</span><span class="p">,</span>
+  <span class="nx">sw</span><span class="p">:</span> <span class="s1">'要绘制的矩形的宽度'</span><span class="p">,</span>
+  <span class="nx">sh</span><span class="p">:</span> <span class="s1">'要绘制的矩形的高度'</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>复制canvas的像素，一一对应到屏幕上并显示。通过ctx.getImageData函数获取canvas的像素信息。绘制前，会处理掉canvas的彩色像素。建议使用#FFF颜色进行绘制。有颜色的像素会被点亮，其余会被关闭。</p>
+
+<h4 id="function-drawpngfilename-dither-callback">function: drawPNG(filename, dither, callback)</h4>
+
+<p>@params {string} filename: 要绘制的PNG图片路径<br />
+@params {boolean} dither: 可选。是否启用抖动算法处理图片像素，默认为false。<br />
+@params {function} callback: 绘制图片完成时的回调。如果绘制错误，回调函数通过参数传递error。成功时为null。</p>
+
+<p>在屏幕上绘制PNG图片。为达到最理想的显示效果，PNG图片最好是单色的，背景透明。通过<code class="highlighter-rouge">pngparse</code>npm包处理图片的像素信息。抖动算法使用的是<code class="highlighter-rouge">floyd-steinberg</code>npm包。</p>
+
+<h4 id="function-showsysteminfosecond">function: showSystemInfo(second)</h4>
+
+<p>@params {Number} second: 刷新屏幕的间隔时间，单位秒。如果不传，或传0，则只显示一次。否则会自动每隔几秒刷新一次。</p>
+
+<p>显示系统信息，在屏幕上显示CPU、内存的统计信息，以及IP地址、时间。如果指定了一个时间，则会自动每隔几秒刷新。</p>
+
+<h4 id="function-stopsysteminfo">function: stopSystemInfo()</h4>
+
+<p>停止刷新系统信息</p>
+
+<hr />
+<h2 id="通用性设备api">通用性设备API</h2>
+<hr />
+
+<h3 id="uart串口设备">UART串口设备</h3>
+
+<p>串口使用非常普遍，也非常简单。创建一个串口设备很容易。在树莓派上面使用串口最简单的方式就是某宝买一个USB转串口，例如常见的使用ch340芯片的STC下载器，只需要10块钱包邮，免驱，还自带3.3V和5V电源接口，非常方便。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">stc89c52rc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Device</span><span class="p">({</span>
+    <span class="na">description</span><span class="p">:</span> <span class="s1">'stc89c52rc'</span><span class="p">,</span>
+    <span class="na">interface</span><span class="p">:</span> <span class="s1">'serial'</span><span class="p">,</span>
+    <span class="na">address</span><span class="p">:</span> <span class="s1">'/dev/ttyUSB0'</span><span class="p">,</span>
+    <span class="na">baudRate</span><span class="p">:</span> <span class="mi">9600</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>上面是使用USB转串口和单片机的串口引脚相连，单片机设置好波特率，树莓派和单片机之间就可以互相传输数据。串口是基于<code class="highlighter-rouge">serialport</code>这个非常受欢迎的npm包封装的。串口设备的<code class="highlighter-rouge">serial</code>属性是<code class="highlighter-rouge">serialport</code>的实例，该属性下面有所有它的方法和属性。可自行查阅它的文档。</p>
+
+<p>串口驱动实例有下面这些方法:</p>
+
+<h4 id="function-ontype-callback-1">function: on(type, callback)</h4>
+
+<p>请参考XFS5152CE部分API文档</p>
+
+<h4 id="function-writedata-callback">function: write(data, callback)</h4>
+
+<p>@params {buffer || array} data: 要发送的数据。可以是buffer或者是array，当然也可以是字符串，以二进制流发送。<br />
+@params {function} callback: 发送数据成功后的回调。如果发送错误，则通过参数传递error。</p>
+
+<p>向串口设备发送数据。发送时以二进制流发送。</p>
+
+<h4 id="function-drivername-driver">function: driver(name, driver)</h4>
+
+<p>@params {string} name: 驱动的名字<br />
+@params {function} driver: 实现驱动的方法</p>
+
+<p>未通用设备注册自定义驱动。实际就是向实例中添加一个属性名为name的driver函数。这样实例便可以直接调用这个函数。只不过driver函数的运行时this指向该实例。例如xfs5152ce就是通过创建通用串口设备，然后注册驱动函数实现的。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">serial</span><span class="p">.</span><span class="nx">driver</span><span class="p">(</span><span class="s1">'say'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">imed</span><span class="p">,</span> <span class="nx">cb</span><span class="p">){</span>
+    <span class="p">......</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="i2c总线设备">I2C总线设备</h3>
+
+<p>I2C设备稍复杂点，因为它是一对多的。数据的读取和发送都是通过主机控制。树莓派自带I2C接口，所以不需要其它硬件就可以使用。很多模块也是使用i2c协议的，例如常见的AT24C02 CMOS EEPROM存储器就是使用I2C的典型。单片机教程中经常使用该例子进行I2C操作的学习。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">i2c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Device</span><span class="p">({</span>
+    <span class="na">description</span><span class="p">:</span> <span class="s1">'test i2c'</span><span class="p">,</span>
+    <span class="na">interface</span><span class="p">:</span> <span class="s1">'i2c'</span><span class="p">,</span>
+    <span class="na">address</span><span class="p">:</span> <span class="mh">0x3c</span><span class="p">,</span>
+    <span class="na">device</span><span class="p">:</span> <span class="s1">'/dev/i2c-1'</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>注意i2c通用设备的address地址不是指i2c的物理接口地址，而是指的从机的逻辑地址。device才是指接口的物理接口地址。i2c驱动是基于<code class="highlighter-rouge">i2c</code>这个非常受欢迎的npm包封装的。实例的i2c属性就是<code class="highlighter-rouge">i2c</code>的实例，它拥有所有的方法和属性，可以自行查阅i2c的文档。SSD1306就是通过创建通用i2c设备，然后通过寄存器操作驱动屏幕。</p>
+
+<p>i2c实例有以下方法:</p>
+
+<h4 id="function-drivername-driver-1">function: driver(name, driver)</h4>
+
+<p>参考上面的driver文档。</p>
+
+<p>因为i2c方法太多，这里就没有进行封装了，可以通过i2c属性访问各函数。</p>
+
+<hr />
+
+<h3 id="udp网络设备">UDP网络设备</h3>
+
+<p>有些更高级的模块使用网络进行数据传输。例如ESP 8266 WiFi模块，可以将串口的数据通过WiFi以UDP或TCP协议发送出去。这个就好玩了，通过将8266和单片机串口相连，可以很容易的让单片机实现网络连接。让单片机去采集数据，通过网络发送给树莓派，或者树莓派发送控制命令，远程遥控单片机。8266模块使用UDP是最简单的方法。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">esp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Device</span><span class="p">({</span>
+    <span class="na">description</span><span class="p">:</span> <span class="s1">'stc89c52rc-wifi'</span><span class="p">,</span>
+    <span class="na">interface</span><span class="p">:</span> <span class="s1">'udp'</span><span class="p">,</span>
+    <span class="na">type</span><span class="p">:</span> <span class="s1">'udp4'</span><span class="p">,</span>
+    <span class="na">address</span><span class="p">:</span> <span class="s1">'127.0.0.1'</span><span class="p">,</span>
+    <span class="na">port</span><span class="p">:</span> <span class="mi">8266</span><span class="p">,</span>
+    <span class="na">remoteAddress</span><span class="p">:</span> <span class="s1">'192.168.1.80'</span><span class="p">,</span>
+    <span class="na">remotePort</span><span class="p">:</span> <span class="mi">8266</span><span class="p">,</span>
+    <span class="na">reuseAddr</span><span class="p">:</span> <span class="kc">false</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>使用udp需要配置在本地监听服务器的地址和端口，同时也要指定对方的IP地址和端口。一般给8266模块配置固定IP。</p>
+
+<p>UDP驱动实例有以下方法:</p>
+
+<h4 id="function-ontype-callback-2">function: on(type, callback)</h4>
+
+<p>@params {string} type: 事件类型。可以取值为: listening、close、error、message。<br />
+@params {function} callback: 事件发生时的回调。不同的事件类型有不同的参数。具体如下:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>@type: listening 当本地监听服务器启动后发生
+    没有参数
+
+@type: close 当本地监听服务器关闭后发生
+    没有参数
+
+@type: error 当监听服务器发生错误时发生
+    callback(error)
+
+@type: message 当服务器接受到数据时发生
+    callback(data, remote, next)
+    
+    data是接收到的数据。buffer类型。
+    remote是node dgram的内置对象。请参考node文档。
+    next请参考上面xfs5152ce驱动的文档。
+</code></pre></div></div>
+
+<h4 id="function-writedata-callback-1">function: write(data, callback)</h4>
+
+<p>@params {buffer} data: 要发送的数据。<br />
+@params {function} callback(error): 发送数据成功或失败后的回调。</p>
+
+<h4 id="function-drivername-driver-2">function: driver(name, driver)</h4>
+
+<p>参考上面的driver文档。</p>
+
+<hr />
+
+<p>还有很多不完善的地方，无论是API设计到代码组织，都需要好好思考。后续会增加更多驱动和完善通用性驱动的功能。大部分驱动都是以通用性设备作为基础，然后按照硬件要求的数据格式进行传输，达到让硬件工作的方式。所以有必要完善好通用性驱动的功能。</p>
+
+<p>更友好的API文档也是后续要做的事。</p>
+
+<p>总之，这只是开始。</p>
+
+<hr />
+
+<h2 id="change-log">change log</h2>
+
+<blockquote>
+  <p>v0.0.3 @ 2018-06-02 22:56</p>
+</blockquote>
+
+<ul>
+  <li>使用RxJS，更抽象更简单易用的API</li>
+</ul>
+
+<blockquote>
+  <p>v0.0.2 @ 2018-04-22 17:19</p>
+</blockquote>
+
+<ul>
+  <li>SSD1306新增showSystemInfo函数，用于监控系统信息。</li>
+  <li>直接调用showSystemInfo即可在屏幕上面显示内存、CPU统计信息、IP、时间。</li>
+  <li>stopSystemInfo函数用于停止刷新系统监控信息。</li>
+  <li>增加GPIO引脚参考图，用于查阅树莓派引脚编号和功能。</li>
+</ul>
+
+<blockquote>
+  <p>v0.0.1 @ 2018-01-01 23:27</p>
+</blockquote>
+
+<ul>
+  <li>增加讯飞XFS5152CE文字转语音芯片的驱动</li>
+  <li>增加SSD1306 OLED屏幕的驱动。</li>
+  <li>支持在SSD1306屏幕上直接绘制canvas，更友好的图形API(我正在尽量提高刷新率)</li>
+  <li>包含UART串口、I2C、UDP驱动</li>
+  <li>包含DHT-11、DHT-22温度湿度传感器驱动</li>
+</ul>
+
+  </div><div class="content sub-content related-article">
+    <h3 class="sub-title">再看看其它同类文章吧！</h3>
+    <div class="list">
+      
+      <a href="/project/tGFX/en/"><p class="transition-02s">tGFX - a tiny gfx library for tft/lcd/oled</p></a>
+      <a href="/project/tGFX/"><p class="transition-02s">tGFX 一个轻量、简单、跨平台的二维图形绘图库</p></a>
+      <a href="/project/timor-wifi-boot/"><p class="transition-02s">Timor-WIFI-Boot 一个使用漂亮的 web 界面来管理 ESP8266/ESP32 网络配置的开源项目</p></a></div>
+  </div>
+  <div class="content sub-content">
+    <h3 class="sub-title">有想说的评论一句吧！</h3>
+    
+    <div id="SOHUCS" sid="/project/onedevice.html"></div>
+  </div>
+</div>
+    </div>
+    <footer class="site-footer">
+  <div class="site-info">
+    <p>
+      <span>Powered by </span>
+      <a href="http://jekyllrb.com/">jekyll</a>
+      <span> & </span>
+      <a href="https://nodejs.org/" target="_blank">NodeJS</a>
+      <span> | </span>
+      <span> Server on RaspberryPi 3B | Theme made by </span>
+      <a href="mailto:bluescode@outlook.com">sudo</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <p xmlns:dct="http://purl.org/dc/terms/">
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">
+        <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/by-nc-sa.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" style="border-style: none;" width="80" height="28" alt="署名-非商业性使用-相同方式共享 (CC BY-NC-SA)" />
+      </a>
+    </p>
+    <p>
+      <span>本作品采用</span>
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">《署名-非商业性使用-相同方式共享》</a>
+      <span>许可协议，转载请先联系</span>
+      <a href="mailto:bluescode@outlook.com">站长</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/logo.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="logo" width="64" height="64" class="logo">
+    <p>提莫的神秘商店</p>
+  </div>
+  <div class="site-info">
+    <p>
+      <a href="http://www.beian.miit.gov.cn/" target="_blank">浙ICP备19010606号</a>
+      <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/public-security.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" width="20" height="20" alt="浙公网安备案图标" style="margin: 0 20px;" />
+      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002013836" target="_blank">浙公网安备33011002013836号</a>
+    </p>
+  </div>
+</footer>
+
+    <script>
+  /**
+   url: string
+   callback: [function]
+  */
+  function loadScript (url, callback) {
+    var headElement = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+    var script = document.createElement("script");
+    script.setAttribute("type", "text/javascript");
+    script.setAttribute("charset", "UTF-8");
+    script.setAttribute("src", url);
+    if (typeof callback === 'function') {
+      if (window.attachEvent) {
+        script.onreadystatechange = function () {
+          var e = script.readyState;
+          if (e === "loaded" || e === "complete") {
+            script.onreadystatechange = null;
+            callback();
+          }
+        };
+      } else {
+        script.onload = callback
+      }
+    }
+    headElement.appendChild(script);
+  }
+  /**
+   callback: function
+   timeout: [number] default: 1000
+  */
+  function lazycall(callback, timeout) {
+    if (typeof timeout != 'number') {
+      timeout = 1000
+    }
+    if (window.addEventListener) {
+      window.addEventListener('load', callback, false);
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', callback);
+    } else {
+      setTimeout(callback, timeout);
+    }
+  }
+  /**
+   url: string
+   timeout: [number] default: 1000
+   callback: [function]
+  */
+  function lazyloadScript (url, timeout, callback) {
+    if (typeof timeout === 'function') {
+      callback = timeout
+      timeout = 1000
+    }
+    lazycall(function () {
+      loadScript(url, callback)
+    }, timeout)
+  }
+  lazyloadScript('http://libs.baidu.com/jquery/2.0.3/jquery.min.js', function () {
+    $(document).ready(function () {
+      var navToggle = $('.js-nav-toggle')
+      var mobileMenu = $('.js-mobile-menu')
+      // Toggle blog-menu
+      navToggle.on("click", function () {
+        navToggle.toggleClass("active");
+        mobileMenu.slideToggle();
+        return false;
+      });
+      // Hide mobile-menu > 768
+      $(window).resize(function () {
+        var windowWidth = $(window).width()
+        if (windowWidth > 768) {
+          navToggle.removeClass("active");
+          mobileMenu.show();
+        }
+        if (windowWidth <= 768 && !navToggle.hasClass('active')) {
+          navToggle.removeClass("active");
+          mobileMenu.hide();
+        }
+      });
+      // lazyload img for footer
+      $('.site-footer img.js-lazyload-img').each(function (index, elem) {
+        var img = $(this)
+        img.attr('src', img.data('src'))
+      });
+    });
+  })
+</script>
+
+    <script type="text/javascript">
+  var _hmt = _hmt || [];
+  function loadBaiduTongji () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?f497f00a5871b6ed9078f87ab818d62d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  }
+  lazycall(loadBaiduTongji)
+</script>
+    <script type="text/javascript">
+  function loadChangyan () {
+    var appid = 'cytTik2AP';
+    var conf = 'prod_0b6e93ff9daf2e0d6e49c8ad1586bf4b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      var loadJsWithId=function(d,i){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("id",i);b.setAttribute("charset","UTF-8");b.setAttribute("src",d);c.appendChild(b)};
+      loadJsWithId('https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf, "changyan_mobile_js")
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  }
+  lazycall(loadChangyan)
+</script>
+    
+  </body>
+</html>

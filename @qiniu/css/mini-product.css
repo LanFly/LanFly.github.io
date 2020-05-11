@@ -1,0 +1,86 @@
+@media all and (max-width: 768px) {
+  .main .title {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+
+.main .highlighter-rouge {
+  display: inline;
+  border: 1px dashed #c9cdc9;
+  padding: 1px 5px;
+  background-color: #fffff5;
+  border-radius: 5px;
+}
+
+figure.highlight {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.main .article-content .highlight .rouge-table .gutter .lineno {
+  line-height: 20px;
+}
+.main .article-content .highlight .rouge-table .code span {
+  line-height: 20px;
+}
+
+.main .content .article-content ul {
+  padding-left: 40px;
+}
+.main .content .article-content h2 {
+  margin-top: 20px;
+}
+.main .content .article-content h4 {
+  margin-top: 20px;
+}
+.main .content .article-content p {
+  margin-top: 20px;
+}
+.main .content .article-content p img {
+  max-width: 100%;
+  text-align: center;
+  height: auto;
+}
+
+/* --------------------------- for content-navigator --------------------------- */
+
+.main .content-navigator {
+  padding: 0;
+}
+
+.main .content-navigator + .content {
+  margin-top: 0;
+}
+
+.main .content-navigator ul {
+  list-style: none;
+  overflow: hidden;
+}
+
+.main .content-navigator ul a {
+  text-decoration: none;
+  padding: 10px 10px;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #a5b807;
+}
+
+.main .content-navigator ul li {
+  float: left;
+  border: 1px solid inherit;
+  border-right: 1px solid #e0e0ce;
+}
+
+.main .content-navigator ul li:hover {
+  background-color: #e0e0ce;
+}
+
+.main .content-navigator ul li.content-menu-active {
+  background-color: #e0e0ce;
+}
+
+.main .content-navigator ul li.content-menu-active a {
+  color: #000000;
+}

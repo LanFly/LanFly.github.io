@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="keywords" content="javascript,js,nodemcujs,jerryscript,esp32,iic,spi,i2c">
+<meta name="description" content="本文的主要目的是描述如何让 ESP32 芯片运行 JavaScript，并且让 web 前端开发人员也能玩转硬件。作者之前是 web 前端开发工程师，所以文章会尽量站在 web 前端开发工程师的角度，抛开底层的硬件知识，去掉一些目前不需要关心的，将重点放在软件上。尽管这样，我们接下来所要做的是 硬件+软件 的一个整体，所以一些基础的 C 语言和硬件知识会让你更好的阅读此文章。没有也不要紧，因为高深的我也不会阿！"><title>前端也能玩转硬件：在 ESP32 上运行 JavaScript (附可运行固件下载) - 提莫的神秘商店</title><link rel="stylesheet" href="http://lanfly.vicp.io/css/default.css">
+<link rel="stylesheet" href="http://lanfly.vicp.io/css/highlight/rouge-solarized-light.css">
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" sizes="16x16" />
+<style type="text/css"></style>
+
+    <link rel="stylesheet" href="http://lanfly.vicp.io/css/post.css">
+  </head>
+  <body>
+    <div class="page">
+      <header id="masthead" role="banner" class="site-header">
+  <div class="site-branding">
+    <h1 class="site-title"><a href="/" rel="home" title="回到首页">提莫的神秘商店</a></h1>
+
+    <span class="nav-toggle js-nav-toggle  hidden" title="Click to view the navigation" href="#">
+      <div class="bars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="clear"></div>
+      </div>
+      <p>
+        <span class="menu">Menu</span>
+        <span class="close">Close</span>
+      </p>
+    </span>
+  </div>
+</header>
+
+      <ul id="navi-menu" class="mobile-menu js-mobile-menu"><li class="menu-item transition-02s"><a href="/">首页</a></li><li class="menu-item transition-02s"><a href="/shop">神秘商店</a></li><li class="menu-item transition-02s"><a href="/mcu">硬件</a></li><li class="menu-item transition-02s"><a href="/js">JavaScript</a></li><li class="menu-item transition-02s"><a href="/3d">3D/模型</a></li><li class="menu-item transition-02s"><a href="/project">开源项目</a></li><li class="menu-item transition-02s"><a href="/api">免费服务</a></li><li class="menu-item transition-02s"><a href="/about">关于</a></li></ul>
+      <div class="main enable-sidebar transition-04s">
+  <div class="content article-content">
+    <h1 class="title">前端也能玩转硬件：在 ESP32 上运行 JavaScript (附可运行固件下载)</h1>
+    <blockquote>
+  <p>本篇文章最终的效果是：编译出一个可在 ESP32 上执行的固件，它能存储并直接运行 JavaScript 代码，这样 JavaScript 开发人员就能直接使用而不需要编写 C 代码，就跟在 PC 上编写 NodeJS 程序一样。</p>
+
+  <p>文章比较长，不想看如何实现，只想下载 JavaScript 可执行固件用于开发的同学，请直接拉到文章末尾。想了解如何扩展 JavaScript 接口以实现更多硬件能力的同学，请耐心阅读文章。</p>
+
+  <p>ESP32 开发板可以点击右边的按钮购买。</p>
+</blockquote>
+
+<h2 id="0-写在前面">0. 写在前面</h2>
+
+<p>本文的主要目的是描述如何让 ESP32 芯片运行 JavaScript，并且让 web 前端开发人员也能玩转硬件。
+作者之前是 web 前端开发工程师，所以文章会尽量站在 web 前端开发工程师的角度，抛开底层的硬件知识，去掉一些目前不需要关心的，将重点放在软件上。
+尽管这样，我们接下来所要做的是 硬件+软件 的一个整体，所以一些基础的 C 语言和硬件知识会让你更好的阅读此文章。没有也不要紧，因为高深的我也不会阿！</p>
+
+<p>文章会分为 2 个篇幅进行讲解。其中基础篇会先介绍基础知识，有以下几个部分：</p>
+
+<ol>
+  <li>ESP32 硬件介绍</li>
+  <li>JerryScript 简单介绍</li>
+  <li>FreeRTOS 简单介绍</li>
+</ol>
+
+<p>实战篇将会介绍如何在 ESP32 芯片上面运行 JerryScript，有以下几个部分：</p>
+
+<ol>
+  <li>让 JerryScript 运行并接受串口输入</li>
+  <li>使用片上存储芯片：flash</li>
+  <li>实现 JS 文件模块</li>
+</ol>
+
+<h2 id="1-esp32-硬件介绍">1. ESP32 硬件介绍</h2>
+
+<p>首先先介绍一下 ESP32 是个什么东西，简单来说，它就是一块集成了 WiFi、蓝牙、天线、功率放大器、电源管理模块、CPU、存储器、传感器的单片机微控制器，说人话就是：它能存储并运行我们的代码，还具有 WiFi 和蓝牙功能。先来看一张图吧:</p>
+
+<p class="percent50-img">
+  <img src="https://gd1.alicdn.com/imgextra/i2/1901819815/O1CN01bSYzUN2MNJtHT4WkD_!!1901819815.png_400x400.jpg" alt="ESP32 开发板图片" />
+</p>
+
+<p>下边一块比较大的就是 ESP32 模组，上面提到的所有硬件配置都集成在这片模组上。下面的板子和其它元件是为了方便开发以及芯片启动必要的电路连接，而做成的一个开发板。这个开发板加了电源转换芯片，使得支持 3.3 - 5V 电压，左上角小的方块型的是 cp2102 USB转串口芯片，使得我们可以使用 USB 线连接电脑。这个板子把引脚都引出来了，方便使用杜邦线连接各种外围器件。下面我们说的 ESP32 都表示这整块开发板，而不是 ESP32 模组本身。</p>
+
+<p>ESP32 采用两个哈佛结构 Xtensa LX6 CPU 构成双核系统，时钟频率在 80MHz - 240MHz 范围内可调。片上集成了 520KB SRAM， 448KB ROM。拥有 41 个外设模块，包含常见的 IIC, SPI, UART, PWM, IR, I2S, SDIO 等。常见的协议基本都有了，这使得我们可以更方便的和大部分电子模块或外设进行通信，而不需要像 51 单片机一样，使用软件模拟实现。比如常见的 SSD12864 oled 屏幕，同时具有 IIC 和 SPI 的接口。BLOX-NEO-6M GPS 模块是使用的 UART 接口。直流电机和伺服机可以使用 PWM 驱动。电风扇、空调等用的是 IR 红外线传输信号。</p>
+
+<p>除此之外，ESP32 还集成了片上传感器和模拟信号处理器。比如电容式触摸传感器，霍尔传感器，ADC，DAC 等。如果我们设计了有电池的产品，有了 ADC，我们就可以方便的测量电池的电量，虽然这样测量的值不一定准。</p>
+
+<p>以上是单片机系统中很常见的外设，ESP32 将它们都集成在一个片上系统中了。但 ESP32 最让人激动的是，它集成了 WIFI 和 蓝牙。有了 WIFI 和 蓝牙，再配合各种外设，GPIO，我们就能拿它做很多事情，比如温度湿度传感器的值直接上传到服务器。远程下发执行指令开关灯等，尽可以发挥你的想象。</p>
+
+<p>但硬件编程对于软件工程师来说却实门槛有点高，尤其像我们 web前端开发工程师，C 语言就是第一道门槛。我一直想将 JavaScript 带到硬件编程中去，这样我们就可以使用熟悉的 JavaScript 发挥我们的创意。所以才有了本篇文章。</p>
+
+<h2 id="2-jerryscript-简单介绍">2. JerryScript 简单介绍</h2>
+
+<p>Node.js 很强大，但它是建立在 V8 和 libuv 之上的， ESP32 片上 SRAM 只有 520KB，别说 v8 了，libuv 都跑不起来。所以我们需要一个轻量的，为嵌入式设计的 JavaScript 引擎，幸运的是，我们有 <a href="https://jerryscript.net/">JerryScript</a>。</p>
+
+<p>JerryScript 是一个轻量级的 JavaScript 引擎，它可以运行在受限制的设备上，例如微控制器，它能在 RAM &lt; 64 KB， ROM &lt; 200 KB 的设备上运行。而且它还提供了完整的 ES5.1 语法支持，以及部分 ES6 语法支持，比如 箭头函数，Symbol， Promise 等。在编程体验上虽然没有 v8 这么爽，但有这些就已经很好了啊（相对于其它的嵌入式 JavaScript 引擎来说）！</p>
+
+<p>还有一个重要的点是 JerryScript 的 api 更符合我们的编程习惯，对于已经习惯编写 Node.js addon 的人来说会更容易接受。所以以上2点，是我们选择 JerryScript 的理由。为了让大家更直观的理解，下面我们对比2个目前在嵌入式比较流行的 JavaScript 引擎。</p>
+
+<h4 id="duktape">duktape</h4>
+
+<p><a href="https://duktape.org/">duktape</a> 目前在 github 上面是 3.7K 个 Star，下面是官网的 hello world!</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+#include "duktape.h"
+</span>
+<span class="cm">/* Adder: add argument values. */</span>
+<span class="k">static</span> <span class="n">duk_ret_t</span> <span class="nf">native_adder</span><span class="p">(</span><span class="n">duk_context</span> <span class="o">*</span><span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">duk_get_top</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>  <span class="cm">/* #args */</span>
+  <span class="kt">double</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">res</span> <span class="o">+=</span> <span class="n">duk_to_number</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="n">duk_push_number</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">res</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>  <span class="cm">/* one return value */</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+  <span class="n">duk_context</span> <span class="o">*</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">duk_create_heap_default</span><span class="p">();</span>
+
+  <span class="n">duk_push_c_function</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">native_adder</span><span class="p">,</span> <span class="n">DUK_VARARGS</span><span class="p">);</span>
+  <span class="n">duk_put_global_string</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"adder"</span><span class="p">);</span>
+
+  <span class="n">duk_eval_string</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="s">"adder(1+2);"</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"1+2=%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="n">duk_get_int</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+
+  <span class="n">duk_destroy_heap</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="jerryscript">JerryScript</h4>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include "jerryscript.h"
+#include "jerryscript-ext/handler.h"
+</span>
+<span class="k">static</span> <span class="n">jerry_value_t</span> <span class="nf">adder_handler</span><span class="p">(</span><span class="k">const</span> <span class="n">jerry_value_t</span> <span class="n">func_value</span><span class="p">,</span> <span class="cm">/**&lt; function object */</span>
+                                   <span class="k">const</span> <span class="n">jerry_value_t</span> <span class="n">this_value</span><span class="p">,</span> <span class="cm">/**&lt; this arg */</span>
+                                   <span class="k">const</span> <span class="n">jerry_value_t</span> <span class="n">args</span><span class="p">[],</span>    <span class="cm">/**&lt; function arguments */</span>
+                                   <span class="k">const</span> <span class="n">jerry_length_t</span> <span class="n">args_cnt</span><span class="p">)</span>  <span class="cm">/**&lt; number of function arguments */</span>
+<span class="p">{</span>
+  <span class="kt">double</span> <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kt">uint32_t</span> <span class="n">argIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="n">argIndex</span> <span class="o">&lt;</span> <span class="n">args_cnt</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="kt">double</span> <span class="o">=</span> <span class="kt">double</span> <span class="o">+</span> <span class="n">jerry_get_number_value</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">argIndex</span><span class="p">]);</span>
+    <span class="n">argIndex</span><span class="o">++</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">jerry_create_number</span><span class="p">(</span><span class="n">total</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">const</span> <span class="n">jerry_char_t</span> <span class="n">script</span><span class="p">[]</span> <span class="o">=</span> <span class="s">"print(adder(1, 2));"</span><span class="p">;</span>
+
+  <span class="cm">/* Initialize engine */</span>
+  <span class="n">jerry_init</span> <span class="p">(</span><span class="n">JERRY_INIT_EMPTY</span><span class="p">);</span>
+
+  <span class="cm">/* Register 'print' function from the extensions */</span>
+  <span class="n">jerryx_handler_register_global</span> <span class="p">((</span><span class="k">const</span> <span class="n">jerry_char_t</span> <span class="o">*</span><span class="p">)</span> <span class="s">"print"</span><span class="p">,</span> <span class="n">jerryx_handler_print</span><span class="p">);</span>
+
+  <span class="cm">/* Register 'adder' function from the extensions */</span>
+  <span class="n">jerryx_handler_register_global</span> <span class="p">((</span><span class="k">const</span> <span class="n">jerry_char_t</span> <span class="o">*</span><span class="p">)</span> <span class="s">"adder"</span><span class="p">,</span> <span class="n">adder_handler</span><span class="p">);</span>
+
+  <span class="cm">/* Setup Global scope code */</span>
+  <span class="n">jerry_value_t</span> <span class="n">parsed_code</span> <span class="o">=</span> <span class="n">jerry_parse</span> <span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="k">sizeof</span> <span class="p">(</span><span class="n">script</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">JERRY_PARSE_NO_OPTS</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">jerry_value_is_error</span> <span class="p">(</span><span class="n">parsed_code</span><span class="p">))</span>
+  <span class="p">{</span>
+    <span class="cm">/* Execute the parsed source code in the Global scope */</span>
+    <span class="n">jerry_value_t</span> <span class="n">ret_value</span> <span class="o">=</span> <span class="n">jerry_run</span> <span class="p">(</span><span class="n">parsed_code</span><span class="p">);</span>
+
+    <span class="cm">/* Returned value must be freed */</span>
+    <span class="n">jerry_release_value</span> <span class="p">(</span><span class="n">ret_value</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="cm">/* Parsed source code must be freed */</span>
+  <span class="n">jerry_release_value</span> <span class="p">(</span><span class="n">parsed_code</span><span class="p">);</span>
+
+  <span class="cm">/* Cleanup engine */</span>
+  <span class="n">jerry_cleanup</span> <span class="p">();</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<h2 id="3-freertos-简单介绍">3. FreeRTOS 简单介绍</h2>
+
+<p><a href="https://www.freertos.org">FreeRTOS</a> 是一个热门的嵌入式设备用即时操作系统核心，它设计小巧且简易，大部分的代码由 C 语言编写。它提供多任务，互斥锁，信号量，和软件定时器等功能，让用户可以快速的进行应用程序设计。</p>
+
+<p>以上是维基百科的介绍，简单来说主要就是为设计多任务的应用程序提供基本的工具库，让应用开发者可以专注于逻辑的实现，而没必要自己实现任务管理和调度。因为在单片机上编程是没有像 Linux 一样的多进程，多线程的概念的，单片机上电启动后就从指定地址加载指令，按照顺序执行完。</p>
+
+<p>单片机一般来说只有一个处理器，同一时间只能处理一个任务，假如你想让 2 个 LED 交替闪烁，那么你必须在 <code class="highlighter-rouge">while(true){...}</code> 循环内手动控制 2 个 LED 逻辑代码的执行时间，假如后续有 3 个，4 个，N 个呢？那么所有的逻辑都得写在里面，会非常庞大。</p>
+
+<p>FreeRTOS 的任务能让各个逻辑跑在单独的 Task 中互不干扰，各 Task 以优先级抢占 CPU 时间。值得注意的是，即使使用了 FreeRTOS，整个应用仍然是单线程的，高优先级任务执行完后，必须要让出 CPU 时间才能让其它低优先级任务执行。记住，单片机只有一个处理器，同一时间只能处理一个任务。</p>
+
+<p>整个 FreeRTOS 的任务是一个链表，从任务列表中取出最高优先级的任务执行，执行完后再取出下一优先级任务，一直循环。不过有几点不同，FreeRTOS 永远保证高优先级任务先执行，所以低优先级任务有可能没有机会执行。每次执行完任务后，从列表中取出下一个任务时，都会重新计算优先级。执行中的任务只能由任务自身让出 CPU 时间，否则其它任务没有机会执行，当然除了中断。FreeRTOS 是实时操作系统，你可以精确控制各个任务的开始和结束时间。</p>
+
+<h1 id="实战篇">实战篇</h1>
+
+<h2 id="1-让-jerryscript-运行并接受串口输入">1. 让 JerryScript 运行并接受串口输入</h2>
+
+<p>以上介绍完了基础知识，下面我们开始让 JerryScript 在 ESP32 上面跑起来，并让串口接收用户输入，将它输入 JerryScript 中执行。</p>
+
+<p>首先需要准备好 <a href="https://docs.espressif.com/projects/esp-idf/zh_CN/latest/index.html">ESP-IDF</a> 开发环境，然后新建一个空的工程，我推荐从 <a href="https://github.com/espressif/esp-idf/tree/master/examples/get-started/hello_world">idf-hello-world</a> 新建。JerryScript 将作为一个外部依赖放在 <code class="highlighter-rouge">deps/JerryScript</code> 目录。JerryScript 源码地址：<a href="https://jerryscript.net/">JerryScript</a>。</p>
+
+<p>最终我们的工程目录是这样的：</p>
+
+<pre><code class="language-txt">- build
+- deps
+  - jerryscript
+- components
+- main
+- spiffs
+- partitions.csv
+- CMakeLists.txt
+- sdkconfig
+</code></pre>
+
+<ul>
+  <li><code class="highlighter-rouge">build</code> 是我们的构建目录，构建过程中的所有临时文件都在这里，方便清理。</li>
+  <li><code class="highlighter-rouge">deps</code> 是存放第三方依赖的目录，JerryScript 将作为一个依赖，这样方便管理，可以和官方保持同步。</li>
+  <li><code class="highlighter-rouge">components</code> 是存放<a href="https://docs.espressif.com/projects/esp-idf/zh_CN/latest/api-guides/build-system.html#component-directories">用户组件</a>的目录，我们自己编写的组件都放在这里。</li>
+  <li><code class="highlighter-rouge">main</code> 是一个特殊的组件，作为应用的主程序。</li>
+  <li><code class="highlighter-rouge">spiffs</code> 是存放内置文件系统的目录，里面的所有文件都会被打包成一个二进制文件，方便烧录到芯片上。</li>
+  <li><code class="highlighter-rouge">partitions.csv</code> 是分区表配置文件，每一个应用都需要配置一个分区表，这里使用默认的就行了。</li>
+  <li><code class="highlighter-rouge">CMakeLists.txt</code> 是工程的主构建文件，整个工程的构建将从这里开始。</li>
+  <li><code class="highlighter-rouge">sdkconfig</code> 是工程的配置文件，可以配置系统参数和一些用户自定义的参数。</li>
+</ul>
+
+<p>以上所有都准备好后，可以开始写代码了。ESP32 的 CPU 型号是 Xtensa 32-bit LX6，所以我们需要编写 JerryScript 的交叉编译，然后将静态库链接到 main 组件中去，这样 JerryScript 才能运行起来。</p>
+
+<p>下面是主 CMakeLists.txt 文件内容，主要是指定 JerryScript 的源码目录，这样方便在其它组件内使用。然后设置 <code class="highlighter-rouge">JERRY_GLOBAL_HEAP_SIZE</code> 为 128KB。
+<code class="highlighter-rouge">JERRY_GLOBAL_HEAP_SIZE</code> 表示 JerryScript 虚拟机预先申请的内存大小，在虚拟机启动时就会向系统预先申请指定大小的内存。
+因为 ESP32 内存总共才 520KB，而 JerryScript 默认的 heap_size 也是 512KB，这样肯定是编译不过的，会报溢出错误。</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cmake_minimum_required</span><span class="p">(</span>VERSION 3.5<span class="p">)</span>
+
+<span class="nb">set</span><span class="p">(</span>JERRYSCRIPT_SOURCE <span class="s2">"</span><span class="si">${</span><span class="nv">CMAKE_SOURCE_DIR</span><span class="si">}</span><span class="s2">/deps/jerryscript"</span><span class="p">)</span>
+
+<span class="c1"># JerryScript setting here</span>
+<span class="nb">set</span><span class="p">(</span>JERRY_GLOBAL_HEAP_SIZE <span class="s2">"(128)"</span><span class="p">)</span>
+
+<span class="nb">include</span><span class="p">(</span>$ENV{IDF_PATH}/tools/cmake/project.cmake<span class="p">)</span>
+<span class="nb">project</span><span class="p">(</span>nodemcujs<span class="p">)</span>
+</code></pre></div></div>
+
+<p>主 cmake 编写好后，接下来是编写 main 组件的 cmake 文件。要使用 JerryScript 非常简单，只需要链接 JerryScript 的静态库，然后配置正确的头文件路径。JerryScript 默认会编译为静态库，我们在 main 组件中将它们链接就行。</p>
+
+<p>下面是 main 组件的 CMakeLists.txt，内容有点多，这里只选择关键的讲解，详情请看 <a href="https://github.com/nodemcujs/nodemcujs-firmware">nodemcujs</a> 项目:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">set</span><span class="p">(</span>COMPONENT_PRIV_INCLUDEDIRS
+    <span class="si">${</span><span class="nv">JerryScript_SOURCE</span><span class="si">}</span>/jerry-core/include
+    <span class="si">${</span><span class="nv">JerryScript_SOURCE</span><span class="si">}</span>/jerry-ext/include
+    <span class="si">${</span><span class="nv">JerryScript_SOURCE</span><span class="si">}</span>/jerry-port/default/include<span class="p">)</span>
+</code></pre></div></div>
+
+<p>上面是设置 JerryScript 的头文件查找路径。下面将进行 JerryScript 的交叉编译，并把编译后的静态库链接到 main 组件：</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Xtensa processor architecture optimization</span>
+<span class="nb">set</span><span class="p">(</span>EXTERNAL_COMPILE_FLAGS -ffunction-sections -fdata-sections -fstrict-volatile-bitfields -mlongcalls -nostdlib -w<span class="p">)</span>
+<span class="nb">string</span><span class="p">(</span>REPLACE <span class="s2">";"</span> <span class="s2">"|"</span> EXTERNAL_COMPILE_FLAGS_ALT_SEP <span class="s2">"</span><span class="si">${</span><span class="nv">EXTERNAL_COMPILE_FLAGS</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>上面是设置交叉编译的参数，针对 xtensa 处理器，不加这个参数链接通不过。尤其注意 <code class="highlighter-rouge">-mlongcalls</code> 参数，此参数虽然被设置为编译参数，但它实际是作用在汇编的。如果你看到 <code class="highlighter-rouge">dangerous relocation: call0: call target out of range</code> 这个错误，多半是忘记加这个参数了。详情请看 <a href="https://embarc.org/man-pages/gcc/Xtensa-Options.html">xtensa-gcc-longcalls</a> 编译器的文档。
+注意，这里的都需要写在 <code class="highlighter-rouge">register_component()</code> 后面，否则会报错。</p>
+
+<p>编译参数设置好后，下面是使用 <code class="highlighter-rouge">externalproject_add</code> 将 JerryScript 作为外部工程单独编译，不能使用 <code class="highlighter-rouge">add_subdirectory</code>，cmake 会报错。</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">externalproject_add</span><span class="p">(</span>jerryscript_build
+  PREFIX <span class="si">${</span><span class="nv">COMPONENT_DIR</span><span class="si">}</span>
+  SOURCE_DIR <span class="si">${</span><span class="nv">JERRYSCRIPT_SOURCE</span><span class="si">}</span>
+  BUILD_IN_SOURCE 0
+  BINARY_DIR jerryscript
+  INSTALL_COMMAND <span class="s2">""</span> <span class="c1"># Do not install to host</span>
+  LIST_SEPARATOR | <span class="c1"># Use the alternate list separator</span>
+  CMAKE_ARGS
+    -DJERRY_GLOBAL_HEAP_SIZE=<span class="si">${</span><span class="nv">JERRY_GLOBAL_HEAP_SIZE</span><span class="si">}</span>
+    -DJERRY_CMDLINE=OFF
+    -DENABLE_LTO=OFF <span class="c1"># FIXME: This option must be turned off or the cross-compiler settings will be overwritten</span>
+    -DCMAKE_C_COMPILER_WORKS=true <span class="c1"># cross-compiler</span>
+    -DCMAKE_SYSTEM_NAME=Generic
+    -DCMAKE_SYSTEM_PROCESSOR=xtensa
+    -DCMAKE_C_COMPILER=<span class="si">${</span><span class="nv">CMAKE_C_COMPILER</span><span class="si">}</span>
+    -DEXTERNAL_COMPILE_FLAGS=<span class="si">${</span><span class="nv">EXTERNAL_COMPILE_FLAGS_ALT_SEP</span><span class="si">}</span>
+    -DCMAKE_EXE_LINKER_FLAGS=<span class="si">${</span><span class="nv">CMAKE_EXE_LINKER_FLAGS</span><span class="si">}</span>
+    -DCMAKE_LINKER=<span class="si">${</span><span class="nv">CMAKE_LINKER</span><span class="si">}</span>
+    -DCMAKE_AR=<span class="si">${</span><span class="nv">CMAKE_AR</span><span class="si">}</span>
+    -DCMAKE_NM=<span class="si">${</span><span class="nv">CMAKE_NM</span><span class="si">}</span>
+    -DCMAKE_RANLIB=<span class="si">${</span><span class="nv">CMAKE_RANLIB</span><span class="si">}</span>
+    -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER
+<span class="p">)</span>
+<span class="nb">add_dependencies</span><span class="p">(</span><span class="si">${</span><span class="nv">COMPONENT_NAME</span><span class="si">}</span> jerryscript_build<span class="p">)</span>
+</code></pre></div></div>
+
+<p>上面主要是将 JerryScript 设置为 main 组件的依赖，这样编译 main 组件时会自动编译 JerryScript。然后设置交叉编译工具链。这里需要特别注意，关闭 <code class="highlighter-rouge">ENABLE_LTO=OFF</code>，为什么？因为 JerryScript 里面开了此选项后，会判断编译器 ID 是否为 GNU，如果是的话，强制设置编译器为 <code class="highlighter-rouge">GCC</code>，导致我们的交叉编译工具链设置失效。</p>
+
+<p>最后，我们将编译后的静态库链接到 main 组件：</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">set</span><span class="p">(</span>COMPONENT_BUILD_PATH <span class="si">${</span><span class="nv">CMAKE_BINARY_DIR</span><span class="si">}</span>/<span class="si">${</span><span class="nv">COMPONENT_NAME</span><span class="si">}</span>/jerryscript<span class="p">)</span>
+
+<span class="nb">target_link_libraries</span><span class="p">(</span><span class="si">${</span><span class="nv">COMPONENT_NAME</span><span class="si">}</span>
+                      <span class="si">${</span><span class="nv">COMPONENT_BUILD_PATH</span><span class="si">}</span>/lib/libjerry-core.a
+                      <span class="si">${</span><span class="nv">COMPONENT_BUILD_PATH</span><span class="si">}</span>/lib/libjerry-ext.a
+                      <span class="si">${</span><span class="nv">COMPONENT_BUILD_PATH</span><span class="si">}</span>/lib/libjerry-port-default-minimal.a<span class="p">)</span>
+</code></pre></div></div>
+
+<p>JerryScript 编译完后，会在编译目录的 <code class="highlighter-rouge">main/jerryscript</code> 下面生成最终文件，这个路径是我们上面自己指定的，我们这里只需要 <code class="highlighter-rouge">jerry-core.a</code> <code class="highlighter-rouge">jerry-ext.a</code> <code class="highlighter-rouge">jerry-default-minimal.a</code> 这三个静态库就行了。
+<code class="highlighter-rouge">${COMPONENT_NAME}</code> 就是 <code class="highlighter-rouge">main</code>。</p>
+
+<p>下面编写初始化代码，在系统启动时初始化 JerryScript 虚拟机。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+</span>
+<span class="cp">#include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
+#include "freertos/task.h"
+</span>
+<span class="cp">#include "jerryscript.h"
+#include "jerryscript-ext/handler.h"
+#include "jerryscript-port.h"
+</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">start_jerryscript</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="cm">/* Initialize engine */</span>
+  <span class="n">jerry_init</span><span class="p">(</span><span class="n">JERRY_INIT_EMPTY</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">app_main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="c1">// init jerryscript</span>
+  <span class="n">start_jerryscript</span><span class="p">();</span>
+  <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="c1">// alive check here. but nothing to do now!</span>
+    <span class="n">vTaskDelay</span><span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="n">portTICK_PERIOD_MS</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="cm">/* Cleanup engine */</span>
+  <span class="n">jerry_cleanup</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>初始化 JerryScript 非常简单，只需要调用 <code class="highlighter-rouge">jerry_init(JERRY_INIT_EMPTY)</code> 就可以，现在我们已经让 js 虚拟机跑起来了。<code class="highlighter-rouge">vTaskDelay</code> 是 FreeRTOS 提供的函数，作用是让出指定的 cpu 时间去执行其它任务，不至于将整个应用程序阻塞在这里，<code class="highlighter-rouge">1000 / portTICK_PERIOD_MS</code> 表示 1000ms，这跟在 Linux 上使用 <code class="highlighter-rouge">sleep(1)</code> 是差不多的。<code class="highlighter-rouge">portTICK_PERIOD_MS</code> 表示 FreeRTOS 1ms 内执行的节拍，这跟 CPU 的频率有关，详情请参考 <a href="https://www.freertos.org">FreeRTOS</a> 文档。</p>
+
+<p>现在 JerryScript 的集成就已经完成了，可以编译出可执行的固件了：</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ mkdir build
+$ cd build
+$ cmake ..
+$ make
+</code></pre></div></div>
+
+<p>如果没有错误，会在编译目录生成可执行固件，使用 <code class="highlighter-rouge">make flash</code> 会自动将固件烧录到 ESP32 芯片上。<code class="highlighter-rouge">make flash</code> 不需要额外的配置，可以直接使用，它会调用内置的 <a href="https://github.com/espressif/esptool">esptool.py</a> 进行烧写。</p>
+
+<p><strong>注意</strong></p>
+
+<p>烧录固件时，需要先安装串口驱动，某宝上面卖的板子质量参差不齐，型号众多，很多卖家不懂技术，自己卖的是什么都不知道。一般来说，ESP32 都是 CP2102 的驱动，去官网下载驱动就行了。</p>
+
+<p>具体的烧录方法请查看 nodemcujs <a href="https://github.com/nodemcujs/nodemcujs-firmware#4-%E7%83%A7%E5%BD%95%E5%9B%BA%E4%BB%B6">烧录固件</a>。</p>
+
+<p>如果编译出错，请从头开始再来一遍。现在 JerryScript 已经跑起来了，但是我们还没有 js 代码执行，下面我们将打开串口，让从串口接收到的字符串输入给 JerryScript 执行，并且将结果从串口输出。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
+#include "freertos/task.h"
+#include "driver/uart.h"
+</span><span class="c1">// ... 省略其它头文件</span>
+<span class="k">static</span> <span class="n">QueueHandle_t</span> <span class="n">uart_queue</span><span class="p">;</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">uart_event_task</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">pvParameters</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">uart_event_t</span> <span class="n">event</span><span class="p">;</span>
+  <span class="kt">uint8_t</span> <span class="o">*</span><span class="n">dtmp</span> <span class="o">=</span> <span class="p">(</span><span class="kt">uint8_t</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+  <span class="k">for</span> <span class="p">(;;)</span> <span class="p">{</span>
+    <span class="c1">// Waiting for UART event.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">xQueueReceive</span><span class="p">(</span><span class="n">uart_queue</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">event</span><span class="p">,</span> <span class="p">(</span><span class="n">portTickType</span><span class="p">)</span><span class="n">portMAX_DELAY</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">bzero</span><span class="p">(</span><span class="n">dtmp</span><span class="p">,</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+      <span class="k">switch</span> <span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
+      <span class="cm">/** 
+       * We'd better handler data event fast, there would be much more data events than
+       * other types of events. If we take too much time on data event, the queue might
+       * be full.
+       */</span>
+      <span class="k">case</span> <span class="n">UART_DATA</span><span class="p">:</span>
+        <span class="n">uart_read_bytes</span><span class="p">(</span><span class="n">UART_NUM_0</span><span class="p">,</span> <span class="n">dtmp</span><span class="p">,</span> <span class="n">event</span><span class="p">.</span><span class="n">size</span><span class="p">,</span> <span class="n">portMAX_DELAY</span><span class="p">);</span>
+        <span class="cm">/* Setup Global scope code */</span>
+        <span class="n">jerry_value_t</span> <span class="n">parsed_code</span> <span class="o">=</span> <span class="n">jerry_parse</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtmp</span><span class="p">,</span> <span class="n">event</span><span class="p">.</span><span class="n">size</span><span class="p">,</span> <span class="n">JERRY_PARSE_NO_OPTS</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">jerry_value_is_error</span><span class="p">(</span><span class="n">parsed_code</span><span class="p">))</span> <span class="p">{</span>
+          <span class="cm">/* Execute the parsed source code in the Global scope */</span>
+          <span class="n">jerry_value_t</span> <span class="n">ret_value</span> <span class="o">=</span> <span class="n">jerry_run</span><span class="p">(</span><span class="n">parsed_code</span><span class="p">);</span>
+
+          <span class="cm">/* Returned value must be freed */</span>
+          <span class="n">jerry_release_value</span><span class="p">(</span><span class="n">ret_value</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">ohno</span> <span class="o">=</span> <span class="s">"something was wrong!"</span><span class="p">;</span>
+          <span class="n">uart_write_bytes</span><span class="p">(</span><span class="n">UART_NUM_0</span><span class="p">,</span> <span class="n">ohno</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">ohno</span><span class="p">));</span>
+        <span class="p">}</span>
+
+        <span class="cm">/* Parsed source code must be freed */</span>
+        <span class="n">jerry_release_value</span><span class="p">(</span><span class="n">parsed_code</span><span class="p">);</span>
+        <span class="c1">// free(dtmp);</span>
+        <span class="k">break</span><span class="p">;</span>
+      <span class="c1">//Event of UART ring buffer full</span>
+      <span class="k">case</span> <span class="n">UART_BUFFER_FULL</span><span class="p">:</span>
+        <span class="c1">// If buffer full happened, you should consider encreasing your buffer size</span>
+        <span class="c1">// As an example, we directly flush the rx buffer here in order to read more data.</span>
+        <span class="n">uart_flush_input</span><span class="p">(</span><span class="n">UART_NUM_0</span><span class="p">);</span>
+        <span class="n">xQueueReset</span><span class="p">(</span><span class="n">uart_queue</span><span class="p">);</span>
+        <span class="k">break</span><span class="p">;</span>
+      <span class="c1">//Others</span>
+      <span class="nl">default:</span>
+        <span class="k">break</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="n">free</span><span class="p">(</span><span class="n">dtmp</span><span class="p">);</span>
+  <span class="n">dtmp</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+  <span class="n">vTaskDelete</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/**
+ * Configure parameters of an UART driver, communication pins and install the driver
+ * 
+ * - Port: UART0
+ * - Baudrate: 115200
+ * - Receive (Rx) buffer: on
+ * - Transmit (Tx) buffer: off
+ * - Flow control: off
+ * - Event queue: on
+ * - Pin assignment: TxD (default), RxD (default)
+ */</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">handle_uart_input</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">uart_config_t</span> <span class="n">uart_config</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="p">.</span><span class="n">baud_rate</span> <span class="o">=</span> <span class="mi">115200</span><span class="p">,</span>
+      <span class="p">.</span><span class="n">data_bits</span> <span class="o">=</span> <span class="n">UART_DATA_8_BITS</span><span class="p">,</span>
+      <span class="p">.</span><span class="n">parity</span> <span class="o">=</span> <span class="n">UART_PARITY_DISABLE</span><span class="p">,</span>
+      <span class="p">.</span><span class="n">stop_bits</span> <span class="o">=</span> <span class="n">UART_STOP_BITS_1</span><span class="p">,</span>
+      <span class="p">.</span><span class="n">flow_ctrl</span> <span class="o">=</span> <span class="n">UART_HW_FLOWCTRL_DISABLE</span><span class="p">};</span>
+  <span class="n">uart_param_config</span><span class="p">(</span><span class="n">UART_NUM_0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">uart_config</span><span class="p">);</span>
+
+  <span class="c1">//Set UART pins (using UART0 default pins ie no changes.)</span>
+  <span class="n">uart_set_pin</span><span class="p">(</span><span class="n">UART_NUM_0</span><span class="p">,</span> <span class="n">UART_PIN_NO_CHANGE</span><span class="p">,</span> <span class="n">UART_PIN_NO_CHANGE</span><span class="p">,</span> <span class="n">UART_PIN_NO_CHANGE</span><span class="p">,</span> <span class="n">UART_PIN_NO_CHANGE</span><span class="p">);</span>
+  <span class="c1">//Install UART driver, and get the queue.</span>
+  <span class="n">uart_driver_install</span><span class="p">(</span><span class="n">UART_NUM_0</span><span class="p">,</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">uart_queue</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+  <span class="c1">//Create a task to handler UART event from ISR</span>
+  <span class="n">xTaskCreate</span><span class="p">(</span><span class="n">uart_event_task</span><span class="p">,</span> <span class="s">"uart_event_task"</span><span class="p">,</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>代码有点多，将它拆成 2 个函数来看，<code class="highlighter-rouge">handle_uart_input</code> 函数负责安装串口驱动，然后启动一个 <a href="https://www.freertos.org/taskandcr.html">Task</a> 来处理串口输入。为什么要启动一个 task ？因为串口输入是异步的，我们不能让它阻塞，所以在新的 task 中采用 <a href="https://github.com/espressif/esp-idf/tree/6fe853a2c/examples/peripherals/uart/uart_events">esp-uart-events</a> 的方式监听事件，等有串口输入的事件到来时再去读取输入并执行。</p>
+
+<p>板子带有一个 USB 转串口芯片，芯片的引脚被连接到 <code class="highlighter-rouge">UART_NUM_0</code>，所以我们可以默认从这个串口读取输入，<code class="highlighter-rouge">printf</code> 默认也会从这里输出，这样插上 USB 就可以当做一台 mini 的 JavaScript 开发板了，方便开发和调试。这正是动态语言在硬件编程上的魅力。</p>
+
+<p>有了输入，我们还需要一个 native api 用于在 JavaScript 代码中输出数据，这里我们使用自带的 <code class="highlighter-rouge">print</code> 就行了。在 JavaScript 代码中可以直接使用 <code class="highlighter-rouge">print(message)</code> 来输出数据到串口。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include "jerryscript.h"
+#include "jerryscript-ext/handler.h"
+</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">handler_print</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="cm">/* Register 'print' function from the extensions */</span>
+  <span class="n">jerryx_handler_register_global</span> <span class="p">((</span><span class="k">const</span> <span class="n">jerry_char_t</span> <span class="o">*</span><span class="p">)</span> <span class="s">"print"</span><span class="p">,</span>
+                                  <span class="n">jerryx_handler_print</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">app_main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="c1">// init jerryscript</span>
+  <span class="n">start_jerryscript</span><span class="p">();</span>
+  <span class="n">handler_print</span><span class="p">();</span>
+  <span class="c1">// handle uart input</span>
+  <span class="n">handle_uart_input</span><span class="p">();</span>
+  <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="c1">// alive check here. but nothing to do now!</span>
+    <span class="n">vTaskDelay</span><span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="n">portTICK_PERIOD_MS</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="cm">/* Cleanup engine */</span>
+  <span class="n">jerry_cleanup</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>使用 <code class="highlighter-rouge">make flash</code> 编译更新后的固件，将它烧录到板子上，现在打开串口，连接上板子，输入 <code class="highlighter-rouge">var msg = 'hello nodemcujs'; print(msg)</code> 试试吧。你可以输入任意合法的 JavaScript 语句，使用 <code class="highlighter-rouge">print</code> 函数输出数据。</p>
+
+<p><strong>注意：不要使用 minicom，可以使用 <a href="https://esp8266.ru/esplorer/">ESPlorer</a>。因为我们是将串口的输入直接输入虚拟机执行的，所以只接收可显示字符和换行回车，其它字符比如控制字符会导致执行失败</strong></p>
+
+<p>完整代码请查看 <a href="https://github.com/nodemcujs/nodemcujs-firmware">nodemcujs</a> 源码。</p>
+
+<h2 id="2-使用片上存储芯片flash">2. 使用片上存储芯片：flash</h2>
+
+<p>上面我们已经实现了内嵌 JerryScript 虚拟机并且打通了串口交互，但每次重启都会重置数据，这显然不是一块标准的开发板，本章节我们将会对接文件系统用于存储用户数据。</p>
+
+<p>ESP32 已经集成了一片 4MB 的 SPI 存储芯片，SPI 是一种数据交换协议，我们这里不用太关心，感兴趣的自己查找资料，下文我们以 <code class="highlighter-rouge">flash</code> 代指这个存储芯片。</p>
+
+<p><a href="https://docs.espressif.com/projects/esp-idf/zh_CN/latest/index.html">ESP-IDF</a> 工程支持 <a href="https://docs.espressif.com/projects/esp-idf/zh_CN/latest/api-reference/storage/spiffs.html">spiffs</a> 组件，我们只需要拿来用就行了。要使用文件系统，有这些步骤是必须要做的：</p>
+
+<ol>
+  <li>分区表 - 划分磁盘的用途，告诉系统有几个分区，各个分区大小是多少。每片 ESP32 的 flash 可以包含多个应用程序，以及多种不同类型的数据（例如校准数据、文件系统数据、参数存储器数据等）。因此，我们需要引入分区表的概念。</li>
+  <li>mount - 读取分区表配置，如果还没有被初始化，则对磁盘进行格式化</li>
+</ol>
+
+<p>我们基于默认的分区表上进行修改，新增一个 data 分区用于存储用户自定义数据。在项目根目录新建 <code class="highlighter-rouge">partitions.csv</code> 文件，内容如下：</p>
+
+<pre><code class="language-csv"># Name,   Type, SubType, Offset,  Size, Flags
+# Note: if you change the phy_init or app partition offset, make sure to change the offset in Kconfig.projbuild
+nvs,      data, nvs,     0x9000,  0x6000,
+phy_init, data, phy,     0xf000,  0x1000,
+factory,  app,  factory, 0x10000, 1M,
+storage,  data, spiffs,  ,        0x2F0000,
+</code></pre>
+
+<p><code class="highlighter-rouge">nvs</code> 和 <code class="highlighter-rouge">phy_init</code> 分区使用默认就行，<code class="highlighter-rouge">factory</code> 分区用于存储 App，即编译出来的可执行代码，也可以理解为编译出来的 <code class="highlighter-rouge">bin</code> 文件。我们指定大小为 <code class="highlighter-rouge">1M</code>，目前编译出来的固件大小为 <code class="highlighter-rouge">500KB</code> 左右，一般来说够用了。</p>
+
+<p><code class="highlighter-rouge">storage</code> 分区是我们新加的分区，用于存储用户自定义数据，<code class="highlighter-rouge">offset</code> 我们这里不填写，会自动对齐上一个分区。大小指定为 <code class="highlighter-rouge">0x2F0000</code>，差不多有 <code class="highlighter-rouge">2.7M</code> 可用空间。注意这是最大了，不能再大，ESP32 最常见的 flash 大小是 <code class="highlighter-rouge">4MB</code>，如果你的 <code class="highlighter-rouge">flash</code> 大小不一样，可以根据情况修改，但不能超过分区大小，可以小于。</p>
+
+<p>ESP32 默认将分区表数据烧写至 <code class="highlighter-rouge">0x8000</code> 地址处，长度为 <code class="highlighter-rouge">0xC00</code>，最多可以保存 <code class="highlighter-rouge">95</code> 个条目，分区表后面还保存有 <code class="highlighter-rouge">MD5</code> 校验和，所以如果你不清楚整个分区表，不要乱改分区数据。详细说明请看 <a href="https://docs.espressif.com/projects/esp-idf/zh_CN/latest/api-guides/partition-tables.html">分区表</a> 文档。</p>
+
+<p><strong>注意</strong></p>
+
+<p>要使用用户自定义分区表，需要在 <code class="highlighter-rouge">sdkconfig</code> 文件中指定，可以使用 <code class="highlighter-rouge">make menuconfig</code> 图形界面，具体方法如下：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">mkdir </span>build
+<span class="nv">$ </span><span class="nb">cd </span>build
+<span class="nv">$ </span>cmake ..
+<span class="nv">$ </span>make menuconfig
+</code></pre></div></div>
+
+<p>执行 <code class="highlighter-rouge">make menuconfig</code> 后，会出现图形界面，进入：<code class="highlighter-rouge">Partition Table</code>，<code class="highlighter-rouge">Partition Table</code> 选择 <code class="highlighter-rouge">Custom partition table CSV</code>。然后 <code class="highlighter-rouge">Custom partition CSV file</code> 填写 <code class="highlighter-rouge">partitions.csv</code>，注意这是你的分区表文件名，请根据你自己的情况修改。</p>
+
+<p>分区表制作好后，接下来我们在启动流程中 <code class="highlighter-rouge">mount storage</code> 分区：如果分区没有被初始化，则格式化分区后再次加载，否则直接加载。并且将使用情况打印出来。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include "esp_system.h"
+#include "esp_spi_flash.h"
+#include "esp_heap_caps.h"
+#include "esp_err.h"
+</span>
+<span class="cp">#include "driver/uart.h"
+#include "esp_spiffs.h"
+</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">mount_spiffs</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">esp_vfs_spiffs_conf_t</span> <span class="n">conf</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">.</span><span class="n">base_path</span> <span class="o">=</span> <span class="s">"/spiffs"</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">partition_label</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">max_files</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">format_if_mount_failed</span> <span class="o">=</span> <span class="nb">true</span>
+  <span class="p">};</span>
+
+  <span class="n">esp_err_t</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">esp_vfs_spiffs_register</span><span class="p">(</span><span class="o">&amp;</span><span class="n">conf</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="n">ESP_OK</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">==</span> <span class="n">ESP_FAIL</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="n">printf</span><span class="p">(</span><span class="s">"Failed to mount or format filesystem</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">==</span> <span class="n">ESP_ERR_NOT_FOUND</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="n">printf</span><span class="p">(</span><span class="s">"Failed to find SPIFFS partition</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+      <span class="n">printf</span><span class="p">(</span><span class="s">"Failed to initialize SPIFFS (%s)</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">esp_err_to_name</span><span class="p">(</span><span class="n">ret</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="kt">size_t</span> <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">used</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">ret</span> <span class="o">=</span> <span class="n">esp_spiffs_info</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">total</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">used</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="n">ESP_OK</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"Failed to get SPIFFS partition information (%s)</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">esp_err_to_name</span><span class="p">(</span><span class="n">ret</span><span class="p">));</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"Partition size: total: %d, used: %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">used</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">bash_path</code> 我们设置为 <code class="highlighter-rouge">/spiffs</code>，这相当于根目录前缀，以后访问数据分区时都要使用 <code class="highlighter-rouge">/spiffs/file</code>，当然你可以根据自己情况修改。将 <code class="highlighter-rouge">format_if_mount_failed</code> 参数设置为 <code class="highlighter-rouge">true</code>，可以在分区 <code class="highlighter-rouge">mount 失败后自动格式化</code>，这种情况一般是分区未被格式化。注意 <a href="https://docs.espressif.com/projects/esp-idf/zh_CN/latest/api-reference/storage/spiffs.html">spiffs</a> 文件系统是没有目录概念的，<code class="highlighter-rouge">/</code> 只是被当做一个文件名，后续我们可以自己模拟目录的概念。</p>
+
+<p>挂载分区后，我们就可以使用文件系统的 api 去读写文件了。我们使用 <code class="highlighter-rouge">esp_spiffs_info</code> 读取文件系统信息，将总大小和已使用情况打印出来。</p>
+
+<p>最后，在启动流程中调用这个函数：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">app_main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="c1">// mount spiffs</span>
+  <span class="n">mount_spiffs</span><span class="p">();</span>
+  <span class="c1">// init jerryscript</span>
+  <span class="n">start_jerryscript</span><span class="p">();</span>
+  <span class="n">handler_print</span><span class="p">();</span>
+  <span class="c1">// handle uart input</span>
+  <span class="n">handle_uart_input</span><span class="p">();</span>
+  <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="c1">// alive check here. but nothing to do now!</span>
+    <span class="n">vTaskDelay</span><span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="n">portTICK_PERIOD_MS</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="cm">/* Cleanup engine */</span>
+  <span class="n">jerry_cleanup</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>重新编译，然后烧写，使用串口连接上板子查看打印出来的分区信息，如果看到成功打印出分区表数据，则说明文件系统挂载成功了，如果失败了，则仔细检查一遍哪里出错了。</p>
+
+<h2 id="3-实现-js-文件模块">3. 实现 JS 文件模块</h2>
+
+<p>上面我们已经有了文件的概念了，那我们就可以编写 js 文件模块，然后使用 require 去加载文件模块，并且开机自动加载执行 index.js 文件，这样 JavaScript 开发者来说就可以脱离 SDK 独立开发了。当然涉及到硬件驱动部分还是需要 SDK 支持，暴露接口给 JavaScript，这里不进行细说。</p>
+
+<p>先来看一下 Node.js 中的文件模块长什么样：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// a.js</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">a</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`hello, i am </span><span class="p">${</span><span class="nx">__filename</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这个模块很简单，只对外提供一个函数，函数里面打印出自身的文件名。那么如何使用这个模块呢：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// index.js</span>
+<span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./a.js'</span><span class="p">)</span>
+
+<span class="nx">a</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>只需要使用 <code class="highlighter-rouge">require</code> 函数加载这个模块，赋值给一个变量，这个变量就引用了模块的所有对外实现。因为我们对外就暴露一个函数，所以可以直接调用。那么这里的 <code class="highlighter-rouge">module.exports</code> 变量是从哪里来的呢？<code class="highlighter-rouge">__filename</code> 又为什么会等于 <code class="highlighter-rouge">a.js</code> 呢？<code class="highlighter-rouge">require</code> 的返回值是怎么来的呢？来简单看一下 Node.js 是如何实现的。</p>
+
+<p>当 require 一个文件模块时，Node.js 会读取文件的内容，然后将内容头尾包装一下，最终变成：</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">require</span><span class="p">,</span> <span class="nx">module</span><span class="p">,</span> <span class="nx">__filename</span><span class="p">,</span> <span class="nx">__dirname</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// 模块源码</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>把参数传递进去执行这个函数，所以我们可以在文件模块中使用 exports 等未定义的变量，最后 require 函数将 exports 变量返回，就完成了一次模块的加载。当然，Node.js 中的实现是比这个要复杂很多的，这里只是简单的描述一下，详情请查看 <a href="https://github.com/nodejs/node/blob/master/lib/internal/modules/cjs/loader.js">Node.js: require</a> 源码。</p>
+
+<p>知道了 require 是如何工作的，现在我们来实现一个最简单的 require，它只从文件系统中加载文件模块，并且不支持缓存和相对路径的。如果加载成功，则返回模块的 exports 对象，否则返回 undefined。</p>
+
+<p>可以新建一个 <a href="https://docs.espressif.com/projects/esp-idf/zh_CN/latest/api-guides/build-system.html#component-directories">用户组件</a>，叫 jerry-module，也可以直接在 <code class="highlighter-rouge">main</code> 中编写。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">module_module_init</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">jerry_value_t</span> <span class="n">global</span> <span class="o">=</span> <span class="n">jerry_get_global_object</span><span class="p">();</span>
+
+  <span class="n">jerry_value_t</span> <span class="n">prop_name</span> <span class="o">=</span> <span class="n">jerry_create_string</span><span class="p">((</span><span class="k">const</span> <span class="n">jerry_char_t</span> <span class="o">*</span><span class="p">)</span><span class="s">"require"</span><span class="p">);</span>
+  <span class="n">jerry_value_t</span> <span class="n">value</span> <span class="o">=</span> <span class="n">jerry_create_external_function</span><span class="p">(</span><span class="n">require_handler</span><span class="p">);</span>
+  <span class="n">jerry_release_value</span><span class="p">(</span><span class="n">jerry_set_property</span><span class="p">(</span><span class="n">global</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">value</span><span class="p">));</span>
+  <span class="n">jerry_release_value</span><span class="p">(</span><span class="n">prop_name</span><span class="p">);</span>
+  <span class="n">jerry_release_value</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+
+  <span class="n">jerry_release_value</span><span class="p">(</span><span class="n">global</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>我们规定每个 native 模块都有一个 <code class="highlighter-rouge">init</code> 方法，以 <code class="highlighter-rouge">module</code> 开头，中间的 module 表示模块名。在 init 方法中会给 <code class="highlighter-rouge">global</code> 变量注册模块自身需要暴露给 JavaScript 的 api，这样 JavaScript 就可以使用了。下面是 require 函数的实现。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="n">jerry_value_t</span> <span class="nf">require_handler</span><span class="p">(</span><span class="k">const</span> <span class="n">jerry_value_t</span> <span class="n">func_value</span><span class="p">,</span> <span class="cm">/**&lt; function object */</span>
+                                     <span class="k">const</span> <span class="n">jerry_value_t</span> <span class="n">this_value</span><span class="p">,</span> <span class="cm">/**&lt; this arg */</span>
+                                     <span class="k">const</span> <span class="n">jerry_value_t</span> <span class="n">args</span><span class="p">[],</span>     <span class="cm">/**&lt; function arguments */</span>
+                                     <span class="k">const</span> <span class="n">jerry_length_t</span> <span class="n">args_cnt</span><span class="p">)</span>  <span class="cm">/**&lt; number of function arguments */</span>
+<span class="p">{</span>
+  <span class="n">jerry_size_t</span> <span class="n">strLen</span> <span class="o">=</span> <span class="n">jerry_get_string_size</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+  <span class="n">jerry_char_t</span> <span class="n">name</span><span class="p">[</span><span class="n">strLen</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+  <span class="n">jerry_string_to_char_buffer</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">name</span><span class="p">,</span> <span class="n">strLen</span><span class="p">);</span>
+  <span class="n">name</span><span class="p">[</span><span class="n">strLen</span><span class="p">]</span> <span class="o">=</span> <span class="sc">'\0'</span><span class="p">;</span>
+
+  <span class="kt">size_t</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">jerry_char_t</span> <span class="o">*</span><span class="n">script</span> <span class="o">=</span> <span class="n">jerry_port_read_source</span><span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">script</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"No such file: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">jerry_create_undefined</span><span class="p">();</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">return</span> <span class="n">jerry_create_undefined</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="n">jerryx_handle_scope</span> <span class="n">scope</span><span class="p">;</span>
+  <span class="n">jerryx_open_handle_scope</span><span class="p">(</span><span class="o">&amp;</span><span class="n">scope</span><span class="p">);</span>
+
+  <span class="k">static</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">jargs</span> <span class="o">=</span> <span class="s">"exports, module, __filename"</span><span class="p">;</span>
+  <span class="n">jerry_value_t</span> <span class="n">res</span> <span class="o">=</span> <span class="n">jerryx_create_handle</span><span class="p">(</span><span class="n">jerry_parse_function</span><span class="p">((</span><span class="n">jerry_char_t</span> <span class="o">*</span><span class="p">)</span><span class="n">name</span><span class="p">,</span> <span class="n">strLen</span><span class="p">,</span>
+                                          <span class="p">(</span><span class="n">jerry_char_t</span> <span class="o">*</span><span class="p">)</span><span class="n">jargs</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">jargs</span><span class="p">),</span>
+                                          <span class="p">(</span><span class="n">jerry_char_t</span> <span class="o">*</span><span class="p">)</span><span class="n">script</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">JERRY_PARSE_NO_OPTS</span><span class="p">));</span>
+  <span class="n">jerry_port_release_source</span><span class="p">(</span><span class="n">script</span><span class="p">);</span>
+  <span class="n">jerry_value_t</span> <span class="n">module</span> <span class="o">=</span> <span class="n">jerryx_create_handle</span><span class="p">(</span><span class="n">jerry_create_object</span><span class="p">());</span>
+  <span class="n">jerry_value_t</span> <span class="n">exports</span> <span class="o">=</span> <span class="n">jerryx_create_handle</span><span class="p">(</span><span class="n">jerry_create_object</span><span class="p">());</span>
+  <span class="n">jerry_value_t</span> <span class="n">prop_name</span> <span class="o">=</span> <span class="n">jerryx_create_handle</span><span class="p">(</span><span class="n">jerry_create_string</span><span class="p">((</span><span class="n">jerry_char_t</span> <span class="o">*</span><span class="p">)</span><span class="s">"exports"</span><span class="p">));</span>
+  <span class="n">jerryx_create_handle</span><span class="p">(</span><span class="n">jerry_set_property</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">exports</span><span class="p">));</span>
+  <span class="n">jerry_value_t</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">jerryx_create_handle</span><span class="p">(</span><span class="n">jerry_create_string</span><span class="p">((</span><span class="n">jerry_char_t</span> <span class="o">*</span><span class="p">)</span><span class="n">name</span><span class="p">));</span>
+  <span class="n">jerry_value_t</span> <span class="n">jargs_p</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">exports</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">filename</span> <span class="p">};</span>
+  <span class="n">jerry_value_t</span> <span class="n">jres</span> <span class="o">=</span> <span class="n">jerryx_create_handle</span><span class="p">(</span><span class="n">jerry_call_function</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">jargs_p</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+
+  <span class="n">jerry_value_t</span> <span class="n">escaped_exports</span> <span class="o">=</span> <span class="n">jerry_get_property</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">);</span>
+  <span class="n">jerryx_close_handle_scope</span><span class="p">(</span><span class="n">scope</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="n">escaped_exports</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这里我们的实现非常简单：</p>
+
+<ol>
+  <li>require 只接收一个参数叫 <code class="highlighter-rouge">name</code>，表示文件模块的绝对路径。</li>
+  <li>然后使用 <code class="highlighter-rouge">jerry_port_read_source</code> 读取文件的内容，注意使用这个函数需要头文件 <code class="highlighter-rouge">jerryscript-port.h</code>，使用完后记得使用 <code class="highlighter-rouge">jerry_port_release_source</code> 释放文件内容。</li>
+  <li>接着判断文件是否存在，如果不存在或者文件内容为空，则返回 undefined，表示加载模块失败。</li>
+  <li>使用 <code class="highlighter-rouge">jerry_parse_function</code> 构造一个 JavaScript 函数，我们这里只实现 <code class="highlighter-rouge">exports, module, __filename</code> 这三个参数。</li>
+  <li>使用 <code class="highlighter-rouge">jerry_create_object</code> 构造一个 JavaScript object，使用 <code class="highlighter-rouge">jerry_set_property</code> 给这个 object 设置 <code class="highlighter-rouge">exports</code> 属性。</li>
+  <li>使用 <code class="highlighter-rouge">jerry_call_function</code> 将 <code class="highlighter-rouge">exports, module, filename</code> 作为参数执行函数，这样文件模块就会执行。<code class="highlighter-rouge">module.exports</code> 是 <code class="highlighter-rouge">exports</code> 的引用。</li>
+  <li>最后，在文件模块内部会赋值给 <code class="highlighter-rouge">exports</code> 变量，这就是模块对外暴露的 api，我们使用 <code class="highlighter-rouge">jerry_get_property</code> 将 <code class="highlighter-rouge">exports</code> 属性返回，就完成了模块加载。</li>
+</ol>
+
+<p>最后，我们在虚拟机初始化后，调用模块的初始化函数，将模块注册到虚拟机：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">app_main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="c1">// mount spiffs</span>
+  <span class="n">mount_spiffs</span><span class="p">();</span>
+  <span class="c1">// init jerryscript</span>
+  <span class="n">start_jerryscript</span><span class="p">();</span>
+  <span class="n">handler_print</span><span class="p">();</span>
+  <span class="c1">// handle uart input</span>
+  <span class="n">handle_uart_input</span><span class="p">();</span>
+  <span class="c1">// init node core api</span>
+  <span class="n">module_module_init</span><span class="p">();</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="c1">// alive check here. but nothing to do now!</span>
+    <span class="n">vTaskDelay</span><span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="n">portTICK_PERIOD_MS</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="cm">/* Cleanup engine */</span>
+  <span class="n">jerry_cleanup</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>现在，我们差最后一步：从文件系统中加载执行 <code class="highlighter-rouge">index.js</code> 文件，这样开机启动就会自动执行代码了。实现这个也很简单，在所有操作都完成后，使用文件 api 从文件系统读取 <code class="highlighter-rouge">index.js</code> 文件，然后使用 <code class="highlighter-rouge">jerry_run</code> 执行。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="kt">void</span> <span class="nf">load_js_entry</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="kt">char</span> <span class="o">*</span><span class="n">entry</span> <span class="o">=</span> <span class="s">"/spiffs/index.js"</span><span class="p">;</span>
+  <span class="kt">size_t</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">jerry_char_t</span> <span class="o">*</span><span class="n">script</span> <span class="o">=</span> <span class="n">jerry_port_read_source</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">size</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">script</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"No such file: /spiffs/index.js</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">jerry_value_t</span> <span class="n">parse_code</span> <span class="o">=</span> <span class="n">jerry_parse</span><span class="p">((</span><span class="n">jerry_char_t</span> <span class="o">*</span><span class="p">)</span><span class="n">entry</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">entry</span><span class="p">),</span> <span class="n">script</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">JERRY_PARSE_NO_OPTS</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">jerry_value_is_error</span><span class="p">(</span><span class="n">parse_code</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"Unexpected error</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">jerry_value_t</span> <span class="n">ret_value</span> <span class="o">=</span> <span class="n">jerry_run</span><span class="p">(</span><span class="n">parse_code</span><span class="p">);</span>
+    <span class="n">jerry_release_value</span><span class="p">(</span><span class="n">ret_value</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="n">jerry_release_value</span><span class="p">(</span><span class="n">parse_code</span><span class="p">);</span>
+  <span class="n">jerry_port_release_source</span><span class="p">(</span><span class="n">script</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>entry 的入口可以自己修改，我们指定 <code class="highlighter-rouge">/spiffs/index.js</code>。如果加载失败，则什么也不做。如果加载成功，则使用 <code class="highlighter-rouge">jerry_parse</code> 编译 js 代码，最后使用 <code class="highlighter-rouge">jerry_run</code> 执行。同样，在启动流程中调用这个函数。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">app_main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="c1">// mount spiffs</span>
+  <span class="n">mount_spiffs</span><span class="p">();</span>
+  <span class="c1">// init jerryscript</span>
+  <span class="n">start_jerryscript</span><span class="p">();</span>
+  <span class="n">handler_print</span><span class="p">();</span>
+  <span class="c1">// handle uart input</span>
+  <span class="n">handle_uart_input</span><span class="p">();</span>
+  <span class="c1">// init node core api</span>
+  <span class="n">module_module_init</span><span class="p">();</span>
+
+  <span class="c1">// load /spiffs/index.js</span>
+  <span class="n">load_js_entry</span><span class="p">();</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="c1">// alive check here. but nothing to do now!</span>
+    <span class="n">vTaskDelay</span><span class="p">(</span><span class="mi">1000</span> <span class="o">/</span> <span class="n">portTICK_PERIOD_MS</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="cm">/* Cleanup engine */</span>
+  <span class="n">jerry_cleanup</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>现在，我们整理一下启动流程都做了什么：</p>
+
+<ol>
+  <li>mount <a href="https://docs.espressif.com/projects/esp-idf/zh_CN/latest/api-reference/storage/spiffs.html">spiffs</a> 文件系统</li>
+  <li>初始化 <a href="https://jerryscript.net/">JerryScript</a> 虚拟机</li>
+  <li>注册全局 print 函数用于串口输出</li>
+  <li>安装串口驱动，将输入传递给虚拟机执行</li>
+  <li>注册 module 模块</li>
+  <li>从文件系统加载 index.js 文件并执行</li>
+  <li>很重要的一步：使用 <a href="https://www.freertos.org/a00127.html">vTaskDelay</a> 让出 CPU 时间供其它任务执行</li>
+</ol>
+
+<p>至此，我们有了一个 JavaScript 开发板了，但功能有限，驱动部分以及常用的功能模块都没有实现。本来还想介绍一下 native 模块和定时器的，篇幅有限，这里就不再详细介绍了，完整的源码请查看 <a href="https://github.com/nodemcujs/nodemcujs-firmware">nodemcujs</a>。</p>
+
+<p>最后再简单介绍一下如何上传 index.js 以及自定义数据到文件系统：</p>
+
+<ol>
+  <li>使用 <a href="https://github.com/igrr/mkspiffs">mkspiffs</a> 制作文件镜像</li>
+  <li>使用 <a href="https://github.com/espressif/esptool">esptool.py</a> 烧录工具将文件镜像烧录到板子</li>
+</ol>
+
+<p>完整的文件镜像制作和烧录方法请查看 nodemcujs <a href="https://github.com/nodemcujs/nodemcujs-firmware#6-%E5%88%B6%E4%BD%9C%E6%96%87%E4%BB%B6%E9%95%9C%E5%83%8F">制作文件镜像</a>。</p>
+
+
+  </div><div class="content sidebar"><div class="preference-product">
+      <h2 class="sidebar-title">神秘商店</h2>
+      <a href="https://item.taobao.com/item.htm?spm=a1z10.1-c-s.w4004-18317433854.28.23fc50e5bWK3Ul&id=588610096841"  target="_blank">
+        <img src="https://gd1.alicdn.com/imgextra/i2/1901819815/O1CN01bSYzUN2MNJtHT4WkD_!!1901819815.png_400x400.jpg" alt="图片加载失败了">
+      </a>
+      <p class="product-name">ESP32模块开发板 无线WiFi+蓝牙 2合1 双核CPU 物联网 ESP-32S</p>
+      <a href="https://item.taobao.com/item.htm?spm=a1z10.1-c-s.w4004-18317433854.28.23fc50e5bWK3Ul&id=588610096841" target="_blank">
+        <div class="goto-detail" title="将会在新窗口中打开宝贝详情页面">查看详情</div>
+      </a>
+    </div></div><div class="content sub-content related-article">
+    <h3 class="sub-title">再看看其它同类文章吧！</h3>
+    <div class="list">
+      </div>
+  </div>
+  <div class="content sub-content">
+    <h3 class="sub-title">有想说的评论一句吧！</h3>
+    
+    <div id="SOHUCS" sid="/js/esp32-running-jerryscript.html"></div>
+  </div>
+</div>
+    </div>
+    <footer class="site-footer">
+  <div class="site-info">
+    <p>
+      <span>Powered by </span>
+      <a href="http://jekyllrb.com/">jekyll</a>
+      <span> & </span>
+      <a href="https://nodejs.org/" target="_blank">NodeJS</a>
+      <span> | </span>
+      <span> Server on RaspberryPi 3B | Theme made by </span>
+      <a href="mailto:bluescode@outlook.com">sudo</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <p xmlns:dct="http://purl.org/dc/terms/">
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">
+        <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/by-nc-sa.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" style="border-style: none;" width="80" height="28" alt="署名-非商业性使用-相同方式共享 (CC BY-NC-SA)" />
+      </a>
+    </p>
+    <p>
+      <span>本作品采用</span>
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">《署名-非商业性使用-相同方式共享》</a>
+      <span>许可协议，转载请先联系</span>
+      <a href="mailto:bluescode@outlook.com">站长</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/logo.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="logo" width="64" height="64" class="logo">
+    <p>提莫的神秘商店</p>
+  </div>
+  <div class="site-info">
+    <p>
+      <a href="http://www.beian.miit.gov.cn/" target="_blank">浙ICP备19010606号</a>
+      <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/public-security.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" width="20" height="20" alt="浙公网安备案图标" style="margin: 0 20px;" />
+      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002013836" target="_blank">浙公网安备33011002013836号</a>
+    </p>
+  </div>
+</footer>
+
+    <script>
+  /**
+   url: string
+   callback: [function]
+  */
+  function loadScript (url, callback) {
+    var headElement = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+    var script = document.createElement("script");
+    script.setAttribute("type", "text/javascript");
+    script.setAttribute("charset", "UTF-8");
+    script.setAttribute("src", url);
+    if (typeof callback === 'function') {
+      if (window.attachEvent) {
+        script.onreadystatechange = function () {
+          var e = script.readyState;
+          if (e === "loaded" || e === "complete") {
+            script.onreadystatechange = null;
+            callback();
+          }
+        };
+      } else {
+        script.onload = callback
+      }
+    }
+    headElement.appendChild(script);
+  }
+  /**
+   callback: function
+   timeout: [number] default: 1000
+  */
+  function lazycall(callback, timeout) {
+    if (typeof timeout != 'number') {
+      timeout = 1000
+    }
+    if (window.addEventListener) {
+      window.addEventListener('load', callback, false);
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', callback);
+    } else {
+      setTimeout(callback, timeout);
+    }
+  }
+  /**
+   url: string
+   timeout: [number] default: 1000
+   callback: [function]
+  */
+  function lazyloadScript (url, timeout, callback) {
+    if (typeof timeout === 'function') {
+      callback = timeout
+      timeout = 1000
+    }
+    lazycall(function () {
+      loadScript(url, callback)
+    }, timeout)
+  }
+  lazyloadScript('http://libs.baidu.com/jquery/2.0.3/jquery.min.js', function () {
+    $(document).ready(function () {
+      var navToggle = $('.js-nav-toggle')
+      var mobileMenu = $('.js-mobile-menu')
+      // Toggle blog-menu
+      navToggle.on("click", function () {
+        navToggle.toggleClass("active");
+        mobileMenu.slideToggle();
+        return false;
+      });
+      // Hide mobile-menu > 768
+      $(window).resize(function () {
+        var windowWidth = $(window).width()
+        if (windowWidth > 768) {
+          navToggle.removeClass("active");
+          mobileMenu.show();
+        }
+        if (windowWidth <= 768 && !navToggle.hasClass('active')) {
+          navToggle.removeClass("active");
+          mobileMenu.hide();
+        }
+      });
+      // lazyload img for footer
+      $('.site-footer img.js-lazyload-img').each(function (index, elem) {
+        var img = $(this)
+        img.attr('src', img.data('src'))
+      });
+    });
+  })
+</script>
+
+    <script type="text/javascript">
+  var _hmt = _hmt || [];
+  function loadBaiduTongji () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?f497f00a5871b6ed9078f87ab818d62d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  }
+  lazycall(loadBaiduTongji)
+</script>
+    <script type="text/javascript">
+  function loadChangyan () {
+    var appid = 'cytTik2AP';
+    var conf = 'prod_0b6e93ff9daf2e0d6e49c8ad1586bf4b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      var loadJsWithId=function(d,i){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("id",i);b.setAttribute("charset","UTF-8");b.setAttribute("src",d);c.appendChild(b)};
+      loadJsWithId('https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf, "changyan_mobile_js")
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  }
+  lazycall(loadChangyan)
+</script>
+    
+  </body>
+</html>

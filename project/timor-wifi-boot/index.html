@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="keywords" content="wifi, manager, html, web, lua, connect, esp8266, esp32">
+<meta name="description" content="一个使用漂亮的 web 界面来管理 ESP8266/ESP32 网络配置的开源项目，基于 NodeMcu Lua。"><title>Timor-WIFI-Boot 一个使用漂亮的 web 界面来管理 ESP8266/ESP32 网络配置的开源项目 - 提莫的神秘商店</title><link rel="stylesheet" href="http://lanfly.vicp.io/css/default.css">
+<link rel="stylesheet" href="http://lanfly.vicp.io/css/highlight/rouge-solarized-light.css">
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" sizes="16x16" />
+<style type="text/css"></style>
+
+    <link rel="stylesheet" href="http://lanfly.vicp.io/css/mini-product.css">
+  </head>
+  <body>
+    <div class="page">
+      <header id="masthead" role="banner" class="site-header">
+  <div class="site-branding">
+    <h1 class="site-title"><a href="/" rel="home" title="回到首页">提莫的神秘商店</a></h1>
+
+    <span class="nav-toggle js-nav-toggle  hidden" title="Click to view the navigation" href="#">
+      <div class="bars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="clear"></div>
+      </div>
+      <p>
+        <span class="menu">Menu</span>
+        <span class="close">Close</span>
+      </p>
+    </span>
+  </div>
+</header>
+
+      <ul id="navi-menu" class="mobile-menu js-mobile-menu"><li class="menu-item transition-02s"><a href="/">首页</a></li><li class="menu-item transition-02s"><a href="/shop">神秘商店</a></li><li class="menu-item transition-02s"><a href="/mcu">硬件</a></li><li class="menu-item transition-02s"><a href="/js">JavaScript</a></li><li class="menu-item transition-02s"><a href="/3d">3D/模型</a></li><li class="menu-item transition-02s"><a href="/project">开源项目</a></li><li class="menu-item transition-02s"><a href="/api">免费服务</a></li><li class="menu-item transition-02s"><a href="/about">关于</a></li></ul>
+      <div class="main transition-04s">
+  <h1 class="title">Timor-WIFI-Boot 一个使用漂亮的 web 界面来管理 ESP8266/ESP32 网络配置的开源项目</h1>
+  <div class="content content-navigator">
+  <ul class="sub-navigator"></ul>
+</div>
+  <div class="content">
+    <div class="article-content"><h1 id="timor-wifi-boot">Timor-WIFI-Boot</h1>
+
+<p>一个使用漂亮的 web 界面来管理 ESP8266/ESP32 网络配置的开源项目，基于 NodeMcu Lua。</p>
+
+<p>ESP8266/ESP32 WiFi Connection manager with beautiful web configuration base on NodeMCU Lua.</p>
+
+<h4 id="官网httptimortechprojecttimor-wifi-boot">官网：<a href="http://timor.tech/project/timor-wifi-boot">http://timor.tech/project/timor-wifi-boot</a></h4>
+
+<h4 id="源码httpsgithubcomlanflytimor-wifi-boot">源码：<a href="https://github.com/LanFly/timor-wifi-boot">https://github.com/LanFly/timor-wifi-boot</a></h4>
+
+<h4 id="交流群-qq-230948257">交流群 QQ: 230948257</h4>
+
+<p>有任何问题都可以联系，包括技术问题、开发板和屏幕购买。</p>
+
+<h2 id="预览">预览</h2>
+
+<p class="percent50-img">
+  <img src="http://lanfly.vicp.io/project/timor-wifi-boot/preview.png" />
+</p>
+
+<h2 id="特点">特点</h2>
+
+<ol>
+  <li>所有代码开源，可自定义修改</li>
+  <li>使用 Lua 编写，代码简单，可读性高（简单是最重要的）</li>
+  <li>支持 OLED 屏幕，实时显示状态和日期时间</li>
+  <li>支持历史记录，断电永久保存，开机自动连接</li>
+  <li>网络监控，断线自动重连+打开 AP，联网 AP 自动关闭</li>
+  <li>自带 HTTP Server，无需任何第三方 APP</li>
+  <li>界面使用原生 HTML + CSS + JavaScript，开发简单，兼容性好</li>
+</ol>
+
+<h2 id="feature">Feature</h2>
+
+<ol>
+  <li>All codes are open source and can be customized and modified</li>
+  <li>Written with Lua, simple code, high readability (simplicity is the most important)</li>
+  <li>Support OLED screen, real-time display status and date time</li>
+  <li>Support historical record, power off for permanent storage, power on for automatic connection</li>
+  <li>Network monitoring, disconnection automatic reconnection + AP on, networking AP automatically closed</li>
+  <li>With HTTP server, no third-party app is required</li>
+  <li>The interface uses HTML + CSS + JavaScript, which is easy to develop</li>
+</ol>
+
+<h2 id="环境">环境</h2>
+
+<p>该项目基于 NodeMcu，使用 Lua 编写，支持 ESP8266/ESP32。</p>
+
+<p>以下环境是必须要的：</p>
+
+<ol>
+  <li>ESP8266 或者 ESP32 开发板</li>
+  <li><a href="https://esp8266.ru/esplorer/">ESPlorer</a> 用于上传代码、调试。可以根据喜好选择其它工具。</li>
+  <li><a href="https://github.com/marcelstoer/nodemcu-pyflasher">nodemcu-pyflasher</a> 用于烧写固件。可以根据喜好选择其它工具。</li>
+</ol>
+
+<h2 id="下载">下载</h2>
+
+<p>本项目中用到的所有资源和代码，都可以在下面的列表中下载使用。注意：最新的代码请到源码仓库中下载，本站只是提供一个备份，方便网络环境差（你懂得）的同学。</p>
+
+<ul>
+  <li><a href="http://lanfly.vicp.io/project/timor-wifi-boot/nodemcu-integer.bin">nodemcu-integer.bin</a> 包含了最小依赖模块的固件。</li>
+  <li><a href="http://lanfly.vicp.io/project/timor-wifi-boot/index.html">index.html</a> 这是 web 配置界面，CSS 和 JavaScript 已集成，无需网络。</li>
+  <li><a href="http://lanfly.vicp.io/project/timor-wifi-boot/httpServer.lua">httpServer.lua</a> 这是提供 HTTP 服务的组件。</li>
+  <li><a href="http://lanfly.vicp.io/project/timor-wifi-boot/init.lua">init.lua</a> 这是应用主代码</li>
+</ul>
+
+<h2 id="安装">安装</h2>
+
+<p>安装该项目非常简单，所有必须的文件本项目都自带了，你只需要将它们上传到 ESP8266 或者 ESP32 开发板上。</p>
+
+<h4 id="第一步烧写固件">第一步：烧写固件</h4>
+
+<p>因为其中的一些功能需要特定的模块支持，所以必须得烧写包含依赖模块的固件，项目里的 <a href="#下载">nodemcu-integer.bin</a> 包含了最小依赖，使用 nodemcu-pyflasher 将它烧录至开发板。
+当然你也可以自己定制固件。</p>
+
+<h4 id="第二步上传代码">第二步：上传代码</h4>
+
+<p>打开 ESPlorer，连接开发板。</p>
+
+<p>烧写固件完成后，手动复位一下开发板，它会自动格式化文件系统。一般 5-10 秒可完成。</p>
+
+<p>然后按照顺序，依次将下列文件上传到开发板：</p>
+
+<ol>
+  <li><a href="#下载">index.html</a> 这是 web 配置界面，CSS 和 JavaScript 已集成，无需网络。</li>
+  <li><a href="#下载">httpServer.lua</a> 这是提供 HTTP 服务的组件。</li>
+  <li><a href="#下载">init.lua</a> 这是应用主代码。</li>
+</ol>
+
+<h2 id="运行">运行</h2>
+
+<p>上面的文件不能改名，必须原样保存。全部文件上传完后，手动复位一下，代码就会运行。</p>
+
+<p>此时可以查看 OLED 屏幕，或者查看串口输出。</p>
+
+<h2 id="配置网络">配置网络</h2>
+
+<p>使用手机打开 WIFI，能看到 <code class="highlighter-rouge">Timor-WIFI-Boot</code> 的热点，无密码。点击连接。</p>
+
+<p>然后打开浏览器，输入 <code class="highlighter-rouge">192.168.4.1</code> 即可打开页面。</p>
+
+<p>在输入框输入 WIFI账号 和 密码，点击 <code class="highlighter-rouge">连接网络</code> 按钮即可。</p>
+
+<p>配置成功会弹出窗口提示。此时开始连接网络，连接成功 AP 会自动关闭，连接失败可再次点击按钮配置。</p>
+
+<p>连接网络成功后，OLED 屏幕会进入日期时间页面，自动同步当前时间。</p>
+
+<p>配置网络是永久保存的，下次开机会自动连接。</p>
+
+<h2 id="oled-屏幕">OLED 屏幕</h2>
+
+<p>本项目默认使用 SSD1306 128*32 IIC 屏幕，默认接线如下：</p>
+
+<figure class="highlight"><pre><code class="language-lua" data-lang="lua"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="code"><pre><span class="kd">local</span> <span class="n">i2cSDA</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="kd">local</span> <span class="n">i2cSCL</span> <span class="o">=</span> <span class="mi">6</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>即开发板的 D5 接屏幕的 SDA，D6 接屏幕的 SCL。如果你想使用其它引脚，请自行配置。</p>
+
+<p>如果你想支持其它型号的屏幕，也非常简单。u8g2 支持的屏幕都可以使用，当然，你还可以自行实现屏幕驱动。</p>
+
+<p>如果你不想要 OLED 屏幕支持，不接也可以运行，但最好将屏幕绘制部分代码和驱动代码删除，以节约内存。</p>
+
+<h2 id="api-文档">API 文档</h2>
+
+<h2 id="oled-绘制">OLED 绘制</h2>
+
+<h4 id="连接历史记录界面">连接历史记录界面</h4>
+
+<figure class="highlight"><pre><code class="language-lua" data-lang="lua"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="code"><pre><span class="kd">local</span> <span class="n">renderOnHistory</span> <span class="o">=</span> <span class="k">function</span> <span class="p">()</span>
+  <span class="n">oled</span><span class="p">:</span><span class="n">drawStr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'Connecting: '</span><span class="o">..</span><span class="n">SSID</span><span class="p">)</span>
+<span class="k">end</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<h4 id="启动ap界面-无历史记录">启动(AP)界面 (无历史记录)</h4>
+
+<figure class="highlight"><pre><code class="language-lua" data-lang="lua"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="code"><pre><span class="kd">local</span> <span class="n">renderOnStartup</span> <span class="o">=</span> <span class="k">function</span> <span class="p">()</span>
+  <span class="n">oled</span><span class="p">:</span><span class="n">drawStr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'Startup...'</span><span class="p">)</span>
+<span class="k">end</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<h4 id="设置界面等待用户配置网络">设置界面(等待用户配置网络)</h4>
+
+<figure class="highlight"><pre><code class="language-lua" data-lang="lua"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="code"><pre><span class="kd">local</span> <span class="n">renderOnSetup</span> <span class="o">=</span> <span class="k">function</span> <span class="p">()</span>
+  <span class="n">oled</span><span class="p">:</span><span class="n">drawStr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'Waiting for User...'</span><span class="p">)</span>
+<span class="k">end</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<h4 id="已连接网络界面">已连接网络界面</h4>
+
+<figure class="highlight"><pre><code class="language-lua" data-lang="lua"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="kd">local</span> <span class="n">renderOnConnected</span> <span class="o">=</span> <span class="k">function</span> <span class="p">()</span>
+  <span class="n">font_helvB14_tr</span><span class="p">()</span>
+  <span class="kd">local</span> <span class="n">rtm</span> <span class="o">=</span> <span class="n">rtctime</span><span class="p">.</span><span class="n">epoch2cal</span><span class="p">(</span><span class="n">rtctime</span><span class="p">.</span><span class="n">get</span><span class="p">())</span>
+  <span class="n">oled</span><span class="p">:</span><span class="n">drawStr</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">string.format</span><span class="p">(</span><span class="s2">"%02d:%02d:%02d"</span><span class="p">,</span> <span class="n">rtm</span><span class="p">[</span><span class="s1">'hour'</span><span class="p">]</span><span class="o">+</span><span class="mi">8</span><span class="p">,</span> <span class="n">rtm</span><span class="p">[</span><span class="s1">'min'</span><span class="p">],</span> <span class="n">rtm</span><span class="p">[</span><span class="s1">'sec'</span><span class="p">]))</span>
+<span class="k">end</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>以上是各阶段的屏幕绘制 API，用户只需实现里面的具体绘制操作就行。绘制函数每秒刷新一次。</p>
+
+<p>如果想提高刷新率，请更改:</p>
+
+<figure class="highlight"><pre><code class="language-lua" data-lang="lua"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+</pre></td><td class="code"><pre><span class="n">oled_timer</span><span class="p">:</span><span class="n">alarm</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="n">tmr</span><span class="p">.</span><span class="n">ALARM_AUTO</span><span class="p">,</span> <span class="n">renderDisplay</span><span class="p">)</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>单位为毫秒。建议不要小于 <code class="highlighter-rouge">30</code> 毫秒，太快的刷新率将会触发看门狗、影响 WIFI 稳定性、循环死机等不可预料的情况。</p>
+
+<p>如果分辨率比较大，可以适当提高 IIC 速率，以减少传输时间，目前固件最高支持 <code class="highlighter-rouge">1MHz</code> 速率。</p>
+
+<p>如果使用彩色屏幕，可以使用 SPI 传输。</p>
+
+<h2 id="内存">内存</h2>
+
+<p>NodeMcu 内存资源有限，总内存 <code class="highlighter-rouge">48KB</code> 左右，运行此项目后，剩余可用内存 <code class="highlighter-rouge">20KB</code> 左右，留给业务逻辑的内存非常有限，如果不是必须的模块，尽量不要编译进去，以节约这可怜的一点点内存。</p>
+
+<p>以下四点可以节约一点内存：</p>
+
+<ol>
+  <li>固件只编译最小依赖的模块。</li>
+  <li>本项目的代码是 Lua 编写的，用在产品上可以将所有 Lua 源码先编译一下。</li>
+  <li>压缩 html 文件。</li>
+  <li>适当的调用 <code class="highlighter-rouge">collectgarbage()</code> 函数以进行垃圾回收。</li>
+</ol>
+</div>
+  </div>
+  <div class="content sub-content">
+    <h3 class="sub-title">有想说的评论一句吧！</h3>
+    
+    <div id="SOHUCS" sid="/project/timor-wifi-boot/"></div>
+  </div>
+</div>
+    </div>
+    <footer class="site-footer">
+  <div class="site-info">
+    <p>
+      <span>Powered by </span>
+      <a href="http://jekyllrb.com/">jekyll</a>
+      <span> & </span>
+      <a href="https://nodejs.org/" target="_blank">NodeJS</a>
+      <span> | </span>
+      <span> Server on RaspberryPi 3B | Theme made by </span>
+      <a href="mailto:bluescode@outlook.com">sudo</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <p xmlns:dct="http://purl.org/dc/terms/">
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">
+        <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/by-nc-sa.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" style="border-style: none;" width="80" height="28" alt="署名-非商业性使用-相同方式共享 (CC BY-NC-SA)" />
+      </a>
+    </p>
+    <p>
+      <span>本作品采用</span>
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">《署名-非商业性使用-相同方式共享》</a>
+      <span>许可协议，转载请先联系</span>
+      <a href="mailto:bluescode@outlook.com">站长</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/logo.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="logo" width="64" height="64" class="logo">
+    <p>提莫的神秘商店</p>
+  </div>
+  <div class="site-info">
+    <p>
+      <a href="http://www.beian.miit.gov.cn/" target="_blank">浙ICP备19010606号</a>
+      <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/public-security.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" width="20" height="20" alt="浙公网安备案图标" style="margin: 0 20px;" />
+      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002013836" target="_blank">浙公网安备33011002013836号</a>
+    </p>
+  </div>
+</footer>
+
+    <script>
+  /**
+   url: string
+   callback: [function]
+  */
+  function loadScript (url, callback) {
+    var headElement = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+    var script = document.createElement("script");
+    script.setAttribute("type", "text/javascript");
+    script.setAttribute("charset", "UTF-8");
+    script.setAttribute("src", url);
+    if (typeof callback === 'function') {
+      if (window.attachEvent) {
+        script.onreadystatechange = function () {
+          var e = script.readyState;
+          if (e === "loaded" || e === "complete") {
+            script.onreadystatechange = null;
+            callback();
+          }
+        };
+      } else {
+        script.onload = callback
+      }
+    }
+    headElement.appendChild(script);
+  }
+  /**
+   callback: function
+   timeout: [number] default: 1000
+  */
+  function lazycall(callback, timeout) {
+    if (typeof timeout != 'number') {
+      timeout = 1000
+    }
+    if (window.addEventListener) {
+      window.addEventListener('load', callback, false);
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', callback);
+    } else {
+      setTimeout(callback, timeout);
+    }
+  }
+  /**
+   url: string
+   timeout: [number] default: 1000
+   callback: [function]
+  */
+  function lazyloadScript (url, timeout, callback) {
+    if (typeof timeout === 'function') {
+      callback = timeout
+      timeout = 1000
+    }
+    lazycall(function () {
+      loadScript(url, callback)
+    }, timeout)
+  }
+  lazyloadScript('http://libs.baidu.com/jquery/2.0.3/jquery.min.js', function () {
+    $(document).ready(function () {
+      var navToggle = $('.js-nav-toggle')
+      var mobileMenu = $('.js-mobile-menu')
+      // Toggle blog-menu
+      navToggle.on("click", function () {
+        navToggle.toggleClass("active");
+        mobileMenu.slideToggle();
+        return false;
+      });
+      // Hide mobile-menu > 768
+      $(window).resize(function () {
+        var windowWidth = $(window).width()
+        if (windowWidth > 768) {
+          navToggle.removeClass("active");
+          mobileMenu.show();
+        }
+        if (windowWidth <= 768 && !navToggle.hasClass('active')) {
+          navToggle.removeClass("active");
+          mobileMenu.hide();
+        }
+      });
+      // lazyload img for footer
+      $('.site-footer img.js-lazyload-img').each(function (index, elem) {
+        var img = $(this)
+        img.attr('src', img.data('src'))
+      });
+    });
+  })
+</script>
+
+    <script type="text/javascript">
+  var _hmt = _hmt || [];
+  function loadBaiduTongji () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?f497f00a5871b6ed9078f87ab818d62d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  }
+  lazycall(loadBaiduTongji)
+</script>
+    <script type="text/javascript">
+  function loadChangyan () {
+    var appid = 'cytTik2AP';
+    var conf = 'prod_0b6e93ff9daf2e0d6e49c8ad1586bf4b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      var loadJsWithId=function(d,i){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("id",i);b.setAttribute("charset","UTF-8");b.setAttribute("src",d);c.appendChild(b)};
+      loadJsWithId('https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf, "changyan_mobile_js")
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  }
+  lazycall(loadChangyan)
+</script>
+    
+  </body>
+</html>

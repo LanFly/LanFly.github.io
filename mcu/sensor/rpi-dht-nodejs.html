@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="keywords" content="dht11,dht22,am2302,树莓派,nodejs,驱动,rxjs,温度传感器,湿度传感器,监控">
+<meta name="description" content="本文详细介绍了如何在树莓派上使用 nodejs 读取 dht11/22 温度湿度传感器，并提供完整的驱动包，真正的开箱即用。并且介绍了如何使用 RxJS 以观察者模式监控温度和湿度的变化，并发出通知。"><title>树莓派使用 NodeJS 读取并监控 DHT11/22 温度湿度传感器 - 提莫的神秘商店</title><link rel="stylesheet" href="http://lanfly.vicp.io/css/default.css">
+<link rel="stylesheet" href="http://lanfly.vicp.io/css/highlight/rouge-solarized-light.css">
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" sizes="16x16" />
+<style type="text/css"></style>
+
+    <link rel="stylesheet" href="http://lanfly.vicp.io/css/post.css">
+  </head>
+  <body>
+    <div class="page">
+      <header id="masthead" role="banner" class="site-header">
+  <div class="site-branding">
+    <h1 class="site-title"><a href="/" rel="home" title="回到首页">提莫的神秘商店</a></h1>
+
+    <span class="nav-toggle js-nav-toggle  hidden" title="Click to view the navigation" href="#">
+      <div class="bars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="clear"></div>
+      </div>
+      <p>
+        <span class="menu">Menu</span>
+        <span class="close">Close</span>
+      </p>
+    </span>
+  </div>
+</header>
+
+      <ul id="navi-menu" class="mobile-menu js-mobile-menu"><li class="menu-item transition-02s"><a href="/">首页</a></li><li class="menu-item transition-02s"><a href="/shop">神秘商店</a></li><li class="menu-item transition-02s"><a href="/mcu">硬件</a></li><li class="menu-item transition-02s"><a href="/js">JavaScript</a></li><li class="menu-item transition-02s"><a href="/3d">3D/模型</a></li><li class="menu-item transition-02s"><a href="/project">开源项目</a></li><li class="menu-item transition-02s"><a href="/api">免费服务</a></li><li class="menu-item transition-02s"><a href="/about">关于</a></li></ul>
+      <div class="main enable-sidebar transition-04s">
+  <div class="content article-content">
+    <h1 class="title">树莓派使用 NodeJS 读取并监控 DHT11/22 温度湿度传感器</h1>
+    <p>本文详细介绍了如何在树莓派上使用 nodejs 读取 dht11/22/AM2302 温度湿度传感器，并提供完整的驱动包，真正的开箱即用。并且介绍了如何使用 RxJS 以观察者模式监控温度和湿度的变化，并发出通知。</p>
+
+<p>dht11 温度湿度传感器使用很广泛，价格也相对便宜，并且使用单总线传输数据，这使得编写驱动变得容易不少。下面我们会重点介绍如何去监控温度和湿度的变化，并且在达到触发条件时发出通知，从而达到自动化控制的目的。除此之外，作者也会提供封装好的 RxJS 包，让开发变得更容易。</p>
+
+<p class="percent50-img">
+  <img src="https://gd3.alicdn.com/imgextra/i3/1901819815/O1CN01CqAhj32MNJt0rVA0w_!!1901819815.png_400x400.jpg" />
+</p>
+
+<p>先介绍一下 DHT11 传感器，这个模块使用单总线进行数据传输，并且输出的是数字信号，意外着我们只需要一个 GPIO 口就能读取温度和湿度了。</p>
+
+<p>上面的图片是本店中出售的 DHT11 温度湿度传感器，电源支持 3.3v - 5v，可用在树莓派、51单片机、stm32、arduino、ESP系列上。</p>
+
+<p>下面是该传感器的详细介绍：</p>
+
+<p class="percent50-img">
+  <img src="https://img.alicdn.com/imgextra/i1/1901819815/O1CN01blPS1a2MNJt1LgCgi_!!1901819815.png" />
+</p>
+
+<p>下面我们使用 NodeJS 的 <a href="https://www.npmjs.com/package/rx-dht-sensor">rx-dht-sensor</a> 库来驱动传感器。感谢开源社区和作者给我们提供这么好用的库。</p>
+
+<p><a href="https://github.com/OneDevice-JS/rx-dht-sensor">【github 源码】</a></p>
+
+<h2 id="安装驱动库">安装驱动库</h2>
+
+<p>我们在树莓派上默认使用 nodejs (v8.10.0) 进行安装和使用。当然其它版本也是可以的。如果你的树莓派还没有 <a href="https://nodejs.org/en/download/">nodejs</a> 环境，请先 <a href="https://nodejs.org/dist/v10.15.3/node-v10.15.3-linux-armv7l.tar.xz">下载 nodejs</a>，然后参照这个 <a href="https://github.com/nodejs/help/wiki/Installation">安装 nodejs</a>。</p>
+
+<p>假设到这里 nodejs 环境已经准备好了。</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd </span>your-project-dir
+<span class="nv">$ </span>npm <span class="nb">install </span>rx-dht-sensor
+</code></pre></div></div>
+
+<p>上面的命令会在当前目录下安装 rx-dht-sensor 包。</p>
+
+<h2 id="硬件接线">硬件接线</h2>
+
+<p>该传感器仅需要 3 根线就可以，其中 2 根是电源，另外 1 根是 <code class="highlighter-rouge">data</code>。下面是树莓派的默认接线图。</p>
+
+<p class="percent50-img">
+  <img src="http://lanfly.vicp.io/mcu/sensor/rpi-dht11-nodejs.png" />
+</p>
+
+<blockquote>
+  <p>注意：请一定注意电源正负极。电源反接必烧毁。
+本模块兼容 3.3v 和 5v，树莓派的 3.3v 可能由于电源质量问题，实际不足数。如发现传感器读数偏差较大或不稳定工作，可接到 5v 引脚上。
+其它店铺购买的模块，请一定确认清楚电源，理论上 3.3v 的模块接 5v 必定会烧毁的。本人不负责。</p>
+</blockquote>
+
+<p>至此，传感器的线接好了，下面开始写程序读取传感器的值。</p>
+
+<h2 id="hello-dht-代码">hello dht! 代码</h2>
+
+<p>新建 hello-dht.js 文件，代码如下：</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">DHTSeries</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'rx-dht-sensor'</span><span class="p">);</span>
+
+<span class="c1">// 创建驱动实例</span>
+<span class="kd">var</span> <span class="nx">dht11</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DHTSeries</span><span class="p">({</span>
+  <span class="na">model</span><span class="p">:</span> <span class="s1">'dht11'</span><span class="p">,</span>
+  <span class="na">address</span><span class="p">:</span> <span class="mi">4</span>
+<span class="p">});</span>
+
+<span class="c1">// 简单的使用 fetch 方法读取传感器的值，如读取失败，err 参数不为 null</span>
+<span class="nx">dht11</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">temperature</span><span class="p">,</span> <span class="nx">humidity</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">'a error occur when read dht-sensor:'</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'temperature: '</span> <span class="o">+</span> <span class="nx">temperature</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">', humidity: '</span> <span class="o">+</span> <span class="nx">humidity</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<span class="p">});</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>然后使用下面命令运行它：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>node hello-dht.js
+</code></pre></div></div>
+
+<p>如果没有显示传感器的值，检查传感器的接线是否正确。如果程序有报错，能看懂的错误自己解决，看不懂的请在文章下面留言，或使用页面右下角的站内信邮件。在本店购买的用户，有问题请直接联系旺旺客服或售后技术群，将会第一时间给你解答。</p>
+
+<p>如果显示：<code class="highlighter-rouge">a error occur when read dht-sensor:</code> ，使用 <code class="highlighter-rouge">ctrl + c</code> 中断程序，然后多重试几次。这可能是由于数据传输不稳定造成的。</p>
+
+<p>驱动支持型号：dht11, dht22, am2302</p>
+
+<p>address：GPIO BCM 编号</p>
+
+<h2 id="使用观察者模式监控数值">使用观察者模式监控数值</h2>
+
+<p>上面我们使用了 fetch 方法一次性读取传感器的数值，主要是测试一下驱动是否正常。通常，我们使用温度湿度传感器都需要一直读取它，以达到实时更新的目的。比如屏幕上实时更新、自动化控制等。</p>
+
+<p>下面我们使用驱动提供的观察者模式，来自动完成这些功能。</p>
+
+<h3 id="实时刷新">实时刷新</h3>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">DHTSeries</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'rx-dht-sensor'</span><span class="p">);</span>
+
+<span class="c1">// 创建实例</span>
+<span class="kd">var</span> <span class="nx">dht11</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DHTSeries</span><span class="p">({</span>
+  <span class="na">model</span><span class="p">:</span> <span class="s1">'dht11'</span><span class="p">,</span>
+  <span class="na">address</span><span class="p">:</span> <span class="mi">4</span>
+<span class="p">});</span>
+
+<span class="c1">// 每隔 2000毫秒（2秒） 刷新一次</span>
+<span class="kd">var</span> <span class="nx">observable</span> <span class="o">=</span> <span class="nx">dht11</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="mi">2000</span><span class="p">);</span>
+
+<span class="c1">// 开始实时刷新，把结果打印出来</span>
+<span class="kd">var</span> <span class="nx">subscription</span> <span class="o">=</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="nx">subscribe</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'temperature: '</span> <span class="o">+</span> <span class="nx">value</span><span class="p">.</span><span class="nx">t</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">', humidity: '</span> <span class="o">+</span> <span class="nx">value</span><span class="p">.</span><span class="nx">h</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<span class="p">},</span> <span class="kd">function</span> <span class="nx">onError</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">'dht-sensor monitoring error.'</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// 如果想停止刷新，可以使用 dispose() 停止.</span>
+<span class="c1">// subscription.dispose()</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>提示：上面出现了一些陌生的词语，如果你只是想学会怎么使用，那你完全可以忽略它们。如果你想更深入了解，你可以学习 <a href="https://rxjs.dev/guide/overview">RxJS</a>，然后在 <a href="https://github.com/OneDevice-JS/rx-dht-sensor">GitHub</a> 查看 <a href="https://github.com/OneDevice-JS/rx-dht-sensor/blob/master/rx-operator.js#L95">then</a> 操作符的源代码。</p>
+
+<p>上面我们使用 RxJS 提供的观察者模式进行监控数据。使用 observe(interval, type=’all’) 同时进行温度和湿度的监控。</p>
+
+<p>observe 会返回 observable（观察者） 对象，然后我们订阅温度和湿度的值。</p>
+
+<blockquote>
+  <p>注意： observe 只返回 观察者，此时它并不会真正的去读取传感器的数值，因为 观察者 是惰性的，现在还没有人订阅它。 必须使用驱动提供的 then 操作符去订阅它，或者使用 RxJS 自带的 subscribe 函数订阅。</p>
+</blockquote>
+
+<p>订阅后，每隔 2s 就会打印 温度和湿度 的数值。如果想根据温度和湿度的变化进行一系列的操作，就可以在 then 回调函数里面进行。</p>
+
+<p>observe 可以同时监控温度和湿度，也可以只监控 温度 (<code class="highlighter-rouge">t</code>) 或者 湿度 (<code class="highlighter-rouge">h</code>)，通过 type 来筛选。</p>
+
+<h3 id="只监控-温度">只监控 温度</h3>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">DHTSeries</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'rx-dht-sensor'</span><span class="p">);</span>
+
+<span class="c1">// 创建实例</span>
+<span class="kd">var</span> <span class="nx">dht11</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DHTSeries</span><span class="p">({</span>
+  <span class="na">model</span><span class="p">:</span> <span class="s1">'dht11'</span><span class="p">,</span>
+  <span class="na">address</span><span class="p">:</span> <span class="mi">4</span>
+<span class="p">});</span>
+
+<span class="c1">// 每隔 2000毫秒（2秒） 刷新一次，只监听 温度</span>
+<span class="kd">var</span> <span class="nx">observable</span> <span class="o">=</span> <span class="nx">dht11</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="s1">'t'</span><span class="p">);</span>
+
+<span class="c1">// 开始实时刷新，把结果打印出来</span>
+<span class="kd">var</span> <span class="nx">subscription</span> <span class="o">=</span> <span class="nx">observable</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="nx">subscribe</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'temperature: '</span> <span class="o">+</span> <span class="nx">value</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<span class="p">},</span> <span class="kd">function</span> <span class="nx">onError</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">'dht-sensor monitoring error.'</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// 如果想停止刷新，可以使用 dispose() 停止.</span>
+<span class="c1">// subscription.dispose()</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<blockquote>
+  <p>当你指定了 type 后，返回的 value 值是不同的，请注意取值，否则会发生 undefined 报错。</p>
+</blockquote>
+
+<p>当然，驱动提供了常用的操作符用于简化业务代码。下面我们介绍驱动提供的几种操作符。</p>
+
+<h2 id="操作符">操作符</h2>
+
+<h3 id="max-当数值大于设定条件的时候触发">max: 当数值大于设定条件的时候触发</h3>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="code"><pre><span class="c1">// 只有当温度大于 28 度时才会触发 then 回调函数</span>
+<span class="kd">var</span> <span class="nx">subscription</span> <span class="o">=</span> <span class="nx">dht11</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="s1">'t'</span><span class="p">).</span><span class="nx">max</span><span class="p">(</span><span class="mi">28</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'好热啊！当前温度是: '</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+<span class="p">});</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="min-当数值小于设定条件的时候触发">min: 当数值小于设定条件的时候触发</h3>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="code"><pre><span class="c1">// 只有当湿度小于 20% 时才会触发 then 回调函数</span>
+<span class="kd">var</span> <span class="nx">subscription</span> <span class="o">=</span> <span class="nx">dht11</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="s1">'h'</span><span class="p">).</span><span class="nx">min</span><span class="p">(</span><span class="mi">20</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'好干燥啊！当前湿度是: '</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+<span class="p">});</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="when-当数值等于给定条件的时候触发">when: 当数值等于给定条件的时候触发</h3>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="code"><pre><span class="c1">// 只有当温度等于 20度 时才会触发 then 回调函数</span>
+<span class="kd">var</span> <span class="nx">subscription</span> <span class="o">=</span> <span class="nx">dht11</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="s1">'t'</span><span class="p">).</span><span class="nx">when</span><span class="p">(</span><span class="mi">20</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'设定的温度到了！当前温度是: '</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+<span class="p">});</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="between-当数值大于左区间并且小于右区间的时候触发">between: 当数值大于左区间并且小于右区间的时候触发</h3>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="code"><pre><span class="c1">// 只有当温度 大于20度 并且 小于26度 时才会触发 then 回调函数</span>
+<span class="kd">var</span> <span class="nx">subscription</span> <span class="o">=</span> <span class="nx">dht11</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="s1">'t'</span><span class="p">).</span><span class="nx">between</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">26</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'当前温度是: '</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+<span class="p">});</span></pre></td></tr></tbody></table></code></pre></figure>
+
+
+  </div><div class="content sidebar"><div class="preference-product">
+      <h2 class="sidebar-title">神秘商店</h2>
+      <a href="https://item.taobao.com/item.htm?spm=a1z10.1-c-s.w4004-18317433854.18.23fc50e5bWK3Ul&id=587601992088"  target="_blank">
+        <img src="https://gd3.alicdn.com/imgextra/i3/1901819815/O1CN01CqAhj32MNJt0rVA0w_!!1901819815.png_400x400.jpg" alt="图片加载失败了">
+      </a>
+      <p class="product-name">DHT11 温度模块 湿度模块 温湿度模块 传感器 赠送温湿度监控源码</p>
+      <a href="https://item.taobao.com/item.htm?spm=a1z10.1-c-s.w4004-18317433854.18.23fc50e5bWK3Ul&id=587601992088" target="_blank">
+        <div class="goto-detail" title="将会在新窗口中打开宝贝详情页面">查看详情</div>
+      </a>
+    </div></div><div class="content sub-content related-article">
+    <h3 class="sub-title">再看看其它同类文章吧！</h3>
+    <div class="list">
+      
+      <a href="/mcu/lcd/nodemcu-st7735s-lua-demo.html"><p class="transition-02s">nodemcu 使用 Lua 编写/移植 ST7735S 0.96 寸彩色 LCD 屏幕驱动（SPI 通信）</p></a>
+      <a href="/mcu/oled/rpi-ssd1306-python-graphics.html"><p class="transition-02s">树莓派使用 Python 驱动 SSD1306 中文字体、图片动画高级教程（IIC/SPI 通信）</p></a>
+      <a href="/mcu/oled/rpi-ssd1306-python.html"><p class="transition-02s">树莓派使用 Python 驱动 SSD1306（IIC/SPI 通信）</p></a>
+      <a href="/mcu/lcd/rpi-st7735-python.html"><p class="transition-02s">树莓派使用 Python 驱动 ST7735 1.44 寸彩色 TFT 屏幕（SPI 通信）</p></a>
+      <a href="/mcu/lcd/rpi-st7735s-python-demo.html"><p class="transition-02s">树莓派使用 Python 编写/移植 ST7735S 0.96 寸彩色 LCD 屏幕驱动（SPI 通信）</p></a>
+      <a href="/tv/timor-tv-rpi.html"><p class="transition-02s">树莓派复古小电视开发教程</p></a></div>
+  </div>
+  <div class="content sub-content">
+    <h3 class="sub-title">有想说的评论一句吧！</h3>
+    
+    <div id="SOHUCS" sid="/mcu/sensor/rpi-dht-nodejs.html"></div>
+  </div>
+</div>
+    </div>
+    <footer class="site-footer">
+  <div class="site-info">
+    <p>
+      <span>Powered by </span>
+      <a href="http://jekyllrb.com/">jekyll</a>
+      <span> & </span>
+      <a href="https://nodejs.org/" target="_blank">NodeJS</a>
+      <span> | </span>
+      <span> Server on RaspberryPi 3B | Theme made by </span>
+      <a href="mailto:bluescode@outlook.com">sudo</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <p xmlns:dct="http://purl.org/dc/terms/">
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">
+        <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/by-nc-sa.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" style="border-style: none;" width="80" height="28" alt="署名-非商业性使用-相同方式共享 (CC BY-NC-SA)" />
+      </a>
+    </p>
+    <p>
+      <span>本作品采用</span>
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">《署名-非商业性使用-相同方式共享》</a>
+      <span>许可协议，转载请先联系</span>
+      <a href="mailto:bluescode@outlook.com">站长</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/logo.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="logo" width="64" height="64" class="logo">
+    <p>提莫的神秘商店</p>
+  </div>
+  <div class="site-info">
+    <p>
+      <a href="http://www.beian.miit.gov.cn/" target="_blank">浙ICP备19010606号</a>
+      <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/public-security.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" width="20" height="20" alt="浙公网安备案图标" style="margin: 0 20px;" />
+      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002013836" target="_blank">浙公网安备33011002013836号</a>
+    </p>
+  </div>
+</footer>
+
+    <script>
+  /**
+   url: string
+   callback: [function]
+  */
+  function loadScript (url, callback) {
+    var headElement = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+    var script = document.createElement("script");
+    script.setAttribute("type", "text/javascript");
+    script.setAttribute("charset", "UTF-8");
+    script.setAttribute("src", url);
+    if (typeof callback === 'function') {
+      if (window.attachEvent) {
+        script.onreadystatechange = function () {
+          var e = script.readyState;
+          if (e === "loaded" || e === "complete") {
+            script.onreadystatechange = null;
+            callback();
+          }
+        };
+      } else {
+        script.onload = callback
+      }
+    }
+    headElement.appendChild(script);
+  }
+  /**
+   callback: function
+   timeout: [number] default: 1000
+  */
+  function lazycall(callback, timeout) {
+    if (typeof timeout != 'number') {
+      timeout = 1000
+    }
+    if (window.addEventListener) {
+      window.addEventListener('load', callback, false);
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', callback);
+    } else {
+      setTimeout(callback, timeout);
+    }
+  }
+  /**
+   url: string
+   timeout: [number] default: 1000
+   callback: [function]
+  */
+  function lazyloadScript (url, timeout, callback) {
+    if (typeof timeout === 'function') {
+      callback = timeout
+      timeout = 1000
+    }
+    lazycall(function () {
+      loadScript(url, callback)
+    }, timeout)
+  }
+  lazyloadScript('http://libs.baidu.com/jquery/2.0.3/jquery.min.js', function () {
+    $(document).ready(function () {
+      var navToggle = $('.js-nav-toggle')
+      var mobileMenu = $('.js-mobile-menu')
+      // Toggle blog-menu
+      navToggle.on("click", function () {
+        navToggle.toggleClass("active");
+        mobileMenu.slideToggle();
+        return false;
+      });
+      // Hide mobile-menu > 768
+      $(window).resize(function () {
+        var windowWidth = $(window).width()
+        if (windowWidth > 768) {
+          navToggle.removeClass("active");
+          mobileMenu.show();
+        }
+        if (windowWidth <= 768 && !navToggle.hasClass('active')) {
+          navToggle.removeClass("active");
+          mobileMenu.hide();
+        }
+      });
+      // lazyload img for footer
+      $('.site-footer img.js-lazyload-img').each(function (index, elem) {
+        var img = $(this)
+        img.attr('src', img.data('src'))
+      });
+    });
+  })
+</script>
+
+    <script type="text/javascript">
+  var _hmt = _hmt || [];
+  function loadBaiduTongji () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?f497f00a5871b6ed9078f87ab818d62d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  }
+  lazycall(loadBaiduTongji)
+</script>
+    <script type="text/javascript">
+  function loadChangyan () {
+    var appid = 'cytTik2AP';
+    var conf = 'prod_0b6e93ff9daf2e0d6e49c8ad1586bf4b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      var loadJsWithId=function(d,i){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("id",i);b.setAttribute("charset","UTF-8");b.setAttribute("src",d);c.appendChild(b)};
+      loadJsWithId('https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf, "changyan_mobile_js")
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  }
+  lazycall(loadChangyan)
+</script>
+    
+  </body>
+</html>

@@ -1,85 +1,444 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
-<head>
+  <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>BluesCode | 记录我的生活和工作</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="keywords" content="">
+<meta name="description" content=""><title>提莫的神秘商店</title><link rel="stylesheet" href="http://lanfly.vicp.io/css/default.css">
+<link rel="stylesheet" href="http://lanfly.vicp.io/css/highlight/rouge-solarized-light.css">
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" sizes="16x16" />
+<style type="text/css"></style>
 
-    <link rel='stylesheet' id='heidi-style-css' href='/css/heidi.css' type='text/css' media='all' />
-    <meta name="generator" content="github pages" />
-    <style type="text/css">
-    .recentcomments a {
-        display: inline !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-    </style>
-</head>
+    <link rel="stylesheet" href="http://lanfly.vicp.io/css/category.css">
+    <link rel="stylesheet" href="http://lanfly.vicp.io/css/index.css">
+  </head>
+  <body>
+    <div class="page">
+      <header id="masthead" role="banner" class="site-header">
+  <div class="site-branding">
+    <h1 class="site-title"><a href="/" rel="home" title="回到首页">提莫的神秘商店</a></h1>
 
-<body class="home blog">
-    <div id="page" class="hfeed site">
-        <header id="masthead" role="banner" class="site-header">
-            <div class="site-branding">
-                <h1 class="site-title"><a href="/" rel="home" title="回到首页">BluesCode</a></h1>
-                <h2 class="site-description">一个以兴趣驱动的个人博客</h2>
-                <span class="nav-toggle hidden" title="Click to view the navigation" href="#">
-	                <div class="bars">
-	                    <div class="bar"></div>
-	                    <div class="bar"></div>
-	                    <div class="bar"></div>
-	                    <div class="clear"></div>
-	                </div>
-	                <p>
-	                    <span class="menu">Menu</span>
-	                    <span class="close">Close</span>
-	                </p>
-	            </span>
-            </div>
-            <!-- .site-branding -->
-        </header>
-        <ul id="navi-menu" class="mobile-menu">
-	        <li class="menu-item"><a href="/">首页</a></li>
-	        <li class="menu-item"><a href="/web">web前端</a></li>
-            <li class="menu-item"><a href="/mac">MacOSX</a></li>
-            <li class="menu-item"><a href="/resource">干货分享</a></li>
-            <li class="menu-item"><a href="/laneditor" title="一款个性化在线markdown编辑器">LanEditor</a></li>
-    	</ul>
-        <!-- #masthead -->
-        <div id="content" class="site-content">
-            <div id="primary" class="content-area">
-                <main id="main" class="site-main" role="main">
-                    
-                    
-                    <!-- #post-## -->
-                    <div class="more hentry">
-                        我正在努力加载(＞﹏＜)
-                    </div>
-                </main>
-                <!-- #main -->
-            </div>
-            <!-- #primary -->
-            <div id="secondary" class="widget-area" role="complementary">
-                <aside id="sidebar-loading" class="widget">
-                    <h1 class="widget-title">我在努力加载 ::>_<::</h1>
-                </aside>
-            </div>
-            <!-- #secondary -->
-        </div>
-        <!-- #content -->
-        <footer id="colophon" class="site-footer" role="contentinfo">
-            <div class="site-info">Powered by 
-                <a href="http://jekyllrb.com/">jekyll</a>
-                <span class="sep"> </span> Theme optimized by <a href="mailto:bluescode@outlook.com">BluesCode</a> based on <a href="http://www.andersnoren.se/teman/rams-wordpress-theme/">Rams</a> and <a href="http://alexaweidinger.com" rel="designer">Alexa Weidinger</a></div>
-            <!-- .site-info -->
-        </footer>
-        <!-- #colophon -->
+    <span class="nav-toggle js-nav-toggle  hidden" title="Click to view the navigation" href="#">
+      <div class="bars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="clear"></div>
+      </div>
+      <p>
+        <span class="menu">Menu</span>
+        <span class="close">Close</span>
+      </p>
+    </span>
+  </div>
+</header>
+
+      <ul id="navi-menu" class="mobile-menu js-mobile-menu"><li class="menu-item transition-02s"><a href="/">首页</a></li><li class="menu-item transition-02s"><a href="/shop">神秘商店</a></li><li class="menu-item transition-02s"><a href="/mcu">硬件</a></li><li class="menu-item transition-02s"><a href="/js">JavaScript</a></li><li class="menu-item transition-02s"><a href="/3d">3D/模型</a></li><li class="menu-item transition-02s"><a href="/project">开源项目</a></li><li class="menu-item transition-02s"><a href="/api">免费服务</a></li><li class="menu-item transition-02s"><a href="/about">关于</a></li></ul>
+      
+<div class="main transition-04s">
+      <div class="content category-wrapper">
+        <h1 class="title">分类：硬件 <span class="description">简介：各种硬件教程和驱动都在这里，店长精心编写的驱动，一分钟教你如何玩转各种硬件</span></h1>
+        <div class="article-list"><article class="post">
+                <header class="entry-header">
+                  <h1 class="entry-title">
+                    <a href="/mcu/lcd/nodemcu-st7735s-lua-demo.html">nodemcu 使用 Lua 编写/移植 ST7735S 0.96 寸彩色 LCD 屏幕驱动（SPI 通信）</a>
+                  </h1>
+                  <div class="entry-meta">
+                    <span>最后更新于：</span>
+                    <span class="update-time">2019-09-22 00:33:26</span>
+                    <span class="author-label">作者：</span>
+                    <span class="author">提莫队长</span>
+                  </div>
+                </header>
+                <div class="entry-content">
+                  本站提供了很多现成的屏幕驱动供大家使用，也写了很多文章教大家如何绘图、显示中文、动画制作等。现在，让我们来自己编写/移植一款彩色屏幕的驱动，这样大家以后也可以把驱动移植到其它平台，或者举一反三，自行学会编写其它型号的屏幕驱动。当然，你也可以移植到其它语言比如 nodejs，Lua，C 来驱动此屏幕。本站已经实现了 C, NodeJS, Lua, Python 各种语言的版本，可以运行在单片机，树莓派，ESP8266/32等各种平台。 
+                  <br/>
+                  <a class="readmore" href="/mcu/lcd/nodemcu-st7735s-lua-demo.html">更多 >></a>
+                </div>
+                <footer class="entry-footer">
+                  <span>分类:</span><a href="/mcu" class="category hl">mcu</a></footer>
+              </article><article class="post">
+                <header class="entry-header">
+                  <h1 class="entry-title">
+                    <a href="/mcu/sensor/rpi-dht-nodejs.html">树莓派使用 NodeJS 读取并监控 DHT11/22 温度湿度传感器</a>
+                  </h1>
+                  <div class="entry-meta">
+                    <span>最后更新于：</span>
+                    <span class="update-time">2019-05-12 12:10:39</span>
+                    <span class="author-label">作者：</span>
+                    <span class="author">提莫队长</span>
+                  </div>
+                </header>
+                <div class="entry-content">
+                  本文详细介绍了如何在树莓派上使用 nodejs 读取 dht11/22 温度湿度传感器，并提供完整的驱动包，真正的开箱即用。并且介绍了如何使用 RxJS 以观察者模式监控温度和湿度的变化，并发出通知。<br/> dht11 温度湿度传感器使用很广泛，价格也相对便宜，并且使用单总线传输数据，这使得编写驱动变得容易不少。下面我们会重点介绍如何去监控温度和湿度的变化，并且在达到触发条件时发出通知，从而达到自动化控制的目的。除此之外，作者也会提供封装好的 RxJS 包，让开发变得更容易。
+                  <br/>
+                  <a class="readmore" href="/mcu/sensor/rpi-dht-nodejs.html">更多 >></a>
+                </div>
+                <footer class="entry-footer">
+                  <span>分类:</span><a href="/mcu" class="category hl">mcu</a></footer>
+              </article><article class="post">
+                <header class="entry-header">
+                  <h1 class="entry-title">
+                    <a href="/mcu/oled/rpi-ssd1306-python-graphics.html">树莓派使用 Python 驱动 SSD1306 中文字体、图片动画高级教程（IIC/SPI 通信）</a>
+                  </h1>
+                  <div class="entry-meta">
+                    <span>最后更新于：</span>
+                    <span class="update-time">2019-08-10 16:03:13</span>
+                    <span class="author-label">作者：</span>
+                    <span class="author">提莫队长</span>
+                  </div>
+                </header>
+                <div class="entry-content">
+                  本文是树莓派上使用 python 驱动 SSD1306 OLED 屏幕的高级篇，详细讲解了如何显示中文字体，显示图片，制作动画等高级用法，让你在树莓派上玩转屏幕，做出任何你想要的效果。
+                  <br/>
+                  <a class="readmore" href="/mcu/oled/rpi-ssd1306-python-graphics.html">更多 >></a>
+                </div>
+                <footer class="entry-footer">
+                  <span>分类:</span><a href="/mcu" class="category hl">mcu</a></footer>
+              </article><article class="post">
+                <header class="entry-header">
+                  <h1 class="entry-title">
+                    <a href="/mcu/oled/rpi-ssd1306-python.html">树莓派使用 Python 驱动 SSD1306（IIC/SPI 通信）</a>
+                  </h1>
+                  <div class="entry-meta">
+                    <span>最后更新于：</span>
+                    <span class="update-time">2019-02-08 00:11:15</span>
+                    <span class="author-label">作者：</span>
+                    <span class="author">提莫队长</span>
+                  </div>
+                </header>
+                <div class="entry-content">
+                  本文详细介绍了如何在树莓派上使用 python 驱动 SSD1306 OLED 屏幕，并提供完整的驱动包，真正的开箱即用。支持 IIC 和 SPI。 支持图形驱动和 canvas 绘图，能直接显示 png 图片，支持中文显示。<br/> 更有驱动的源码分析，授人以鱼不如授人以渔，阅读完后能真正理解原理并充分使用它。
+                  <br/>
+                  <a class="readmore" href="/mcu/oled/rpi-ssd1306-python.html">更多 >></a>
+                </div>
+                <footer class="entry-footer">
+                  <span>分类:</span><a href="/mcu" class="category hl">mcu</a></footer>
+              </article><article class="post">
+                <header class="entry-header">
+                  <h1 class="entry-title">
+                    <a href="/mcu/lcd/rpi-st7735-python.html">树莓派使用 Python 驱动 ST7735 1.44 寸彩色 TFT 屏幕（SPI 通信）</a>
+                  </h1>
+                  <div class="entry-meta">
+                    <span>最后更新于：</span>
+                    <span class="update-time">2019-08-19 00:40:03</span>
+                    <span class="author-label">作者：</span>
+                    <span class="author">提莫队长</span>
+                  </div>
+                </header>
+                <div class="entry-content">
+                  本文详细介绍了如何在树莓派上使用 python 驱动 ST7735 TFT 彩色屏幕，并提供完整的驱动包，真正的开箱即用。支持SPI。并讲解如何给彩色屏幕绘图。 有了彩色屏幕，我们可以绘制出更漂亮的界面，并且 TFT 屏幕比之前的 SSD1306 分辨率也高了不少，本店出售的 ST7735 是 128*128 分辨率的，支持 262K 颜色。 
+                  <br/>
+                  <a class="readmore" href="/mcu/lcd/rpi-st7735-python.html">更多 >></a>
+                </div>
+                <footer class="entry-footer">
+                  <span>分类:</span><a href="/mcu" class="category hl">mcu</a></footer>
+              </article><article class="post">
+                <header class="entry-header">
+                  <h1 class="entry-title">
+                    <a href="/mcu/lcd/rpi-st7735s-python-demo.html">树莓派使用 Python 编写/移植 ST7735S 0.96 寸彩色 LCD 屏幕驱动（SPI 通信）</a>
+                  </h1>
+                  <div class="entry-meta">
+                    <span>最后更新于：</span>
+                    <span class="update-time">2019-09-01 19:19:12</span>
+                    <span class="author-label">作者：</span>
+                    <span class="author">提莫队长</span>
+                  </div>
+                </header>
+                <div class="entry-content">
+                  本站提供了很多现成的屏幕驱动供大家使用，也写了很多文章教大家如何绘图、显示中文、动画制作等。现在，让我们来自己编写/移植一款彩色屏幕的驱动，这样大家以后也可以把驱动移植到其它平台，或者举一反三，自行学会编写其它型号的屏幕驱动。当然，你也可以移植到其它语言比如 nodejs，Lua，C 来驱动此屏幕。本站已经实现了 C, NodeJS, Lua, Python 各种语言的版本，可以运行在单片机，树莓派，ESP8266/32等各种平台。 
+                  <br/>
+                  <a class="readmore" href="/mcu/lcd/rpi-st7735s-python-demo.html">更多 >></a>
+                </div>
+                <footer class="entry-footer">
+                  <span>分类:</span><a href="/mcu" class="category hl">mcu</a></footer>
+              </article><article class="post">
+                <header class="entry-header">
+                  <h1 class="entry-title">
+                    <a href="/tv/timor-tv-rpi.html">树莓派复古小电视开发教程</a>
+                  </h1>
+                  <div class="entry-meta">
+                    <span>最后更新于：</span>
+                    <span class="update-time">2019-02-08 14:03:02</span>
+                    <span class="author-label">作者：</span>
+                    <span class="author">提莫队长</span>
+                  </div>
+                </header>
+                <div class="entry-content">
+                  这是 ssd1306 复古小电视的使用文档，通过阅读文档，可以了解到复古小电视的使用方法，包括学会如何显示 png 图片、如何使用 canvas 绘图、如何使用原生 api 绘图。不用怕，这非常简单。
+                  <br/>
+                  <a class="readmore" href="/tv/timor-tv-rpi.html">更多 >></a>
+                </div>
+                <footer class="entry-footer">
+                  <span>分类:</span><a href="/timor-tv" class="category hl">timor-tv</a><a href="/mcu" class="category hl">mcu</a></footer>
+              </article></div>
+      </div>
+      <div class="content category-wrapper">
+        <h1 class="title">分类：JavaScript <span class="description">简介：JavaScript、NodeJS 相关的都在这里。教你如何使用 JavaScript 玩转硬件</span></h1>
+        <div class="article-list"><article class="post">
+                <header class="entry-header">
+                  <h1 class="entry-title">
+                    <a href="/js/esp32-running-jerryscript.html">前端也能玩转硬件：在 ESP32 上运行 JavaScript (附可运行固件下载)</a>
+                  </h1>
+                  <div class="entry-meta">
+                    <span>最后更新于：</span>
+                    <span class="update-time">2019-09-24 22:16:29</span>
+                    <span class="author-label">作者：</span>
+                    <span class="author">提莫队长</span>
+                  </div>
+                </header>
+                <div class="entry-content">
+                  本文的主要目的是描述如何让 ESP32 芯片运行 JavaScript，并且让 web 前端开发人员也能玩转硬件。作者之前是 web 前端开发工程师，所以文章会尽量站在 web 前端开发工程师的角度，抛开底层的硬件知识，去掉一些目前不需要关心的，将重点放在软件上。尽管这样，我们接下来所要做的是 硬件+软件 的一个整体，所以一些基础的 C 语言和硬件知识会让你更好的阅读此文章。没有也不要紧，因为高深的我也不会阿！
+                  <br/>
+                  <a class="readmore" href="/js/esp32-running-jerryscript.html">更多 >></a>
+                </div>
+                <footer class="entry-footer">
+                  <span>分类:</span><a href="/js" class="category hl">js</a></footer>
+              </article></div>
+      </div>
+      <div class="content category-wrapper">
+        <h1 class="title">分类：3D/模型 <span class="description">简介：分享各类好玩、好看、有意思的 3D 打印模型和 DIY 手工、手办等模型</span></h1>
+        <div class="article-list"><div class="info-empty">提莫队长比较懒，该分类下什么也没有！</div></div>
+      </div>
+      <div class="content category-wrapper">
+        <h1 class="title">分类：开源项目 <span class="description">简介：由提莫的神秘商店发起并开源的项目都汇集在这里</span></h1>
+        <div class="article-list"><article class="post">
+                <header class="entry-header">
+                  <h1 class="entry-title">
+                    <a href="/project/tGFX/en/">tGFX - a tiny gfx library for tft/lcd/oled</a>
+                  </h1>
+                  <div class="entry-meta">
+                    <span>最后更新于：</span>
+                    <span class="update-time">2020-02-04 22:28:08</span>
+                    <span class="author-label">作者：</span>
+                    <span class="author">timor</span>
+                  </div>
+                </header>
+                <div class="entry-content">
+                  a tiny gfx library for tft/lcd/oled screen. Platform independent. etc.. C51, STM32, Arduino, Linux, Windows, MacOSX. written in languaug C. support Monochrome, 565, RGB, RGBA color mode. Buildin 5*8 matrix font, support third font.
+                  <br/>
+                  <a class="readmore" href="/project/tGFX/en/">更多 >></a>
+                </div>
+                <footer class="entry-footer">
+                  <span>分类:</span><a href="/project" class="category hl">project</a></footer>
+              </article><article class="post">
+                <header class="entry-header">
+                  <h1 class="entry-title">
+                    <a href="/project/tGFX/">tGFX 一个轻量、简单、跨平台的二维图形绘图库</a>
+                  </h1>
+                  <div class="entry-meta">
+                    <span>最后更新于：</span>
+                    <span class="update-time">2020-02-04 22:28:08</span>
+                    <span class="author-label">作者：</span>
+                    <span class="author">提莫队长</span>
+                  </div>
+                </header>
+                <div class="entry-content">
+                  一个轻量、简单、快速、免费、无任何依赖、跨平台的图形库，二维图形绘图库。可运行在 C51、STM32、Arduino 等各种单片机上，也可以运行在 Linux、Windows、MacOSX 等各种桌面电脑上。 使用纯 C 语言编写，支持 单色、565、RGB、RGBA 颜色格式。内嵌 5*8 点阵字体，支持自定义字体。
+                  <br/>
+                  <a class="readmore" href="/project/tGFX/">更多 >></a>
+                </div>
+                <footer class="entry-footer">
+                  <span>分类:</span><a href="/project" class="category hl">project</a></footer>
+              </article><article class="post">
+                <header class="entry-header">
+                  <h1 class="entry-title">
+                    <a href="/project/timor-wifi-boot/">Timor-WIFI-Boot 一个使用漂亮的 web 界面来管理 ESP8266/ESP32 网络配置的开源项目</a>
+                  </h1>
+                  <div class="entry-meta">
+                    <span>最后更新于：</span>
+                    <span class="update-time">2020-03-21 15:02:35</span>
+                    <span class="author-label">作者：</span>
+                    <span class="author">提莫队长</span>
+                  </div>
+                </header>
+                <div class="entry-content">
+                  一个使用漂亮的 web 界面来管理 ESP8266/ESP32 网络配置的开源项目，基于 NodeMcu Lua。 特点: 1. 所有代码开源，可自定义修改 2. 使用 Lua 编写，代码简单，可读性高（简单是最重要的） 3. 支持 OLED 屏幕，实时显示状态和日期时间 4. 支持历史记录，断电永久保存，开机自动连接 5. 网络监控，断线自动重连+打开 AP，联网 AP 自动关闭 6. 自带 HTTP Server，无需任何第三方 APP 7. 界面使用原生 HTML + CSS + JavaScript，开发简单，兼容性好
+                  <br/>
+                  <a class="readmore" href="/project/timor-wifi-boot/">更多 >></a>
+                </div>
+                <footer class="entry-footer">
+                  <span>分类:</span><a href="/project" class="category hl">project</a></footer>
+              </article><article class="post">
+                <header class="entry-header">
+                  <h1 class="entry-title">
+                    <a href="/project/onedevice.html">oneDevice.js - NodeJS 万能硬件驱动包</a>
+                  </h1>
+                  <div class="entry-meta">
+                    <span>最后更新于：</span>
+                    <span class="update-time">2018-01-01 23:27:26</span>
+                    <span class="author-label">作者：</span>
+                    <span class="author">提莫队长</span>
+                  </div>
+                </header>
+                <div class="entry-content">
+                  我们的目标：NodeJS 能驱动的硬件，都要有 NodeJS 的驱动。<br/> 这是一个旨在用 NodeJS 驱动硬件的驱动包。开箱即用、完善的文档、持续更新、友好的 API。用树莓派打造自己的智能家居。
+                  <br/>
+                  <a class="readmore" href="/project/onedevice.html">更多 >></a>
+                </div>
+                <footer class="entry-footer">
+                  <span>分类:</span><a href="/project" class="category hl">project</a></footer>
+              </article></div>
+      </div>
+      <div class="content category-wrapper">
+        <h1 class="title">分类：免费服务 <span class="description">简介：由提莫的神秘商店维护的免费服务都汇集在这里，应该是最(almost)良心的免费服务了</span></h1>
+        <div class="article-list"><article class="post">
+                <header class="entry-header">
+                  <h1 class="entry-title">
+                    <a href="/api/holiday/">免费节假日 API</a>
+                  </h1>
+                  <div class="entry-meta">
+                    <span>最后更新于：</span>
+                    <span class="update-time">2020-05-03 12:47:54 +0800</span>
+                    <span class="author-label">作者：</span>
+                    <span class="author">提莫队长</span>
+                  </div>
+                </header>
+                <div class="entry-content">
+                  免费节假日 api, 免费好用，简洁好看的文档。可能是最良心的免费节假日 API 接口了。具有 TTS 接口，可直接返回人类可阅读的中文结果, 持续更新中。
+                  <br/>
+                  <a class="readmore" href="/api/holiday/">更多 >></a>
+                </div>
+                <footer class="entry-footer">
+                  <span>分类:</span><a href="/api" class="category hl">api</a></footer>
+              </article></div>
+      </div></div>
     </div>
-    <!-- #page -->
-<!-- <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script> -->
-<script type="text/javascript" src="/javascript/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="/javascript/heidi.js"></script>
-<script type="text/javascript" src="/javascript/index-heidi.js"></script>
-</body>
+    <footer class="site-footer">
+  <div class="site-info">
+    <p>
+      <span>Powered by </span>
+      <a href="http://jekyllrb.com/">jekyll</a>
+      <span> & </span>
+      <a href="https://nodejs.org/" target="_blank">NodeJS</a>
+      <span> | </span>
+      <span> Server on RaspberryPi 3B | Theme made by </span>
+      <a href="mailto:bluescode@outlook.com">sudo</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <p xmlns:dct="http://purl.org/dc/terms/">
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">
+        <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/by-nc-sa.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" style="border-style: none;" width="80" height="28" alt="署名-非商业性使用-相同方式共享 (CC BY-NC-SA)" />
+      </a>
+    </p>
+    <p>
+      <span>本作品采用</span>
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">《署名-非商业性使用-相同方式共享》</a>
+      <span>许可协议，转载请先联系</span>
+      <a href="mailto:bluescode@outlook.com">站长</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/logo.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="logo" width="64" height="64" class="logo">
+    <p>提莫的神秘商店</p>
+  </div>
+  <div class="site-info">
+    <p>
+      <a href="http://www.beian.miit.gov.cn/" target="_blank">浙ICP备19010606号</a>
+      <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/public-security.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" width="20" height="20" alt="浙公网安备案图标" style="margin: 0 20px;" />
+      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002013836" target="_blank">浙公网安备33011002013836号</a>
+    </p>
+  </div>
+</footer>
 
+    <script>
+  /**
+   url: string
+   callback: [function]
+  */
+  function loadScript (url, callback) {
+    var headElement = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+    var script = document.createElement("script");
+    script.setAttribute("type", "text/javascript");
+    script.setAttribute("charset", "UTF-8");
+    script.setAttribute("src", url);
+    if (typeof callback === 'function') {
+      if (window.attachEvent) {
+        script.onreadystatechange = function () {
+          var e = script.readyState;
+          if (e === "loaded" || e === "complete") {
+            script.onreadystatechange = null;
+            callback();
+          }
+        };
+      } else {
+        script.onload = callback
+      }
+    }
+    headElement.appendChild(script);
+  }
+  /**
+   callback: function
+   timeout: [number] default: 1000
+  */
+  function lazycall(callback, timeout) {
+    if (typeof timeout != 'number') {
+      timeout = 1000
+    }
+    if (window.addEventListener) {
+      window.addEventListener('load', callback, false);
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', callback);
+    } else {
+      setTimeout(callback, timeout);
+    }
+  }
+  /**
+   url: string
+   timeout: [number] default: 1000
+   callback: [function]
+  */
+  function lazyloadScript (url, timeout, callback) {
+    if (typeof timeout === 'function') {
+      callback = timeout
+      timeout = 1000
+    }
+    lazycall(function () {
+      loadScript(url, callback)
+    }, timeout)
+  }
+  lazyloadScript('http://libs.baidu.com/jquery/2.0.3/jquery.min.js', function () {
+    $(document).ready(function () {
+      var navToggle = $('.js-nav-toggle')
+      var mobileMenu = $('.js-mobile-menu')
+      // Toggle blog-menu
+      navToggle.on("click", function () {
+        navToggle.toggleClass("active");
+        mobileMenu.slideToggle();
+        return false;
+      });
+      // Hide mobile-menu > 768
+      $(window).resize(function () {
+        var windowWidth = $(window).width()
+        if (windowWidth > 768) {
+          navToggle.removeClass("active");
+          mobileMenu.show();
+        }
+        if (windowWidth <= 768 && !navToggle.hasClass('active')) {
+          navToggle.removeClass("active");
+          mobileMenu.hide();
+        }
+      });
+      // lazyload img for footer
+      $('.site-footer img.js-lazyload-img').each(function (index, elem) {
+        var img = $(this)
+        img.attr('src', img.data('src'))
+      });
+    });
+  })
+</script>
+
+    <script type="text/javascript">
+  var _hmt = _hmt || [];
+  function loadBaiduTongji () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?f497f00a5871b6ed9078f87ab818d62d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  }
+  lazycall(loadBaiduTongji)
+</script>
+  </body>
 </html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="keywords" content="ssd1306,树莓派,oled,iic,i2c,python,驱动,中文,图片,动画">
+<meta name="description" content="本文是树莓派上使用 python 驱动 SSD1306 OLED 屏幕的高级篇，详细讲解了如何显示中文字体，显示图片，制作动画等高级用法，让你在树莓派上玩转屏幕，做出任何你想要的效果。"><title>树莓派使用 Python 驱动 SSD1306 中文字体、图片动画高级教程（IIC/SPI 通信） - 提莫的神秘商店</title><link rel="stylesheet" href="http://lanfly.vicp.io/css/default.css">
+<link rel="stylesheet" href="http://lanfly.vicp.io/css/highlight/rouge-solarized-light.css">
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" sizes="16x16" />
+<style type="text/css"></style>
+
+    <link rel="stylesheet" href="http://lanfly.vicp.io/css/post.css">
+  </head>
+  <body>
+    <div class="page">
+      <header id="masthead" role="banner" class="site-header">
+  <div class="site-branding">
+    <h1 class="site-title"><a href="/" rel="home" title="回到首页">提莫的神秘商店</a></h1>
+
+    <span class="nav-toggle js-nav-toggle  hidden" title="Click to view the navigation" href="#">
+      <div class="bars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="clear"></div>
+      </div>
+      <p>
+        <span class="menu">Menu</span>
+        <span class="close">Close</span>
+      </p>
+    </span>
+  </div>
+</header>
+
+      <ul id="navi-menu" class="mobile-menu js-mobile-menu"><li class="menu-item transition-02s"><a href="/">首页</a></li><li class="menu-item transition-02s"><a href="/shop">神秘商店</a></li><li class="menu-item transition-02s"><a href="/mcu">硬件</a></li><li class="menu-item transition-02s"><a href="/js">JavaScript</a></li><li class="menu-item transition-02s"><a href="/3d">3D/模型</a></li><li class="menu-item transition-02s"><a href="/project">开源项目</a></li><li class="menu-item transition-02s"><a href="/api">免费服务</a></li><li class="menu-item transition-02s"><a href="/about">关于</a></li></ul>
+      <div class="main enable-sidebar transition-04s">
+  <div class="content article-content">
+    <h1 class="title">树莓派使用 Python 驱动 SSD1306 中文字体、图片动画高级教程（IIC/SPI 通信）</h1>
+    <p>本文是树莓派上使用 python 驱动 SSD1306 OLED 屏幕的高级篇，详细讲解了如何显示中文字体，显示图片，制作动画等高级用法，让你在树莓派上玩转屏幕，做出任何你想要的效果。</p>
+
+<p class="percent50-img">
+  <img src="https://gd2.alicdn.com/imgextra/i2/1901819815/O1CN012MNJqsMDgynWvx1_!!1901819815.png_400x400.jpg" />
+</p>
+
+<p>阅读本文的用户，请先阅读 <a href="//timor.tech/mcu/oled/rpi-ssd1306-python.html">树莓派上使用 python 驱动 SSD1306 OLED 屏幕 入门篇</a>，安装好驱动和了解基本的用法，先把屏幕驱动起来，再来看高级用法。</p>
+
+<p>相关链接：
+<a href="https://luma-oled.readthedocs.io/en/latest/_downloads/cda12fc02d33b3817ee352660c4b5f01/SSD1306.pdf">【ssd1306 数据手册下载】</a> 
+<a href="https://luma-oled.readthedocs.io/en/latest/intro.html">【luma-oled 英文文档】</a> 
+<a href="https://github.com/rm-hull/luma.oled">【luma-oled Github】</a></p>
+
+<h2 id="写在前面">写在前面</h2>
+
+<p>凡是在代码里面涉及到中文的，都需要注意<code class="highlighter-rouge">编码</code>和<code class="highlighter-rouge">字符集</code>。在基础篇中，我为了考虑到 Python 初学者和不熟悉硬件编程的同学，在每一行代码中都加入了中文注释。
+然而很多小伙伴是在 Windows 下编程的，或者没有将自己的树莓派系统字符集设置为 <code class="highlighter-rouge">zh_CN.UTF-8</code> 的，结果就是复制粘贴我的代码，连中文注释一起复制了，粘贴到树莓派上，编辑器中中文全部都乱码了。这时执行肯定会报错的。还有一些小伙伴不熟悉 <code class="highlighter-rouge">Linux</code> 命令行，不会用命令行编辑器，比如 <code class="highlighter-rouge">vim</code>, <code class="highlighter-rouge">nano</code> 等，跑过来问我
+怎么将代码放到树莓派上执行。更有甚者，只会使用 <code class="highlighter-rouge">IDE</code>，比如 <code class="highlighter-rouge">pycharm</code>。脱离了图形环境，连执行 <code class="highlighter-rouge">python ssd1306-iic.py</code> 都不会了。</p>
+
+<p>对于此类，我建议多学学，多问问搜索引擎，多看看文档，毕竟我不是做公益的，更不是培训班。有人说你文档写的不清楚，这步骤关系到你的东西，你就得写出来。按照这个逻辑，我写这篇文章，我要先写一部 <code class="highlighter-rouge">Linux</code> 系统基础入门的书，然后才能写本文章了。不是我不愿意教，如果每个人都这样手把手教，那我要不要工作了。写一篇文章很累的，还要罗里吧嗦的基础知识一直重复的讲，没意思。何况我也没收学费啊，如果我像培训班一样收学费，那我很乐意教。</p>
+
+<p>好了，废话结束，就是吐槽一下。下面先讲解上面的问题，再开始本文章。</p>
+
+<h3 id="先设置好字符集">先设置好字符集</h3>
+
+<p>首先确保你系统的字符集是 zh_CN.UTF-8。raspbian 同学可以使用 <code class="highlighter-rouge">sudo raspi-config</code>，然后选择 <code class="highlighter-rouge">4 Localisation Options</code>，进入菜单再选择 <code class="highlighter-rouge">I1 Change Locale</code>，然后使用方向键选择 <code class="highlighter-rouge">zh_CN.UTF-8</code>，使用空格可以选中。按回车后，再选择 <code class="highlighter-rouge">zh_CN.UTF-8</code> 作为系统默认的字符集就行了。记得重启一下。</p>
+
+<p>对于像 <code class="highlighter-rouge">volumio</code> 这些第三方衍生的系统，默认是不带 raspi-config 的。可以使用 <code class="highlighter-rouge">sudo apt-get install raspi-config</code> 安装此软件，然后就可以像上面一样使用了。</p>
+
+<p>设置好后，你可以在命令行或者编辑器中输入中文，如果能正常显示和编辑，那就说明支持中文了。如果显示乱码或者编辑时很诡异，那就说明设置输错了，重新设置一遍吧。</p>
+
+<h3 id="python27-和-python3">Python2.7 和 Python3</h3>
+
+<p>如果不额外声明，我默认是使用 Python2.7 的，Python3 也是支持的。使用 Python3 的同学，我默认你已经知道了它们的区别。</p>
+
+<p>在 Python2.7 中，<code class="highlighter-rouge">pillow</code> 库它叫 PIL，在 Python3 中，它叫 <a href="https://github.com/python-pillow/Pillow">pillow</a>。详细的这里就不介绍了，请自己查看 api 文档。</p>
+
+<p>好了，下面开始本文章的正文。创建 <code class="highlighter-rouge">IIC</code> 和 <code class="highlighter-rouge">SPI</code> 驱动的代码这里就不写出来了，请自己查看基础篇。这里我们默认都以 <code class="highlighter-rouge">SPI</code> 协议。</p>
+
+<h2 id="显示中文和指定中文字体">显示中文和指定中文字体</h2>
+
+<p>在基础篇中介绍了屏幕的 <code class="highlighter-rouge">hello world!</code>，其中涉及到显示文本。但只能显示英文和符号，如果你在 <code class="highlighter-rouge">draw.text()</code> 中写中文，屏幕上是会显示乱码的。为什么？因为默认的字体是英文的，没有中文编码，所以显示不出来。那要如何显示中文呢？很简单，使用中文字体就好了啊。</p>
+
+<p>这里我使用了阿里巴巴的免费字体，大家请自行下载字体，将它放到树莓派上。或者使用任何一款支持中文的 <code class="highlighter-rouge">TTF</code> 字体都可以。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># -*- coding: UTF-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">luma.core.interface.serial</span> <span class="kn">import</span> <span class="n">i2c</span><span class="p">,</span> <span class="n">spi</span>
+<span class="kn">from</span> <span class="nn">luma.core.render</span> <span class="kn">import</span> <span class="n">canvas</span>
+<span class="kn">from</span> <span class="nn">luma.oled.device</span> <span class="kn">import</span> <span class="n">ssd1306</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageDraw</span><span class="p">,</span> <span class="n">ImageFont</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">serial</span> <span class="o">=</span> <span class="n">spi</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">ssd1306</span><span class="p">(</span><span class="n">serial</span><span class="p">)</span>
+
+<span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="s">"GenJyuuGothic-P-Regular.ttf"</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">canvas</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">as</span> <span class="n">draw</span><span class="p">:</span>
+  <span class="n">draw</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">bounding_box</span><span class="p">,</span> <span class="n">outline</span><span class="o">=</span><span class="s">"white"</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s">"black"</span><span class="p">)</span>
+  <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s">"提莫的神秘商店"</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">"UTF-8"</span><span class="p">),</span> <span class="n">fill</span><span class="o">=</span><span class="s">"white"</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="p">(</span><span class="bp">True</span><span class="p">):</span>
+  <span class="k">pass</span>
+
+</code></pre></div></div>
+
+<p>代码非常简单，注意开头我们使用了 <code class="highlighter-rouge"># -*- coding: UTF-8 -*-</code>，Python2.7 默认不是 utf-8 编码，所以我们指定编码让它支持中文。接下来我们使用了 <code class="highlighter-rouge">ImageFont</code> 来加载第三方的字体。第一个参数是<code class="highlighter-rouge">字体文件的路径</code>，请根据自己的实际情况做相应的修改，不要傻傻的复制粘贴，路径都不对，又跑来问我报错了。
+第二个参数是字体的大小，这里我们就设置成 16，如果你想要更大或更小，自己调整就行了。不要又傻傻的问我怎么调整字体大小。更多参数和用法，自己查看 api 文档。文档前面已经给出链接了，不要又傻傻的问我文档在哪。还有，文档是英文的，不要问我有没有中文的文档。我现在是怕了。</p>
+
+<p>下面在显示文字的时候，注意我们使用了 <code class="highlighter-rouge">"提莫的神秘商店".decode("UTF-8")</code>，千万不要忘记后面的 <code class="highlighter-rouge">decode</code>，否则还是会乱码的。在 Python3 中默认已经是 utf-8 编码了。最后我们指定字体，使用 <code class="highlighter-rouge">font</code> 参数把我们刚才加载的字体给它显示就行了。</p>
+
+<p>如果你想要不同的文字使用不同的字体和大小怎么办？很简单，创建多个 <code class="highlighter-rouge">font</code> 就行了，在 <code class="highlighter-rouge">draw.text()</code> 的时候分别使用不同的字体就可以达到效果了，同学们要学会举一反三。</p>
+
+<h2 id="显示图片">显示图片</h2>
+
+<p>基础篇中我们介绍了基本的绘图，点线面等。这些都非常简单，查看 api 就可以知道怎么用的。但很多时候我们想要显示一张图片，这该怎么实现呢？同样也很简单。
+基础篇我们分析了源码和实现，知道了屏幕显示的内容就是 <a href="https://github.com/python-pillow/Pillow">pillow</a> 的 <a href="https://pillow.readthedocs.io/en/latest/reference/Image.html">Image</a> 实例。既然是 <code class="highlighter-rouge">Image</code>，那我要显示图片就很简单了，我使用 <a href="https://github.com/python-pillow/Pillow">pillow</a> 提供的 <a href="https://pillow.readthedocs.io/en/latest/reference/Image.html">Image</a> 类去加载一张图片，然后给驱动显示不就完了。</p>
+
+<p>这里我们在深入的看一下源码。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># https://github.com/rm-hull/luma.core/blob/master/luma/core/render.py#L22</span>
+
+<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dither</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">draw</span> <span class="o">=</span> <span class="bp">None</span>
+  <span class="k">if</span> <span class="n">background</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">"RGB"</span> <span class="k">if</span> <span class="n">dither</span> <span class="k">else</span> <span class="n">device</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+      <span class="k">assert</span><span class="p">(</span><span class="n">background</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">device</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">background</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">dither</span> <span class="o">=</span> <span class="n">dither</span>
+</code></pre></div></div>
+
+<p>我们可以看到 <code class="highlighter-rouge">render()</code> 是有一个参数叫 <code class="highlighter-rouge">background</code> 的，什么意思呢？字面意思，我们可以传一张图片作为背景。如果我们传了 <code class="highlighter-rouge">background</code> 参数，那么使用 <code class="highlighter-rouge">background.copy()</code> 的返回值作为画布。<code class="highlighter-rouge">copy</code> 也很好理解，看文档的作用是返回一份拷贝。所以最简单的要显示一张图片，我们传 <code class="highlighter-rouge">background</code> 参数，然后不要绘图就好了。当然你也可以在图片的基础上绘图。</p>
+
+<p>下面我们使用另一种方法来显示图片。上面的方法简单，但是想要显示多张图片怎么办？我想要精细的控制我的画布怎么办？这个时候我们就要直接操作 <a href="https://pillow.readthedocs.io/en/latest/reference/Image.html">Image</a> 对象了。我们来看看 <code class="highlighter-rouge">display</code> 函数的实现：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># https://github.com/rm-hull/luma.oled/blob/master/luma/oled/device/__init__.py#L191</span>
+
+<span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+  <span class="s">"""
+  Takes a 1-bit :py:mod:`PIL.Image` and dumps it to the OLED
+  display.
+  :param image: Image to display.
+  :type image: :py:mod:`PIL.Image`
+  """</span>
+  <span class="k">assert</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
+  <span class="k">assert</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+  <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preprocess</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+  <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
+      <span class="c"># Column start/end address</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_const</span><span class="o">.</span><span class="n">COLUMNADDR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_colstart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_colend</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="c"># Page start/end address</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_const</span><span class="o">.</span><span class="n">PAGEADDR</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pages</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+  <span class="n">buf</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pages</span><span class="p">)</span>
+  <span class="n">off</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offsets</span>
+  <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span>
+
+  <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">for</span> <span class="n">pix</span> <span class="ow">in</span> <span class="n">image</span><span class="o">.</span><span class="n">getdata</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">pix</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="n">buf</span><span class="p">[</span><span class="n">off</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">|=</span> <span class="n">mask</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+      <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+  <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">buf</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>同样也很简单，先看参数，只接受一个参数 <code class="highlighter-rouge">image</code>，它就是 <a href="https://pillow.readthedocs.io/en/latest/reference/Image.html">Image</a> 的实例。它把 <code class="highlighter-rouge">image</code> 的像素拿出来，然后拼装成屏幕接受的格式，再发送给屏幕，这样屏幕显示的内容就和图片的内容一样了。所以你想要屏幕显示什么，你就把图片绘制成什么。</p>
+
+<p>源码分析完了，下面是显示图片的代码：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># -*- coding: UTF-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">luma.core.interface.serial</span> <span class="kn">import</span> <span class="n">i2c</span><span class="p">,</span> <span class="n">spi</span>
+<span class="kn">from</span> <span class="nn">luma.core.render</span> <span class="kn">import</span> <span class="n">canvas</span>
+<span class="kn">from</span> <span class="nn">luma.oled.device</span> <span class="kn">import</span> <span class="n">ssd1306</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageDraw</span>
+
+<span class="n">serial</span> <span class="o">=</span> <span class="n">spi</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">device</span> <span class="o">=</span> <span class="n">ssd1306</span><span class="p">(</span><span class="n">serial</span><span class="p">)</span>
+
+<span class="n">im</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="nb">open</span><span class="p">(</span><span class="s">"./demo.png"</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
+
+<span class="n">device</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="p">(</span><span class="bp">True</span><span class="p">):</span>
+  <span class="k">pass</span>
+
+</code></pre></div></div>
+
+<p>我们使用 <code class="highlighter-rouge">Image.open</code> 来加载一张图片，然后使用 <code class="highlighter-rouge">convert(mode)</code> 将图片转换为屏幕的格式。为什么要转换？因为我们的 PNG 图片是 RGBA 格式的，而我们的屏幕是单色的，所以需要转换。否则会报错，从上面的 <code class="highlighter-rouge">display</code> 源码分析中就能看到有这么两行：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">assert</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>注意，图片的路径需要替换成你自己的实际路径，并且，图片的格式是有要求的：分辨率一定是 <code class="highlighter-rouge">128*64</code>。内容最好是黑白的，白色的部分会在屏幕上表现为点亮像素，黑色的会表现为熄灭像素。其余的颜色会按照算法自动转换为白色或者黑色。为了照顾新手，这里我把 <code class="highlighter-rouge">demo.png</code> 文件提供给大家下载，调试的时候使用我这张图片，熟悉后再自己作图吧。</p>
+
+<p>图片下载地址：<a href="http://lanfly.vicp.io/mcu/oled/ssd1306-demo.png">ssd1306-demo.png</a></p>
+<p class="percent50-img">
+  <img src="http://lanfly.vicp.io/mcu/oled/ssd1306-demo.png" />
+</p>
+
+<p>最后记得调用 <code class="highlighter-rouge">device.display(im)</code> 把图片显示到屏幕上，否则也不会显示的。这样我们就完成了显示自定义图片的功能。它支持多种图片格式，大家自己发挥。但是 <code class="highlighter-rouge">GIF</code> 是不支持动画的，不要来问我为啥我显示一张 <code class="highlighter-rouge">GIF</code> 图片不会动。你要想会动也可以实现，下面我们会讲如何实现动画。</p>
+
+<h2 id="制作动画">制作动画</h2>
+
+<p>接下来讲解如何实现动画，我们把前面的结合起来，做一个中文时钟，效果就是屏幕会实时刷新当前的时间。</p>
+
+<p>要实现动画，就要知道动画的原理。上面我们能显示自定义的图片了，如果我们一直改变图片，每改变一次就显示一次，这样屏幕的像素会一直变，如果达到了每秒改变 60 次，那看起来是不是就会有动画的效果了？是的，这就是动画的原理。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># -*- coding: UTF-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">luma.core.interface.serial</span> <span class="kn">import</span> <span class="n">i2c</span><span class="p">,</span> <span class="n">spi</span>
+<span class="kn">from</span> <span class="nn">luma.oled.device</span> <span class="kn">import</span> <span class="n">ssd1306</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageDraw</span><span class="p">,</span> <span class="n">ImageFont</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">serial</span> <span class="o">=</span> <span class="n">spi</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">ssd1306</span><span class="p">(</span><span class="n">serial</span><span class="p">)</span>
+
+<span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="s">"GenJyuuGothic-P-Regular.ttf"</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+
+<span class="n">canvas</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="p">(</span><span class="bp">True</span><span class="p">):</span>
+  <span class="n">draw</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">bounding_box</span><span class="p">,</span> <span class="n">outline</span><span class="o">=</span><span class="s">"white"</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s">"black"</span><span class="p">)</span>
+  <span class="n">datestr</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">"</span><span class="si">%</span><span class="s">Y年</span><span class="si">%</span><span class="s">m月</span><span class="si">%</span><span class="s">d日"</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
+  <span class="n">timestr</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">"</span><span class="si">%</span><span class="s">H:</span><span class="si">%</span><span class="s">M:</span><span class="si">%</span><span class="s">S"</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
+  <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">datestr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">"UTF-8"</span><span class="p">),</span> <span class="s">"white"</span><span class="p">,</span> <span class="n">font</span><span class="p">)</span>
+  <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="n">timestr</span><span class="p">,</span> <span class="s">"white"</span><span class="p">,</span> <span class="n">font</span><span class="p">)</span>
+  <span class="n">device</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<p>注意，这次我们是创建了一张空白的图片，我们把它当做我们的画布，然后显示到屏幕上。我们接下来要做的就是一直改变这个画布的内容，每次改变内容后，都将它刷新到屏幕上。注意新建的图片大小和模式必须是和屏幕的一样。</p>
+
+<p>图片对象本身提供的方法有限，只能提供像素操作，我们要显示文字的话，需要使用 <a href="https://pillow.readthedocs.io/en/latest/reference/ImageDraw.html">ImageDraw</a> 类提供的方法。我们使用 <code class="highlighter-rouge">time</code> 内置模块提供的方法，获取现在的时间，并且把它格式化成我们方便阅读的格式。</p>
+
+<p>每次都是先把图片内容清空，然后再绘图。如果不清空的话，上一次的内容还在，效果是不对的，做动画一定要记得清空。</p>
+
+<p>注意，我们是直接在 <code class="highlighter-rouge">while(True)</code> 里面绘图的，这样的话速率是不受控制的，可能会消耗大量的 <code class="highlighter-rouge">CPU</code>，同学们可以自己使用 <code class="highlighter-rouge">sleep</code> 控制速率。我这里演示用的是 <code class="highlighter-rouge">SPI</code> 协议的，速率可以达到 <code class="highlighter-rouge">2400 FPS</code>。</p>
+
+
+  </div><div class="content sidebar"><div class="preference-product">
+      <h2 class="sidebar-title">神秘商店</h2>
+      <a href="https://item.taobao.com/item.htm?id=579354752359"  target="_blank">
+        <img src="https://gd2.alicdn.com/imgextra/i2/1901819815/O1CN012MNJqsMDgynWvx1_!!1901819815.png_400x400.jpg" alt="图片加载失败了">
+      </a>
+      <p class="product-name">0.96寸 I2C通信 OLED液晶屏 128*64树莓派屏幕中文显示</p>
+      <a href="https://item.taobao.com/item.htm?id=579354752359" target="_blank">
+        <div class="goto-detail" title="将会在新窗口中打开宝贝详情页面">查看详情</div>
+      </a>
+    </div></div><div class="content sub-content related-article">
+    <h3 class="sub-title">再看看其它同类文章吧！</h3>
+    <div class="list">
+      
+      <a href="/mcu/lcd/nodemcu-st7735s-lua-demo.html"><p class="transition-02s">nodemcu 使用 Lua 编写/移植 ST7735S 0.96 寸彩色 LCD 屏幕驱动（SPI 通信）</p></a>
+      <a href="/mcu/sensor/rpi-dht-nodejs.html"><p class="transition-02s">树莓派使用 NodeJS 读取并监控 DHT11/22 温度湿度传感器</p></a>
+      <a href="/mcu/oled/rpi-ssd1306-python.html"><p class="transition-02s">树莓派使用 Python 驱动 SSD1306（IIC/SPI 通信）</p></a>
+      <a href="/mcu/lcd/rpi-st7735-python.html"><p class="transition-02s">树莓派使用 Python 驱动 ST7735 1.44 寸彩色 TFT 屏幕（SPI 通信）</p></a>
+      <a href="/mcu/lcd/rpi-st7735s-python-demo.html"><p class="transition-02s">树莓派使用 Python 编写/移植 ST7735S 0.96 寸彩色 LCD 屏幕驱动（SPI 通信）</p></a>
+      <a href="/tv/timor-tv-rpi.html"><p class="transition-02s">树莓派复古小电视开发教程</p></a></div>
+  </div>
+  <div class="content sub-content">
+    <h3 class="sub-title">有想说的评论一句吧！</h3>
+    
+    <div id="SOHUCS" sid="/mcu/oled/rpi-ssd1306-python-graphics.html"></div>
+  </div>
+</div>
+    </div>
+    <footer class="site-footer">
+  <div class="site-info">
+    <p>
+      <span>Powered by </span>
+      <a href="http://jekyllrb.com/">jekyll</a>
+      <span> & </span>
+      <a href="https://nodejs.org/" target="_blank">NodeJS</a>
+      <span> | </span>
+      <span> Server on RaspberryPi 3B | Theme made by </span>
+      <a href="mailto:bluescode@outlook.com">sudo</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <p xmlns:dct="http://purl.org/dc/terms/">
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">
+        <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/by-nc-sa.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" style="border-style: none;" width="80" height="28" alt="署名-非商业性使用-相同方式共享 (CC BY-NC-SA)" />
+      </a>
+    </p>
+    <p>
+      <span>本作品采用</span>
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">《署名-非商业性使用-相同方式共享》</a>
+      <span>许可协议，转载请先联系</span>
+      <a href="mailto:bluescode@outlook.com">站长</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/logo.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="logo" width="64" height="64" class="logo">
+    <p>提莫的神秘商店</p>
+  </div>
+  <div class="site-info">
+    <p>
+      <a href="http://www.beian.miit.gov.cn/" target="_blank">浙ICP备19010606号</a>
+      <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/public-security.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" width="20" height="20" alt="浙公网安备案图标" style="margin: 0 20px;" />
+      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002013836" target="_blank">浙公网安备33011002013836号</a>
+    </p>
+  </div>
+</footer>
+
+    <script>
+  /**
+   url: string
+   callback: [function]
+  */
+  function loadScript (url, callback) {
+    var headElement = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+    var script = document.createElement("script");
+    script.setAttribute("type", "text/javascript");
+    script.setAttribute("charset", "UTF-8");
+    script.setAttribute("src", url);
+    if (typeof callback === 'function') {
+      if (window.attachEvent) {
+        script.onreadystatechange = function () {
+          var e = script.readyState;
+          if (e === "loaded" || e === "complete") {
+            script.onreadystatechange = null;
+            callback();
+          }
+        };
+      } else {
+        script.onload = callback
+      }
+    }
+    headElement.appendChild(script);
+  }
+  /**
+   callback: function
+   timeout: [number] default: 1000
+  */
+  function lazycall(callback, timeout) {
+    if (typeof timeout != 'number') {
+      timeout = 1000
+    }
+    if (window.addEventListener) {
+      window.addEventListener('load', callback, false);
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', callback);
+    } else {
+      setTimeout(callback, timeout);
+    }
+  }
+  /**
+   url: string
+   timeout: [number] default: 1000
+   callback: [function]
+  */
+  function lazyloadScript (url, timeout, callback) {
+    if (typeof timeout === 'function') {
+      callback = timeout
+      timeout = 1000
+    }
+    lazycall(function () {
+      loadScript(url, callback)
+    }, timeout)
+  }
+  lazyloadScript('http://libs.baidu.com/jquery/2.0.3/jquery.min.js', function () {
+    $(document).ready(function () {
+      var navToggle = $('.js-nav-toggle')
+      var mobileMenu = $('.js-mobile-menu')
+      // Toggle blog-menu
+      navToggle.on("click", function () {
+        navToggle.toggleClass("active");
+        mobileMenu.slideToggle();
+        return false;
+      });
+      // Hide mobile-menu > 768
+      $(window).resize(function () {
+        var windowWidth = $(window).width()
+        if (windowWidth > 768) {
+          navToggle.removeClass("active");
+          mobileMenu.show();
+        }
+        if (windowWidth <= 768 && !navToggle.hasClass('active')) {
+          navToggle.removeClass("active");
+          mobileMenu.hide();
+        }
+      });
+      // lazyload img for footer
+      $('.site-footer img.js-lazyload-img').each(function (index, elem) {
+        var img = $(this)
+        img.attr('src', img.data('src'))
+      });
+    });
+  })
+</script>
+
+    <script type="text/javascript">
+  var _hmt = _hmt || [];
+  function loadBaiduTongji () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?f497f00a5871b6ed9078f87ab818d62d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  }
+  lazycall(loadBaiduTongji)
+</script>
+    <script type="text/javascript">
+  function loadChangyan () {
+    var appid = 'cytTik2AP';
+    var conf = 'prod_0b6e93ff9daf2e0d6e49c8ad1586bf4b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      var loadJsWithId=function(d,i){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("id",i);b.setAttribute("charset","UTF-8");b.setAttribute("src",d);c.appendChild(b)};
+      loadJsWithId('https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf, "changyan_mobile_js")
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  }
+  lazycall(loadChangyan)
+</script>
+    
+  </body>
+</html>

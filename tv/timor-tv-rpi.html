@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="keywords" content="ssd1306,树莓派,oled,iic,i2c,nodejs,驱动">
+<meta name="description" content="这是 ssd1306 复古小电视的使用文档，通过阅读文档，可以了解到复古小电视的使用方法，包括学会如何显示 png 图片、如何使用 canvas 绘图、如何使用原生 api 绘图。不用怕，这非常简单。"><title>树莓派复古小电视开发教程 - 提莫的神秘商店</title><link rel="stylesheet" href="http://lanfly.vicp.io/css/default.css">
+<link rel="stylesheet" href="http://lanfly.vicp.io/css/highlight/rouge-solarized-light.css">
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" sizes="16x16" />
+<style type="text/css"></style>
+
+    <link rel="stylesheet" href="http://lanfly.vicp.io/css/post.css">
+  </head>
+  <body>
+    <div class="page">
+      <header id="masthead" role="banner" class="site-header">
+  <div class="site-branding">
+    <h1 class="site-title"><a href="/" rel="home" title="回到首页">提莫的神秘商店</a></h1>
+
+    <span class="nav-toggle js-nav-toggle  hidden" title="Click to view the navigation" href="#">
+      <div class="bars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="clear"></div>
+      </div>
+      <p>
+        <span class="menu">Menu</span>
+        <span class="close">Close</span>
+      </p>
+    </span>
+  </div>
+</header>
+
+      <ul id="navi-menu" class="mobile-menu js-mobile-menu"><li class="menu-item transition-02s"><a href="/">首页</a></li><li class="menu-item transition-02s"><a href="/shop">神秘商店</a></li><li class="menu-item transition-02s"><a href="/mcu">硬件</a></li><li class="menu-item transition-02s"><a href="/js">JavaScript</a></li><li class="menu-item transition-02s"><a href="/3d">3D/模型</a></li><li class="menu-item transition-02s"><a href="/project">开源项目</a></li><li class="menu-item transition-02s"><a href="/api">免费服务</a></li><li class="menu-item transition-02s"><a href="/about">关于</a></li></ul>
+      <div class="main enable-sidebar transition-04s">
+  <div class="content article-content">
+    <h1 class="title">树莓派复古小电视开发教程</h1>
+    <h4 id="作者联系方式">作者联系方式</h4>
+
+<p>如在阅读完此文档后还有疑问或建议，可通过下面的方式与我联系</p>
+
+<p>邮箱：<a href="mailto:bluescode@outlook.com">bluescode@outlook.com</a><br />
+淘宝地址：<a href="https://item.taobao.com/item.htm?id=568378254230">点击前往PC端详情页</a><br />
+站内信邮件：点击右下角的 与我联系 按钮</p>
+
+<h4 id="这是什么">这是什么？</h4>
+
+<p>这是 ssd1306 复古小电视的使用文档，购买了此产品的用户可以通过阅读文档，了解复古小电视的使用方法，包括学会如何显示 png 图片、如何使用canvas绘图、如何使用原生 api 绘图。</p>
+
+<p>没有购买此产品的读者，可以点击上面的淘宝链接访问复古小电视介绍页面，建议在手机端打开，想直接购买，可以通过淘宝链接，或者点击右下角的与我联系，或者直接发邮件与我联系。</p>
+
+<p>此文档中提到的程序代码、图片等全部资源在页面底部有下载地址。</p>
+
+<h4 id="如何自定义显示内容">如何自定义显示内容？</h4>
+
+<p>自定义显示内容有3种方法，分别是：</p>
+
+<ol>
+  <li>直接显示png图片。此方式最简单</li>
+  <li>使用canvas绘图。此方式能动态显示任何内容，包括中文汉字</li>
+  <li>使用api绘图。此方式性能最好</li>
+</ol>
+
+<p>读者可以根据自己的基础选择上面的任何一种方式。也可以同时使用。对于没有nodejs基础的读者，建议选择png图片方式，如果想动态显示内容，则可以使用canvas或者api方式，但是需要你有一点nodejs基础。因为驱动是nodejs编写的，别担心，使用它们绘图非常简单。</p>
+
+<h4 id="显示png图片">显示png图片</h4>
+
+<p>首先准备一张png格式的图片，注意图片的分辨率最佳为128<em>64，因为复古小电视的屏幕分辨率就是 128</em>64。其次，png图片的内容最好为黑色，背景透明，因为复古小电视的屏幕是OLED 屏幕，只能显示单色。黑色的地方在屏幕上会显示，透明的地方则不会显示。</p>
+
+<p>然后进入 watcher 的根目录，新建 show_png.js 文件，同时把 png 图片也放在根目录。我们将使用驱动提供的 drawPNG 函数来显示图片。show_png.js 文件的代码如下：</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+</pre></td><td class="code"><pre><span class="c1">// oled.js 是购买产品附带的软件包，包含完整驱动，可直接使用</span>
+
+<span class="kd">var</span> <span class="nx">Device</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./oled.js'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">ssd1306</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Device</span><span class="p">({</span>
+  <span class="na">description</span><span class="p">:</span> <span class="s1">'test drawPNG'</span><span class="p">,</span>
+  <span class="na">model</span><span class="p">:</span> <span class="s1">'ssd1306'</span><span class="p">,</span>
+  <span class="na">width</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+  <span class="na">height</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+  <span class="na">address</span><span class="p">:</span> <span class="mh">0x3c</span><span class="p">,</span>
+  <span class="na">device</span><span class="p">:</span> <span class="s1">'/dev/i2c-1'</span>
+<span class="p">});</span>
+
+<span class="nx">ssd1306</span><span class="p">.</span><span class="nx">drawPNG</span><span class="p">(</span><span class="s1">'./starwars.png'</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'png 图片显示错误，请确认图片的文件名是否正确'</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'显示PNG图片完成'</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>上面第一段代码的作用是引入 复古小电视 的驱动包，然后我们创建了一个 SSD1306复古小电视 的驱动。这些都是必要的，并且都是相同的。创建完驱动后，我们就能用驱动提供的 api 去操作屏幕了。</p>
+
+<p>我们使用 drawPNG 来显示图片。此函数第一个参数是图片的路径，第二个参数我们暂且使用 false，第三个参数是回调，显示完成或者错误的时候会调用。假如现在根目录下有一张叫 starwars.png 的图片，保存文件，然后执行</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>node show_png.js
+</code></pre></div></div>
+
+<p>现在，你的屏幕应该会显示图片了。如果没有提示 <code class="highlighter-rouge">显示 PNG 图片完成</code>，而是报错了，则确认下图片的路径。好了，现在你已经学会了如何显示图片，接下来再去学习如何制作 png 图片吧。如果对以上文档仍有疑问，请通过开篇的联系方式与我联系。</p>
+
+<h4 id="我们来点高级的使用-canvas-动态显示内容">我们来点高级的，使用 canvas 动态显示内容</h4>
+
+<p>在开始之前，确保你按照软件包的安装说明安装好了全部的依赖，这其中就包括我们要用的 canvas 的安装。canvas 是 HTML5 中定义的一个用于在网页实时生成图像，并且可以操作图像内容的 api。你只需要学会如何使用 canvas，它的教程非常多。</p>
+
+<p>下面，我们来学习如何使用 canvas 来动态的绘制图形。新建 show_canvas.js 文件，文件的代码如下：</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+</pre></td><td class="code"><pre><span class="kd">var</span> <span class="nx">Device</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./oled.js'</span><span class="p">);</span>
+<span class="c1">// 注意，这里多了一行，我们要使用 canvas</span>
+<span class="kd">var</span> <span class="nx">Canvas</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'canvas'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">ssd1306</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Device</span><span class="p">({</span>
+  <span class="na">description</span><span class="p">:</span> <span class="s1">'test drawCanvas'</span><span class="p">,</span>
+  <span class="na">model</span><span class="p">:</span> <span class="s1">'ssd1306'</span><span class="p">,</span>
+  <span class="na">width</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+  <span class="na">height</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+  <span class="na">address</span><span class="p">:</span> <span class="mh">0x3c</span><span class="p">,</span>
+  <span class="na">device</span><span class="p">:</span> <span class="s1">'/dev/i2c-1'</span>
+<span class="p">});</span>
+
+<span class="c1">// 创建一个 canvas 画布，并且大小是 128*64</span>
+<span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Canvas</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">64</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">'2d'</span><span class="p">);</span>
+
+<span class="c1">// 我们先设置字体和大小，然后把画笔的颜色设置成白色，最后显示2行文字</span>
+<span class="nx">ctx</span><span class="p">.</span><span class="nx">font</span> <span class="o">=</span> <span class="s1">'18px Impact'</span><span class="p">;</span>
+<span class="nx">ctx</span><span class="p">.</span><span class="nx">fillStyle</span> <span class="o">=</span> <span class="s1">'#FFF'</span><span class="p">;</span>
+<span class="nx">ctx</span><span class="p">.</span><span class="nx">fillText</span><span class="p">(</span><span class="s2">"hello Canvas"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+<span class="nx">ctx</span><span class="p">.</span><span class="nx">fillText</span><span class="p">(</span><span class="s2">"你好啊"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+
+<span class="c1">// 上面是 canvas 的操作，现在我们让屏幕显示 canvas 的内容</span>
+<span class="nx">ssd1306</span><span class="p">.</span><span class="nx">drawCanvas</span><span class="p">(</span><span class="nx">canvas</span><span class="p">);</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>以//开头的是注释。保存文件，然后运行</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>node show_canvas.js
+</code></pre></div></div>
+
+<p>现在，你的屏幕上应该会显示汉字了。需要注意的是，为了达到最理想的显示效果，canvas 的分辨率最好和屏幕的分辨率一致，并且使用单色绘制 canvas，建议用 #FFF。因为无论如何，你的OLED都是单色的屏幕，无法显示彩色。虽然有彩色的 OLED，但目前还没集成驱动。后续会集成更大尺寸的彩色 LCD、TFT 屏幕驱动。</p>
+
+<p>更多 canvas 内容，可以通过这个网站学习，并在线预览效果 <a href="http://www.runoob.com/html/html5-canvas.html">http://www.runoob.com/html/html5-canvas.html</a></p>
+
+<h4 id="最后我们使用原生-api-来做一个动画效果">最后我们使用原生 api 来做一个动画效果</h4>
+
+<p>动画的效果是一个屏幕扫描动画，一条垂直的直线从屏幕的左边开始逐列扫描到右边，然后又扫描到左边，一直循环往复。这个动画很简单，先垂直画一条直线，然后在横坐标依次叠加就出来动画效果了。新建 show_api.js 文件，代码如下：</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+</pre></td><td class="code"><pre><span class="cm">/**
+ * author: LanFly
+ * email: bluescode@outlook.com
+ * document: http://timor.tech/tv/timor-tv-rpi.html
+ */</span>
+
+<span class="kd">var</span> <span class="nx">Device</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./oled.js'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">ssd1306</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Device</span><span class="p">({</span>
+  <span class="na">description</span><span class="p">:</span> <span class="s1">'test draw animation'</span><span class="p">,</span>
+  <span class="na">model</span><span class="p">:</span> <span class="s1">'ssd1306'</span><span class="p">,</span>
+  <span class="na">width</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+  <span class="na">height</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+  <span class="na">address</span><span class="p">:</span> <span class="mh">0x3c</span><span class="p">,</span>
+  <span class="na">device</span><span class="p">:</span> <span class="s1">'/dev/i2c-1'</span>
+<span class="p">});</span>
+
+<span class="c1">// 记录当前水平位置</span>
+<span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="c1">// 记录扫描方向</span>
+<span class="kd">var</span> <span class="nx">dt</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">render</span><span class="p">(</span><span class="nx">oled</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// 每次都先清除屏幕</span>
+  <span class="nx">oled</span><span class="p">.</span><span class="nx">clearDisplay</span><span class="p">();</span>
+  <span class="c1">// 然后画一条垂直的直线，前2个参数表示起点的横纵坐标，接下来2个参数表示终点的横纵坐标，最后一个参数表示颜色亮</span>
+  <span class="nx">oled</span><span class="p">.</span><span class="nx">drawLine</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="mi">63</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="c1">// 每次移动一个像素点</span>
+  <span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">dt</span><span class="p">;</span>
+  <span class="c1">// 如果到达屏幕右边界，则改变方向，向左移动扫描</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="mi">127</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">x</span> <span class="o">=</span> <span class="mi">127</span><span class="p">;</span>
+    <span class="nx">dt</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+  <span class="c1">// 如果到达屏幕左边界，则改变方向，向右移动扫描</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="nx">dt</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="c1">// 每隔30毫秒移动一次，注意不能太快</span>
+  <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">render</span><span class="p">(</span><span class="nx">oled</span><span class="p">);</span>
+  <span class="p">},</span> <span class="mi">30</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 原生 api 挂载在 oled 对象上，开始显示</span>
+<span class="nx">render</span><span class="p">(</span><span class="nx">ssd1306</span><span class="p">.</span><span class="nx">oled</span><span class="p">);</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>保存文件，然后运行它。现在，你的屏幕应该在显示扫描动画了。动画的原理就是先显示一帧，然后清除，然后又快速的显示下一阵。只要速度保持足够快，就会出现动画效果。学习到这里就结束了，你应该能显示任何你想要显示的内容了，你甚至可以拿 canvas 播放视频。</p>
+
+<p>原生 api 有非常多的方法，比如画点、线、面、矩形、圆、文字、关闭屏幕、打开屏幕、调节亮度等等。合理的使用它们。全部的 api 可以在这里查看：<a href="https://www.npmjs.com/package/oled-ssd1306-i2c#available-methods">https://www.npmjs.com/package/oled-ssd1306-i2c#available-methods</a></p>
+
+<h4 id="如果你还有疑问点击右下角的-与我联系-按钮我会及时回复你或者从头开始看">如果你还有疑问，点击右下角的 与我联系 按钮，我会及时回复你，或者从头开始看。</h4>
+
+<h4 id="此文档的代码下载地址">此文档的代码下载地址</h4>
+
+<p><a href="http://timor.tech/tv/tv_demo.zip">http://timor.tech/tv/tv_demo.zip</a></p>
+
+  </div><div class="content sidebar"><div class="preference-product">
+      <h2 class="sidebar-title">树莓派复古小电视</h2>
+      <a href="https://item.taobao.com/item.htm?id=568378254230"  target="_blank">
+        <img src="https://gd3.alicdn.com/imgextra/i4/1901819815/TB2qNiGIQyWBuNjy0FpXXassXXa_!!1901819815.jpg_400x400.jpg" alt="图片加载失败了">
+      </a>
+      <p class="product-name">提莫的复古小电视</p>
+      <a href="https://item.taobao.com/item.htm?id=568378254230" target="_blank">
+        <div class="goto-detail" title="将会在新窗口中打开宝贝详情页面">查看详情</div>
+      </a>
+    </div></div><div class="content sub-content related-article">
+    <h3 class="sub-title">再看看其它同类文章吧！</h3>
+    <div class="list">
+      
+      <a href="/mcu/lcd/nodemcu-st7735s-lua-demo.html"><p class="transition-02s">nodemcu 使用 Lua 编写/移植 ST7735S 0.96 寸彩色 LCD 屏幕驱动（SPI 通信）</p></a>
+      <a href="/mcu/sensor/rpi-dht-nodejs.html"><p class="transition-02s">树莓派使用 NodeJS 读取并监控 DHT11/22 温度湿度传感器</p></a>
+      <a href="/mcu/oled/rpi-ssd1306-python-graphics.html"><p class="transition-02s">树莓派使用 Python 驱动 SSD1306 中文字体、图片动画高级教程（IIC/SPI 通信）</p></a>
+      <a href="/mcu/oled/rpi-ssd1306-python.html"><p class="transition-02s">树莓派使用 Python 驱动 SSD1306（IIC/SPI 通信）</p></a>
+      <a href="/mcu/lcd/rpi-st7735-python.html"><p class="transition-02s">树莓派使用 Python 驱动 ST7735 1.44 寸彩色 TFT 屏幕（SPI 通信）</p></a>
+      <a href="/mcu/lcd/rpi-st7735s-python-demo.html"><p class="transition-02s">树莓派使用 Python 编写/移植 ST7735S 0.96 寸彩色 LCD 屏幕驱动（SPI 通信）</p></a></div>
+  </div>
+  <div class="content sub-content">
+    <h3 class="sub-title">有想说的评论一句吧！</h3>
+    
+    <div id="SOHUCS" sid="/tv/timor-tv-rpi.html"></div>
+  </div>
+</div>
+    </div>
+    <footer class="site-footer">
+  <div class="site-info">
+    <p>
+      <span>Powered by </span>
+      <a href="http://jekyllrb.com/">jekyll</a>
+      <span> & </span>
+      <a href="https://nodejs.org/" target="_blank">NodeJS</a>
+      <span> | </span>
+      <span> Server on RaspberryPi 3B | Theme made by </span>
+      <a href="mailto:bluescode@outlook.com">sudo</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <p xmlns:dct="http://purl.org/dc/terms/">
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">
+        <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/by-nc-sa.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" style="border-style: none;" width="80" height="28" alt="署名-非商业性使用-相同方式共享 (CC BY-NC-SA)" />
+      </a>
+    </p>
+    <p>
+      <span>本作品采用</span>
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">《署名-非商业性使用-相同方式共享》</a>
+      <span>许可协议，转载请先联系</span>
+      <a href="mailto:bluescode@outlook.com">站长</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/logo.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="logo" width="64" height="64" class="logo">
+    <p>提莫的神秘商店</p>
+  </div>
+  <div class="site-info">
+    <p>
+      <a href="http://www.beian.miit.gov.cn/" target="_blank">浙ICP备19010606号</a>
+      <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/public-security.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" width="20" height="20" alt="浙公网安备案图标" style="margin: 0 20px;" />
+      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002013836" target="_blank">浙公网安备33011002013836号</a>
+    </p>
+  </div>
+</footer>
+
+    <script>
+  /**
+   url: string
+   callback: [function]
+  */
+  function loadScript (url, callback) {
+    var headElement = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+    var script = document.createElement("script");
+    script.setAttribute("type", "text/javascript");
+    script.setAttribute("charset", "UTF-8");
+    script.setAttribute("src", url);
+    if (typeof callback === 'function') {
+      if (window.attachEvent) {
+        script.onreadystatechange = function () {
+          var e = script.readyState;
+          if (e === "loaded" || e === "complete") {
+            script.onreadystatechange = null;
+            callback();
+          }
+        };
+      } else {
+        script.onload = callback
+      }
+    }
+    headElement.appendChild(script);
+  }
+  /**
+   callback: function
+   timeout: [number] default: 1000
+  */
+  function lazycall(callback, timeout) {
+    if (typeof timeout != 'number') {
+      timeout = 1000
+    }
+    if (window.addEventListener) {
+      window.addEventListener('load', callback, false);
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', callback);
+    } else {
+      setTimeout(callback, timeout);
+    }
+  }
+  /**
+   url: string
+   timeout: [number] default: 1000
+   callback: [function]
+  */
+  function lazyloadScript (url, timeout, callback) {
+    if (typeof timeout === 'function') {
+      callback = timeout
+      timeout = 1000
+    }
+    lazycall(function () {
+      loadScript(url, callback)
+    }, timeout)
+  }
+  lazyloadScript('http://libs.baidu.com/jquery/2.0.3/jquery.min.js', function () {
+    $(document).ready(function () {
+      var navToggle = $('.js-nav-toggle')
+      var mobileMenu = $('.js-mobile-menu')
+      // Toggle blog-menu
+      navToggle.on("click", function () {
+        navToggle.toggleClass("active");
+        mobileMenu.slideToggle();
+        return false;
+      });
+      // Hide mobile-menu > 768
+      $(window).resize(function () {
+        var windowWidth = $(window).width()
+        if (windowWidth > 768) {
+          navToggle.removeClass("active");
+          mobileMenu.show();
+        }
+        if (windowWidth <= 768 && !navToggle.hasClass('active')) {
+          navToggle.removeClass("active");
+          mobileMenu.hide();
+        }
+      });
+      // lazyload img for footer
+      $('.site-footer img.js-lazyload-img').each(function (index, elem) {
+        var img = $(this)
+        img.attr('src', img.data('src'))
+      });
+    });
+  })
+</script>
+
+    <script type="text/javascript">
+  var _hmt = _hmt || [];
+  function loadBaiduTongji () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?f497f00a5871b6ed9078f87ab818d62d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  }
+  lazycall(loadBaiduTongji)
+</script>
+    <script type="text/javascript">
+  function loadChangyan () {
+    var appid = 'cytTik2AP';
+    var conf = 'prod_0b6e93ff9daf2e0d6e49c8ad1586bf4b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      var loadJsWithId=function(d,i){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("id",i);b.setAttribute("charset","UTF-8");b.setAttribute("src",d);c.appendChild(b)};
+      loadJsWithId('https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf, "changyan_mobile_js")
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  }
+  lazycall(loadChangyan)
+</script>
+    
+  </body>
+</html>

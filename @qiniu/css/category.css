@@ -1,0 +1,97 @@
+/**
+* css for category page
+*/
+
+/* reset default style */
+
+.main {
+  padding-top: 20px;
+}
+
+.main .content {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+
+/* ------------------------------ */
+/* body  */
+.main .content .article-list {
+  margin-top: 30px;
+}
+
+.article-list .post {
+  border: 1px solid #e0e0ce;
+  border-bottom: 3px solid #a5b80a;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 1px 1px 5px #e6e6e6;
+  /* box-shadow: inset 0 2px 5px #eaeaea; */
+  transition: 0.3s;
+  margin-top: 20px;
+}
+
+.article-list .post:first-of-type {
+  margin-top: 0;
+}
+
+.article-list .info-empty {
+  font-size: 0.6rem;
+  color: #404040;
+  text-align: center;
+}
+
+/* ------------------------------ */
+/* post header */
+.post .entry-header {
+  padding: 10px;
+}
+
+.post .entry-header .entry-title {}
+
+.post .entry-header .entry-title a {
+  color: #222222;
+  text-decoration: none;
+}
+
+.post .entry-header .entry-title a:hover {
+  text-decoration: underline;
+}
+
+.post .entry-header .entry-meta {
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+.post .entry-header .entry-meta .author-label {
+  margin-left: 5px;
+}
+
+/* -------------------------------- */
+/* post content */
+.post .entry-content {
+  padding: 10px;
+  font-size: 1rem;
+  color: #404040;
+  line-height: 1.6rem;
+}
+
+.post .entry-content .readmore {
+  color: #a5b807;
+}
+
+/* ------------------------------- */
+/* post footer */
+.post .entry-footer {
+  padding: 10px;
+  font-size: 0.8rem;
+  color: #aaa;
+  border-top: 1px dashed #e0e0ce;
+}
+
+.post .entry-footer .category {
+  margin-left: 5px;
+  border-radius: 2px;
+  color: #6ac5a2;
+  text-decoration: none;
+}

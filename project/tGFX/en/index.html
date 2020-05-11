@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="keywords" content="tGFX, gfx, graphics, canvas, c, oled, tft, lcd, tiny">
+<meta name="description" content="a tiny gfx library for tft/lcd/oled"><title>tGFX - a tiny gfx library for tft/lcd/oled - 提莫的神秘商店</title><link rel="stylesheet" href="http://lanfly.vicp.io/css/default.css">
+<link rel="stylesheet" href="http://lanfly.vicp.io/css/highlight/rouge-solarized-light.css">
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" sizes="16x16" />
+<style type="text/css"></style>
+
+    <link rel="stylesheet" href="http://lanfly.vicp.io/css/mini-product.css">
+  </head>
+  <body>
+    <div class="page">
+      <header id="masthead" role="banner" class="site-header">
+  <div class="site-branding">
+    <h1 class="site-title"><a href="/" rel="home" title="回到首页">提莫的神秘商店</a></h1>
+
+    <span class="nav-toggle js-nav-toggle  hidden" title="Click to view the navigation" href="#">
+      <div class="bars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="clear"></div>
+      </div>
+      <p>
+        <span class="menu">Menu</span>
+        <span class="close">Close</span>
+      </p>
+    </span>
+  </div>
+</header>
+
+      <ul id="navi-menu" class="mobile-menu js-mobile-menu"><li class="menu-item transition-02s"><a href="/">首页</a></li><li class="menu-item transition-02s"><a href="/shop">神秘商店</a></li><li class="menu-item transition-02s"><a href="/mcu">硬件</a></li><li class="menu-item transition-02s"><a href="/js">JavaScript</a></li><li class="menu-item transition-02s"><a href="/3d">3D/模型</a></li><li class="menu-item transition-02s"><a href="/project">开源项目</a></li><li class="menu-item transition-02s"><a href="/api">免费服务</a></li><li class="menu-item transition-02s"><a href="/about">关于</a></li></ul>
+      <div class="main transition-04s">
+  <h1 class="title">tGFX - a tiny gfx library for tft/lcd/oled</h1>
+  <div class="content content-navigator">
+  <ul class="sub-navigator"><li class="content-menu-active"><a href="./">Home</a></li><li><a href="started.html">Started</a></li><li><a href="font.html">Font</a></li><li><a href="api.html">API</a></li><li><a href="../">中文</a></li></ul>
+</div>
+  <div class="content">
+    <div class="article-content"><h1 id="tgfx">tGFX</h1>
+
+<p><img src="http://lanfly.vicp.io/project/tGFX/preview.png" alt="http://lanfly.vicp.io/project/tGFX/preview.png" /></p>
+
+<p><strong>a tiny gfx library for tft/lcd/oled screen. Platform independent. etc.. C51, STM32, Arduino, Linux, Windows, MacOSX.</strong></p>
+
+<p>Github: <a href="https://github.com/LanFly/tGFX">https://github.com/LanFly/tGFX</a></p>
+
+<h2 id="document">Document</h2>
+
+<p>中文文档: http://timor.tech/project/tGFX</p>
+
+<p>English: http://timor.tech/project/tGFX/en</p>
+
+<h2 id="issues">Issues</h2>
+
+<p>https://github.com/LanFly/tGFX/issues</p>
+
+<h2 id="test">Test</h2>
+
+<p>There are no test cases now. But I will write it as soon as possible.</p>
+
+<h2 id="examples">Examples</h2>
+
+<p><a href="https://github.com/LanFly/tGFX/tree/master/examples/gfx-demo-x86">https://github.com/LanFly/tGFX/tree/master/examples/gfx-demo-x86</a>: This is tGFX demo for x86 on MacOSX or Linux using X11.</p>
+
+<p>more <a href="https://github.com/LanFly/tGFX/tree/master/examples">https://github.com/LanFly/tGFX/tree/master/examples</a> are under development.</p>
+
+<h2 id="features">Features</h2>
+
+<ul>
+  <li>Simple and light weight (<strong>This is important</strong>)</li>
+  <li>Free and Open Source</li>
+  <li>Font support</li>
+  <li>Document support</li>
+  <li>Cross platform</li>
+  <li>No dependence</li>
+  <li>Support canvas rendering</li>
+  <li>Support real-time rendering (No memory mode)</li>
+  <li>Monochrome, 565, RGB, RGBA color support (under development)</li>
+</ul>
+
+<h2 id="how-to-use-font">How to use Font</h2>
+
+<figure class="highlight"><pre><code class="language-c" data-lang="c"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="cp">#include "tGFX/565/font.h"
+</span><span class="c1">// use 5*8 bitmap font. Font Name: FONT_5X8</span>
+<span class="cp">#include "tGFX/font/5x8.h"
+</span>
+<span class="n">tGFX_draw_text</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="s">"Hello tGFX!</span><span class="se">\n</span><span class="s">..."</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">FONT_5X8</span><span class="p">,</span> <span class="mh">0xffff</span><span class="p">);</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p><img src="http://lanfly.vicp.io/project/tGFX/preview/font-5x7.png" alt="http://lanfly.vicp.io/project/tGFX/preview/font-5x7.png" /></p>
+
+<h2 id="how-to-start">How to start</h2>
+
+<p>choose a color mode to use then include it.</p>
+
+<p>example:</p>
+
+<figure class="highlight"><pre><code class="language-c" data-lang="c"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="code"><pre><span class="cp">#include "tGFX.h"
+#include "tGFX/565/basic.h"
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="c1">// use 565 color canvas.</span>
+  <span class="n">tGFX_Canvas</span> <span class="o">*</span><span class="n">canvas</span> <span class="o">=</span> <span class="n">tGFX_create_canvas</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="n">tGFX_COLOR_MODE565</span><span class="p">);</span>
+
+  <span class="n">tGFX_draw_pixel</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="mi">63</span><span class="p">,</span> <span class="mi">63</span><span class="p">,</span> <span class="mh">0xffff</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<h2 id="how-to-build">How to build</h2>
+
+<p>We recommend using CMake to build your program. But you can still compile it manually.</p>
+
+<p>There are <strong>2 parts of source code</strong> that should be compiled into your program.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">tGFX.c</code> is always needed. It provides the main <code class="highlighter-rouge">tGFX_create_canvas</code> functions.</li>
+  <li><code class="highlighter-rouge">src/tGFX/${color_mode}/*.c</code> also needed. It provides the set of drawing functions. example <code class="highlighter-rouge">tGFX_draw_pixel</code>.</li>
+</ul>
+
+<p>And don’t forget to set the include path to <code class="highlighter-rouge">/path/to/tGFX/include</code>.</p>
+
+<h2 id="how-to-build-with-cmake">How to build with CMake</h2>
+
+<p>please see: <a href="https://github.com/LanFly/tGFX/blob/master/examples/gfx-demo-x86/CMakeLists.txt">https://github.com/LanFly/tGFX/blob/master/examples/gfx-demo-x86/CMakeLists.txt</a> for details.</p>
+
+<p>CMake Options:</p>
+
+<ul>
+  <li>
+    <p>tGFX_USE_COLOR_MODE<br />
+description: which color mode to use. Only one color mode can be used at the same time by default.<br />
+default value: 565</p>
+  </li>
+  <li>
+    <p>tGFX_NO_TOOLS<br />
+description: whether to exclude tools source.<br />
+default value: false</p>
+  </li>
+</ul>
+
+<h2 id="how-to-develop-and-debug-embedded-program">How to develop and debug embedded program</h2>
+
+<p>tGFX is platform independent. So you can develop and debug drawings code on PC, such as MacOSX, Linux, Windows.</p>
+
+<p>tGFX provides a demo of using X11 to debug drawings code on MacOSX. See
+<a href="https://github.com/LanFly/tGFX/blob/master/examples/gfx-demo-x86/README.md">https://github.com/LanFly/tGFX/blob/master/examples/gfx-demo-x86/README.md</a> for details.</p>
+
+<h2 id="how-to-contribution">How to contribution</h2>
+
+<p>Any kind of contribution is welcome, such as new features, improvement, bug fix, document, translations, examples.</p>
+
+<p>Commit your PR on Github: <a href="https://github.com/LanFly/tGFX">https://github.com/LanFly/tGFX</a>.</p>
+
+<p>Or contact me by email: <a href="mailto:bluescode@outlook.com">bluescode@outlook.com</a>.</p>
+
+<p>tGFX is designed to be lightweight, fast, simple and independent. So we hope the code to be clean and friendly to read.</p>
+
+<p>Here are a few things to follow:</p>
+
+<ul>
+  <li>Code Style<br />
+please run <code class="highlighter-rouge">./scripts/run-clang-format.sh</code> before committing your PR. Then fix the code that tips error.</li>
+</ul>
+
+<h2 id="font-list">Font List</h2>
+
+<ol>
+  <li>FONT_5X8</li>
+</ol>
+
+<p><img src="http://lanfly.vicp.io/project/tGFX/preview/font-5x7.png" alt="http://lanfly.vicp.io/project/tGFX/preview/font-5x7.png" /></p>
+
+<p>more font are under development</p>
+</div>
+  </div>
+  <div class="content sub-content">
+    <h3 class="sub-title">有想说的评论一句吧！</h3>
+    
+    <div id="SOHUCS" sid="/project/tGFX/en/"></div>
+  </div>
+</div>
+    </div>
+    <footer class="site-footer">
+  <div class="site-info">
+    <p>
+      <span>Powered by </span>
+      <a href="http://jekyllrb.com/">jekyll</a>
+      <span> & </span>
+      <a href="https://nodejs.org/" target="_blank">NodeJS</a>
+      <span> | </span>
+      <span> Server on RaspberryPi 3B | Theme made by </span>
+      <a href="mailto:bluescode@outlook.com">sudo</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <p xmlns:dct="http://purl.org/dc/terms/">
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">
+        <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/by-nc-sa.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" style="border-style: none;" width="80" height="28" alt="署名-非商业性使用-相同方式共享 (CC BY-NC-SA)" />
+      </a>
+    </p>
+    <p>
+      <span>本作品采用</span>
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0" style="text-decoration-line: none;" target="_blank">《署名-非商业性使用-相同方式共享》</a>
+      <span>许可协议，转载请先联系</span>
+      <a href="mailto:bluescode@outlook.com">站长</a>
+    </p>
+  </div>
+  <div class="site-info">
+    <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/logo.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="logo" width="64" height="64" class="logo">
+    <p>提莫的神秘商店</p>
+  </div>
+  <div class="site-info">
+    <p>
+      <a href="http://www.beian.miit.gov.cn/" target="_blank">浙ICP备19010606号</a>
+      <img class="js-lazyload-img" data-src="http://lanfly.vicp.io/assets/icons/public-security.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" width="20" height="20" alt="浙公网安备案图标" style="margin: 0 20px;" />
+      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002013836" target="_blank">浙公网安备33011002013836号</a>
+    </p>
+  </div>
+</footer>
+
+    <script>
+  /**
+   url: string
+   callback: [function]
+  */
+  function loadScript (url, callback) {
+    var headElement = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+    var script = document.createElement("script");
+    script.setAttribute("type", "text/javascript");
+    script.setAttribute("charset", "UTF-8");
+    script.setAttribute("src", url);
+    if (typeof callback === 'function') {
+      if (window.attachEvent) {
+        script.onreadystatechange = function () {
+          var e = script.readyState;
+          if (e === "loaded" || e === "complete") {
+            script.onreadystatechange = null;
+            callback();
+          }
+        };
+      } else {
+        script.onload = callback
+      }
+    }
+    headElement.appendChild(script);
+  }
+  /**
+   callback: function
+   timeout: [number] default: 1000
+  */
+  function lazycall(callback, timeout) {
+    if (typeof timeout != 'number') {
+      timeout = 1000
+    }
+    if (window.addEventListener) {
+      window.addEventListener('load', callback, false);
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', callback);
+    } else {
+      setTimeout(callback, timeout);
+    }
+  }
+  /**
+   url: string
+   timeout: [number] default: 1000
+   callback: [function]
+  */
+  function lazyloadScript (url, timeout, callback) {
+    if (typeof timeout === 'function') {
+      callback = timeout
+      timeout = 1000
+    }
+    lazycall(function () {
+      loadScript(url, callback)
+    }, timeout)
+  }
+  lazyloadScript('http://libs.baidu.com/jquery/2.0.3/jquery.min.js', function () {
+    $(document).ready(function () {
+      var navToggle = $('.js-nav-toggle')
+      var mobileMenu = $('.js-mobile-menu')
+      // Toggle blog-menu
+      navToggle.on("click", function () {
+        navToggle.toggleClass("active");
+        mobileMenu.slideToggle();
+        return false;
+      });
+      // Hide mobile-menu > 768
+      $(window).resize(function () {
+        var windowWidth = $(window).width()
+        if (windowWidth > 768) {
+          navToggle.removeClass("active");
+          mobileMenu.show();
+        }
+        if (windowWidth <= 768 && !navToggle.hasClass('active')) {
+          navToggle.removeClass("active");
+          mobileMenu.hide();
+        }
+      });
+      // lazyload img for footer
+      $('.site-footer img.js-lazyload-img').each(function (index, elem) {
+        var img = $(this)
+        img.attr('src', img.data('src'))
+      });
+    });
+  })
+</script>
+
+    <script type="text/javascript">
+  var _hmt = _hmt || [];
+  function loadBaiduTongji () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?f497f00a5871b6ed9078f87ab818d62d";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  }
+  lazycall(loadBaiduTongji)
+</script>
+    <script type="text/javascript">
+  function loadChangyan () {
+    var appid = 'cytTik2AP';
+    var conf = 'prod_0b6e93ff9daf2e0d6e49c8ad1586bf4b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      var loadJsWithId=function(d,i){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("id",i);b.setAttribute("charset","UTF-8");b.setAttribute("src",d);c.appendChild(b)};
+      loadJsWithId('https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf, "changyan_mobile_js")
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  }
+  lazycall(loadChangyan)
+</script>
+    
+  </body>
+</html>

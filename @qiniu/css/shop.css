@@ -1,0 +1,153 @@
+.main .category-wrapper {
+  margin-top: 30px;
+}
+.main .category-wrapper:first-of-type {
+  margin-top: 0px;
+}
+.main .category-wrapper .product-list {
+  margin-top: 20px;
+}
+.main .category-wrapper .product-list .info-empty {
+  font-size: 0.6rem;
+  margin-top: 10px;
+  color: #404040;
+  text-align: center;
+}
+
+@media screen and (min-width: 768px) {
+  .main .category-wrapper .product-list {
+    overflow: hidden;
+  }
+  .main .category-wrapper .product-list .product-box {
+    box-sizing: border-box;
+    width: 200px;
+    float: left;
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+  .main .category-wrapper .product-list .product {
+    box-sizing: border-box;
+    padding: 9px;
+    border: 1px solid #e0e0ce;
+    background-color: #fff;
+  }
+  .main .category-wrapper .product-list .product:hover {
+    border: 1px solid #ffc100;
+  }
+  .main .category-wrapper .product-list .product a {
+    text-decoration: none;
+  }
+  .main .category-wrapper .product-list .product .preview {
+    box-sizing: border-box;
+    display: -webkit-box;
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;
+    padding-bottom: calc(100% - 2px);
+    padding-bottom: -webkit-calc(100% - 2px);
+    padding-bottom: -moz-calc(100% - 2px);
+    padding-bottom: -o-calc(100% - 2px);
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    border: 1px solid #e0e0ce;
+  }
+  .main .category-wrapper .product-list .product .product-name {
+    font-size: 0.9rem;
+    line-height: 1.2rem;
+    height: 2.3rem;
+    margin-top: 5px;
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -o-line-clamp: 2;
+    -moz-line-clamp: 2;
+    -webkit-line-clamp: 2;
+  }
+  .main .category-wrapper .product-list .product .goto-detail {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 1rem;
+    color: #fff;
+    font-weight: bold;
+    padding: 5px 0px;
+    border-radius: 3px;
+    border-bottom: 3px solid #ca9803;
+    background-image: -webkit-linear-gradient(top, #ffc100, #ecb200);
+  }
+  .main .category-wrapper .product-list .product .goto-detail:hover {
+    border-bottom: 3px solid #ecb200;
+    background-image: -webkit-linear-gradient(top, #ecb200, #ecb200);
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .main .category-wrapper .product-list {
+    overflow: hidden;
+  }
+  .main .category-wrapper .product-list .product-box {
+    box-sizing: border-box;
+    width: 50%;
+    float: left;
+    margin-top: 10px;
+    padding-right: 5px;
+  }
+  .main .category-wrapper .product-list .product-box:nth-child(even) {
+    padding-right: 0;
+    padding-left: 5px;
+  }
+  .main .category-wrapper .product-list .product {
+    box-sizing: border-box;
+    padding: 9px;
+    border: 1px solid #e0e0ce;
+    background-color: #fff;
+  }
+  .main .category-wrapper .product-list .product:hover {
+    border: 1px solid #ffc100;
+  }
+  .main .category-wrapper .product-list .product a {
+    text-decoration: none;
+  }
+  .main .category-wrapper .product-list .product .preview {
+    box-sizing: border-box;
+    display: -webkit-box;
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;
+    padding-bottom: calc(100% - 2px);
+    padding-bottom: -webkit-calc(100% - 2px);
+    padding-bottom: -moz-calc(100% - 2px);
+    padding-bottom: -o-calc(100% - 2px);
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    border: 1px solid #e0e0ce;
+  }
+  .main .category-wrapper .product-list .product .product-name {
+    font-size: 0.9rem;
+    line-height: 1.2rem;
+    height: 2.3rem;
+    margin-top: 5px;
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -o-line-clamp: 2;
+    -moz-line-clamp: 2;
+    -webkit-line-clamp: 2;
+  }
+  .main .category-wrapper .product-list .product .goto-detail {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 1rem;
+    color: #fff;
+    font-weight: bold;
+    padding: 5px 0px;
+    border-radius: 3px;
+    border-bottom: 3px solid #ca9803;
+    background-image: -webkit-linear-gradient(top, #ffc100, #ecb200);
+  }
+  .main .category-wrapper .product-list .product .goto-detail:hover {
+    border-bottom: 3px solid #ecb200;
+    background-image: -webkit-linear-gradient(top, #ecb200, #ecb200);
+  }
+}
